@@ -125,6 +125,8 @@ html, body {
   bottom: var(--bottom-bar-height);
   left: 0;
   right: 0;
+  width: 100%;
+  height: calc(100% - var(--header-height) - var(--bottom-bar-height));
   z-index: 1;
   background: #0d1117;
 }
@@ -416,7 +418,7 @@ html, body {
 }
 
 .permission-overlay.hidden {
-  display: none;
+  display: none !important;
 }
 
 .permission-overlay .perm-icon {

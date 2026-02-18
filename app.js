@@ -38,6 +38,10 @@
   // ============================================================
 
   function initMap(lat, lng) {
+    // Make sure the map container is visible before Leaflet initializes
+    const mapEl = document.getElementById('map');
+    mapEl.style.display = 'block';
+
     map = L.map('map', {
       center: [lat, lng],
       zoom: 18,
@@ -73,6 +77,12 @@
       opacity: 0.3,
       dashArray: '4 6',
     }).addTo(map);
+
+    // Force Leaflet to recalculate its size after the overlay is hidden
+    setTimeout(() => {
+      map.invalidateSize({ animate: false });
+      map.setView([lat, lng], 18);
+    }, 100);
   }
 
   // ============================================================
@@ -97,9 +107,12 @@
     permissionOverlay.classList.add('hidden');
 
     if (isFirstFix) {
-      initMap(lat, lng);
-      loadNearbyAlerts();
-      subscribeToAlerts();
+      // Small delay ensures the overlay is fully hidden before Leaflet measures the container
+      setTimeout(() => {
+        initMap(lat, lng);
+        loadNearbyAlerts();
+        subscribeToAlerts();
+      }, 50);
     } else {
       if (userMarker) userMarker.setLatLng([lat, lng]);
       if (accuracyCircle) accuracyCircle.setLatLng([lat, lng]);
