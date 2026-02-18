@@ -1,49 +1,54 @@
 /* ============================================================
-   styles.css - Pickpocket Alert App - Dark Theme
+   styles.css - Pickpocket Alert App - Waze-inspired Theme
    ============================================================ */
 
 /* --- DESIGN TOKENS --- */
 :root {
-  /* Backgrounds */
-  --bg-primary:   #1a1f2e;
-  --bg-secondary: #242938;
-  --bg-tertiary:  #2d3348;
-  --bg-card:      #1e2435;
+  /* Backgrounds - light like Waze */
+  --bg-primary:    #f5f7fa;
+  --bg-secondary:  #ffffff;
+  --bg-tertiary:   #eef1f6;
+  --bg-card:       #ffffff;
 
-  /* Accents */
-  --accent-orange: #ff6b35;
-  --accent-red:    #e63946;
-  --accent-blue:   #4cc9f0;
-  --accent-green:  #2ec4b6;
+  /* Waze-style accents */
+  --accent-orange:  #ff6d00;   /* Waze orange - primary CTA */
+  --accent-red:     #e53935;   /* Alert/danger */
+  --accent-blue:    #1976d2;   /* User dot / GPS */
+  --accent-cyan:    #00b0ff;   /* Radius circle */
+  --accent-green:   #00c853;   /* Safe / success */
+  --accent-purple:  #7c4dff;   /* Accent */
 
   /* Text */
-  --text-primary:   #f0f4ff;
-  --text-secondary: #8892b0;
-  --text-muted:     #4a5568;
+  --text-primary:   #1a1a2e;
+  --text-secondary: #5f6368;
+  --text-muted:     #9aa0a6;
 
   /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-card:   rgba(255, 255, 255, 0.12);
+  --border-subtle:  rgba(0, 0, 0, 0.08);
+  --border-card:    rgba(0, 0, 0, 0.12);
 
-  /* Shadows */
-  --shadow-button: 0 4px 24px rgba(255, 107, 53, 0.45);
-  --shadow-card:   0 2px 16px rgba(0, 0, 0, 0.5);
-  --shadow-marker: 0 0 14px rgba(230, 57, 70, 0.7);
+  /* Shadows - elevated cards like Waze */
+  --shadow-sm:      0 1px 4px rgba(0,0,0,0.12);
+  --shadow-md:      0 4px 16px rgba(0,0,0,0.14);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,0.18);
+  --shadow-button:  0 6px 20px rgba(255, 109, 0, 0.5);
+  --shadow-marker:  0 0 16px rgba(229, 57, 53, 0.65);
 
   /* Layout */
-  --header-height:     56px;
-  --bottom-bar-height: 64px;
-  --panel-height:      110px;
+  --header-height:     58px;
+  --bottom-bar-height: 66px;
+  --panel-height:      116px;
 
   /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 32px;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  22px;
+  --radius-xl:  32px;
+  --radius-full: 999px;
 
   /* Transitions */
   --tr-fast: 150ms ease;
-  --tr-med:  300ms ease;
+  --tr-med:  280ms ease;
 }
 
 /* --- RESET --- */
@@ -64,13 +69,16 @@ html, body {
   user-select: none;
 }
 
-/* --- APP HEADER --- */
+/* ============================================================
+   HEADER - Waze style: white card with shadow
+   ============================================================ */
 .app-header {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--header-height);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,18 +86,27 @@ html, body {
   z-index: 1000;
 }
 
-.app-header h1 {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  color: var(--text-primary);
+.header-logo {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.app-header h1 .header-icon {
-  font-size: 20px;
+.logo-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: -0.2px;
+}
+
+.logo-text strong {
+  font-weight: 800;
+  color: var(--accent-orange);
 }
 
 .header-right {
@@ -98,27 +115,44 @@ html, body {
   gap: 10px;
 }
 
+/* GPS pill - Waze style chip */
+.gps-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
 /* --- BADGE --- */
 .badge {
   background: var(--accent-red);
   color: #fff;
-  border-radius: 12px;
+  border-radius: var(--radius-full);
   padding: 3px 9px;
   font-size: 12px;
   font-weight: 700;
   min-width: 26px;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px rgba(229,57,53,0.35);
   transition: opacity var(--tr-fast), transform var(--tr-fast);
 }
 
 .badge.hidden {
   opacity: 0;
-  transform: scale(0.6);
+  transform: scale(0.5);
   pointer-events: none;
 }
 
-/* --- MAP --- */
+/* ============================================================
+   MAP - Waze uses bright/clear map tiles
+   ============================================================ */
 #map {
   position: fixed;
   top: var(--header-height);
@@ -128,41 +162,50 @@ html, body {
   width: 100%;
   height: calc(100% - var(--header-height) - var(--bottom-bar-height));
   z-index: 1;
-  background: #0d1117;
+  background: #e8edf2;
 }
 
-/* Darken & desaturate tile layer for moody look */
+/* Waze uses vivid map - no dark filter, slight saturation boost */
 .leaflet-tile-pane {
-  filter: brightness(0.75) saturate(0.7);
+  filter: saturate(1.1) contrast(1.02);
 }
 
 .leaflet-control-attribution {
-  background: rgba(0, 0, 0, 0.55) !important;
+  background: rgba(255,255,255,0.75) !important;
   color: var(--text-muted) !important;
   font-size: 10px !important;
+  border-radius: 6px 0 0 0 !important;
 }
 
 .leaflet-control-attribution a {
-  color: var(--text-muted) !important;
+  color: var(--accent-blue) !important;
 }
 
+/* Waze-style popup */
 .leaflet-popup-content-wrapper {
-  background: var(--bg-secondary) !important;
+  background: #fff !important;
   color: var(--text-primary) !important;
-  border: 1px solid var(--border-card) !important;
+  border: none !important;
   border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: var(--shadow-md) !important;
+  padding: 2px !important;
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px !important;
 }
 
 .leaflet-popup-tip {
-  background: var(--bg-secondary) !important;
+  background: #fff !important;
 }
 
-/* --- USER LOCATION DOT --- */
+/* ============================================================
+   USER LOCATION DOT - Waze blue arrow/dot style
+   ============================================================ */
 .user-dot-wrapper {
   position: relative;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
 .user-dot {
@@ -170,51 +213,65 @@ html, body {
   inset: 2px;
   border-radius: 50%;
   background: var(--accent-blue);
-  border: 2px solid #fff;
-  animation: pulse-blue 2.2s ease-out infinite;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.5);
+  animation: pulse-blue 2.4s ease-out infinite;
 }
 
 @keyframes pulse-blue {
-  0%   { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0.65); }
-  65%  { box-shadow: 0 0 0 16px rgba(76, 201, 240, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(76, 201, 240, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(25,118,210, 0.55); }
+  65%  { box-shadow: 0 0 0 18px rgba(25,118,210, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(25,118,210, 0); }
 }
 
-/* --- ALERT MARKER DOT --- */
-.alert-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+/* ============================================================
+   ALERT MARKER - Waze hazard icon style
+   ============================================================ */
+.alert-dot-outer {
+  width: 34px;
+  height: 34px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
   background: var(--accent-red);
-  border: 2px solid rgba(230, 57, 70, 0.35);
   box-shadow: var(--shadow-marker);
-  animation: pulse-red 1.8s ease-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: marker-pop 0.3s ease-out;
 }
 
-@keyframes pulse-red {
-  0%   { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.7); }
-  65%  { box-shadow: 0 0 0 12px rgba(230, 57, 70, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+.alert-dot-inner {
+  transform: rotate(45deg);
+  font-size: 15px;
+  line-height: 1;
 }
 
-/* --- ALERT BUTTON --- */
+@keyframes marker-pop {
+  0%   { transform: rotate(-45deg) scale(0.5); opacity: 0; }
+  80%  { transform: rotate(-45deg) scale(1.1); }
+  100% { transform: rotate(-45deg) scale(1); opacity: 1; }
+}
+
+/* ============================================================
+   ALERT BUTTON - Waze-style large round CTA
+   ============================================================ */
 .alert-button {
   position: fixed;
-  bottom: calc(var(--bottom-bar-height) + 20px);
+  bottom: calc(var(--bottom-bar-height) + 18px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
-  width: 82px;
-  height: 82px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   background: var(--accent-orange);
   border: none;
   color: #fff;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.5px;
+  font-size: 11px;
+  letter-spacing: 0.6px;
   cursor: pointer;
-  box-shadow: var(--shadow-button), 0 0 0 4px rgba(255, 107, 53, 0.2);
+  box-shadow: var(--shadow-button), 0 0 0 5px rgba(255,109,0,0.15);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -225,53 +282,55 @@ html, body {
   text-transform: uppercase;
 }
 
-.alert-button .btn-icon {
-  font-size: 22px;
+.btn-icon {
+  font-size: 24px;
   line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
 }
 
-.alert-button .btn-label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
+.btn-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
 .alert-button:active:not(.cooldown) {
-  transform: translateX(-50%) scale(0.9);
-  box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+  transform: translateX(-50%) scale(0.91);
+  box-shadow: 0 3px 10px rgba(255,109,0,0.3);
 }
 
 .alert-button.sending {
   background: var(--accent-red);
-  animation: btn-flash 0.4s ease;
+  animation: btn-flash 0.35s ease;
 }
 
 .alert-button.cooldown {
-  background: var(--bg-tertiary);
-  box-shadow: none;
+  background: var(--text-muted);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   cursor: not-allowed;
-  color: var(--text-muted);
+  color: #fff;
 }
 
 @keyframes btn-flash {
   0%   { transform: translateX(-50%) scale(1); }
-  30%  { transform: translateX(-50%) scale(1.12); }
+  35%  { transform: translateX(-50%) scale(1.14); }
   100% { transform: translateX(-50%) scale(1); }
 }
 
-/* --- BOTTOM PANEL (nearby alerts card) --- */
+/* ============================================================
+   BOTTOM PANEL - Waze bottom sheet style
+   ============================================================ */
 .bottom-panel {
   position: fixed;
   bottom: var(--bottom-bar-height);
   left: 0;
   right: 0;
   height: var(--panel-height);
-  background: rgba(26, 31, 46, 0.97);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-card);
+  background: #fff;
+  border-top: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  padding: 14px 18px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.10);
+  padding: 10px 18px 14px;
   z-index: 400;
   transform: translateY(100%);
   transition: transform var(--tr-med);
@@ -282,29 +341,52 @@ html, body {
 }
 
 .panel-handle {
-  width: 36px;
+  width: 38px;
   height: 4px;
   background: var(--border-card);
   border-radius: 2px;
   margin: 0 auto 12px;
 }
 
-.panel-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--accent-red);
+.panel-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 14px;
+}
+
+.panel-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #fff3e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,109,0,0.15);
+}
+
+.panel-text-wrap {
+  flex: 1;
+}
+
+.panel-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent-red);
+  margin-bottom: 2px;
 }
 
 .panel-subtitle {
   font-size: 12px;
   color: var(--text-secondary);
+  line-height: 1.4;
 }
 
-/* --- BOTTOM NAVIGATION --- */
+/* ============================================================
+   BOTTOM NAVIGATION - Waze style
+   ============================================================ */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -313,6 +395,7 @@ html, body {
   height: var(--bottom-bar-height);
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-subtle);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
   display: flex;
   z-index: 1000;
 }
@@ -338,22 +421,15 @@ html, body {
   stroke-width: 1.8;
   fill: none;
   stroke: currentColor;
-  transition: stroke var(--tr-fast);
 }
 
 .nav-item.active {
   color: var(--accent-orange);
 }
 
-/* --- STATUS INDICATOR (GPS) --- */
-.gps-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
+/* ============================================================
+   GPS STATUS DOT
+   ============================================================ */
 .gps-dot {
   width: 8px;
   height: 8px;
@@ -373,28 +449,29 @@ html, body {
 
 @keyframes gps-blink {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+  50%       { opacity: 0.35; }
 }
 
-/* --- TOAST --- */
+/* ============================================================
+   TOAST - Waze floating pill style
+   ============================================================ */
 .toast {
   position: fixed;
-  top: calc(var(--header-height) + 12px);
+  top: calc(var(--header-height) + 14px);
   left: 50%;
-  transform: translateX(-50%) translateY(-6px);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-card);
-  color: var(--text-primary);
+  transform: translateX(-50%) translateY(-8px);
+  background: #1a1a2e;
+  color: #fff;
   padding: 10px 20px;
   border-radius: var(--radius-xl);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   z-index: 2000;
   opacity: 0;
   transition: opacity 0.2s, transform 0.2s;
   pointer-events: none;
   white-space: nowrap;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-md);
 }
 
 .toast.visible {
@@ -402,7 +479,9 @@ html, body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* --- LOCATION PERMISSION OVERLAY --- */
+/* ============================================================
+   LOCATION PERMISSION OVERLAY
+   ============================================================ */
 .permission-overlay {
   position: fixed;
   inset: 0;
@@ -422,13 +501,13 @@ html, body {
 }
 
 .permission-overlay .perm-icon {
-  font-size: 56px;
+  font-size: 60px;
   margin-bottom: 8px;
 }
 
 .permission-overlay h2 {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 800;
   color: var(--text-primary);
 }
 
@@ -436,38 +515,71 @@ html, body {
   font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.6;
-  max-width: 280px;
+  max-width: 290px;
 }
 
+/* ============================================================
+   PRIMARY BUTTON
+   ============================================================ */
 .btn-primary {
   background: var(--accent-orange);
   color: #fff;
   border: none;
   border-radius: var(--radius-lg);
-  padding: 14px 32px;
+  padding: 14px 36px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   margin-top: 8px;
   box-shadow: var(--shadow-button);
   transition: transform var(--tr-fast), box-shadow var(--tr-fast);
+  letter-spacing: 0.3px;
 }
 
 .btn-primary:active {
   transform: scale(0.96);
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 3px 8px rgba(255,109,0,0.3);
+}
+
+/* ============================================================
+   SPINNER
+   ============================================================ */
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--text-muted);
+  font-size: 13px;
+  gap: 10px;
+}
+
+.spinner::before {
+  content: '';
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-card);
+  border-top-color: var(--accent-orange);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ============================================================
    HISTORY SCREEN
    ============================================================ */
 
+/* View toggle - Waze-style segment control */
 .view-toggle-bar {
   position: fixed;
   top: var(--header-height);
   left: 0;
   right: 0;
-  height: 48px;
+  height: 50px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -475,16 +587,17 @@ html, body {
   padding: 0 16px;
   gap: 8px;
   z-index: 500;
+  box-shadow: var(--shadow-sm);
 }
 
 .toggle-btn {
-  padding: 7px 18px;
-  border-radius: 20px;
-  border: 1px solid var(--border-card);
+  padding: 7px 20px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--border-card);
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--tr-fast);
   outline: none;
@@ -494,13 +607,13 @@ html, body {
   background: var(--accent-orange);
   border-color: var(--accent-orange);
   color: #fff;
-  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255,109,0,0.3);
 }
 
-/* --- ALERT LIST (History) --- */
+/* Alert list container */
 .alert-list-container {
   position: fixed;
-  top: calc(var(--header-height) + 48px);
+  top: calc(var(--header-height) + 50px);
   bottom: var(--bottom-bar-height);
   left: 0;
   right: 0;
@@ -509,6 +622,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background: var(--bg-primary);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -516,29 +630,36 @@ html, body {
   display: none;
 }
 
+/* Alert card - Waze report card style */
 .alert-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-card);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  padding: 14px 16px 14px 20px;
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-rows: auto auto;
-  gap: 4px 12px;
-  box-shadow: var(--shadow-card);
+  gap: 3px 12px;
+  box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+  transition: box-shadow var(--tr-fast);
 }
 
+.alert-card:active {
+  box-shadow: var(--shadow-md);
+}
+
+/* Orange left accent bar */
 .alert-card::before {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 4px;
   background: var(--accent-red);
-  border-radius: 3px 0 0 3px;
+  border-radius: 4px 0 0 4px;
 }
 
 .alert-card .card-icon {
@@ -546,19 +667,19 @@ html, body {
   right: 14px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 22px;
-  opacity: 0.35;
+  font-size: 24px;
+  opacity: 0.25;
 }
 
 .alert-card .card-time {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
 .alert-card .card-distance {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent-orange);
   text-align: right;
 }
@@ -585,51 +706,10 @@ html, body {
   color: var(--text-secondary);
   font-size: 14px;
   text-align: center;
-  padding: 60px 32px;
+  padding: 64px 32px;
 }
 
 .empty-state .empty-icon {
-  font-size: 48px;
-  opacity: 0.5;
-}
-
-/* History map */
-#history-map-container {
-  position: fixed;
-  top: calc(var(--header-height) + 48px);
-  bottom: var(--bottom-bar-height);
-  left: 0;
-  right: 0;
-  z-index: 1;
-}
-
-#history-map {
-  width: 100%;
-  height: 100%;
-}
-
-/* --- LOADING SPINNER --- */
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  color: var(--text-muted);
-  font-size: 13px;
-  gap: 10px;
-}
-
-.spinner::before {
-  content: '';
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--border-card);
-  border-top-color: var(--accent-orange);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  font-size: 52px;
+  opacity: 0.45;
 }

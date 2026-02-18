@@ -49,12 +49,10 @@
       attributionControl: true,
     });
 
-    // Dark tile layer (CartoDB Dark Matter - no API key needed)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
+    // Bright tile layer - Waze uses vivid clear maps (OSM standard)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 20,
-      detectRetina: true,
     }).addTo(map);
 
     // User position marker (pulsing blue dot)
@@ -164,11 +162,13 @@
   function createAlertMarker(alert) {
     if (alertMarkers.has(alert.id)) return; // already rendered
 
+    // Waze-style diamond marker
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-dot"></div>',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7],
+      html: '<div class="alert-dot-outer"><span class="alert-dot-inner">⚠️</span></div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 34],
+      popupAnchor: [0, -36],
     });
 
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
@@ -176,9 +176,9 @@
 
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
-        `<div style="text-align:center">
-          <strong style="color:#e63946">⚠️ Carterista</strong><br>
-          <span style="font-size:12px;color:#666">${ageStr}</span>
+        `<div style="text-align:center;font-family:-apple-system,sans-serif">
+          <strong style="color:#e53935;font-size:14px">⚠️ Carterista</strong><br>
+          <span style="font-size:12px;color:#5f6368">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }
       )

@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1a1f2e">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#ffffff">
   <title>Pickpocket Alert</title>
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <!-- Leaflet CSS - sin integrity para evitar bloqueo -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <!-- App styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -26,12 +26,12 @@
 
   <!-- ==================== APP HEADER ==================== -->
   <header class="app-header">
-    <h1>
-      <span class="header-icon">🚨</span>
-      Pickpocket Alert
-    </h1>
+    <div class="header-logo">
+      <span class="logo-icon">🚨</span>
+      <span class="logo-text">Pickpocket<strong>Alert</strong></span>
+    </div>
     <div class="header-right">
-      <div class="gps-status">
+      <div class="gps-pill" id="gps-pill">
         <div class="gps-dot" id="gps-dot"></div>
         <span id="gps-label">Sin GPS</span>
       </div>
@@ -45,17 +45,21 @@
   <!-- ==================== BOTTOM PANEL ==================== -->
   <div id="bottom-panel" class="bottom-panel">
     <div class="panel-handle"></div>
-    <div class="panel-title">
-      <span>⚠️</span>
-      <span id="panel-title-text">Carteristas detectados</span>
+    <div class="panel-row">
+      <div class="panel-icon-wrap">
+        <span class="panel-icon">⚠️</span>
+      </div>
+      <div class="panel-text-wrap">
+        <div class="panel-title-text" id="panel-title-text">Carteristas detectados</div>
+        <div class="panel-subtitle" id="panel-subtitle">Alertas activas en un radio de 50m</div>
+      </div>
     </div>
-    <p class="panel-subtitle" id="panel-subtitle">Hay alertas activas en un radio de 50m</p>
   </div>
 
   <!-- ==================== ALERT BUTTON ==================== -->
   <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
-    <span class="btn-icon">⚠️</span>
-    <span class="btn-label" id="btn-label">ALERTA</span>
+    <span class="btn-icon">🚨</span>
+    <span class="btn-label" id="btn-label">REPORTAR</span>
   </button>
 
   <!-- ==================== BOTTOM NAVIGATION ==================== -->
@@ -75,9 +79,8 @@
   </nav>
 
   <!-- ==================== SCRIPTS ==================== -->
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeM=" crossorigin="anonymous"></script>
+  <!-- Leaflet JS - sin integrity -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Supabase JS v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Shared utilities -->

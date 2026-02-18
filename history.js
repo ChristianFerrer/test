@@ -67,11 +67,9 @@
       attributionControl: true,
     });
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 20,
-      detectRetina: true,
     }).addTo(historyMap);
 
     // User marker on history map
@@ -105,9 +103,10 @@
 
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-dot"></div>',
-      iconSize: [14, 14],
-      iconAnchor: [7, 7],
+      html: '<div class="alert-dot-outer"><span class="alert-dot-inner">⚠️</span></div>',
+      iconSize: [34, 34],
+      iconAnchor: [17, 34],
+      popupAnchor: [0, -36],
     });
 
     alerts.forEach(alert => {
