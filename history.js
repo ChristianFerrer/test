@@ -60,6 +60,14 @@
   function initHistoryMap() {
     if (!userPosition) return;
 
+    // Fix Leaflet default icon paths
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconUrl:       'lib/marker-icon.png',
+      iconRetinaUrl: 'lib/marker-icon-2x.png',
+      shadowUrl:     'lib/marker-shadow.png',
+    });
+
     historyMap = L.map('history-map', {
       center: [userPosition.lat, userPosition.lng],
       zoom: 15,

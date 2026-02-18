@@ -42,6 +42,14 @@
     const mapEl = document.getElementById('map');
     mapEl.style.display = 'block';
 
+    // Fix Leaflet default icon paths to use our local lib/ copies
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconUrl:       'lib/marker-icon.png',
+      iconRetinaUrl: 'lib/marker-icon-2x.png',
+      shadowUrl:     'lib/marker-shadow.png',
+    });
+
     map = L.map('map', {
       center: [lat, lng],
       zoom: 18,
