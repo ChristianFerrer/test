@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1f2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Pickpocket Alert</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <!-- App styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== LOCATION PERMISSION OVERLAY ==================== -->
+  <div id="permission-overlay" class="permission-overlay">
+    <div class="perm-icon">📍</div>
+    <h2>Necesitamos tu ubicación</h2>
+    <p>Esta app necesita acceso a tu GPS para mostrarte alertas cercanas y enviarte alertas de carteristas en tiempo real.</p>
+    <button class="btn-primary" id="request-location-btn">Activar ubicación</button>
+  </div>
+
+  <!-- ==================== APP HEADER ==================== -->
+  <header class="app-header">
+    <h1>
+      <span class="header-icon">🚨</span>
+      Pickpocket Alert
+    </h1>
+    <div class="header-right">
+      <div class="gps-status">
+        <div class="gps-dot" id="gps-dot"></div>
+        <span id="gps-label">Sin GPS</span>
+      </div>
+      <span id="alert-badge" class="badge hidden">0</span>
+    </div>
+  </header>
+
+  <!-- ==================== MAP ==================== -->
+  <div id="map"></div>
+
+  <!-- ==================== BOTTOM PANEL ==================== -->
+  <div id="bottom-panel" class="bottom-panel">
+    <div class="panel-handle"></div>
+    <div class="panel-title">
+      <span>⚠️</span>
+      <span id="panel-title-text">Carteristas detectados</span>
+    </div>
+    <p class="panel-subtitle" id="panel-subtitle">Hay alertas activas en un radio de 50m</p>
+  </div>
+
+  <!-- ==================== ALERT BUTTON ==================== -->
+  <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
+    <span class="btn-icon">⚠️</span>
+    <span class="btn-label" id="btn-label">ALERTA</span>
+  </button>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active" aria-label="Mapa en vivo">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+      </svg>
+      <span>Mapa</span>
+    </a>
+    <a href="history.html" class="nav-item" aria-label="Historial de alertas">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>Historial</span>
+    </a>
+  </nav>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeM=" crossorigin="anonymous"></script>
+  <!-- Supabase JS v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Shared utilities -->
+  <script src="utils.js"></script>
+  <!-- Main app logic -->
+  <script src="app.js"></script>
+
+</body>
+</html>

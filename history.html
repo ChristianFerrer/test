@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a1f2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Historial - Pickpocket Alert</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <!-- App styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== APP HEADER ==================== -->
+  <header class="app-header">
+    <h1>
+      <span class="header-icon">🕐</span>
+      Historial de hoy
+    </h1>
+    <div class="header-right">
+      <span id="history-count" class="badge hidden">0</span>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW TOGGLE ==================== -->
+  <div class="view-toggle-bar">
+    <button class="toggle-btn active" id="btn-list" data-view="list">Lista</button>
+    <button class="toggle-btn" id="btn-map" data-view="map">Mapa</button>
+  </div>
+
+  <!-- ==================== LIST VIEW ==================== -->
+  <div id="list-view" class="alert-list-container">
+    <div class="spinner">Cargando alertas...</div>
+  </div>
+
+  <!-- ==================== MAP VIEW ==================== -->
+  <div id="map-view-container" class="hidden" style="position:fixed;top:calc(var(--header-height) + 48px);bottom:var(--bottom-bar-height);left:0;right:0;z-index:1;">
+    <div id="history-map" style="width:100%;height:100%;background:#0d1117;"></div>
+  </div>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item" aria-label="Mapa en vivo">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+      </svg>
+      <span>Mapa</span>
+    </a>
+    <a href="history.html" class="nav-item active" aria-label="Historial de alertas">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>Historial</span>
+    </a>
+  </nav>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WPeM=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="utils.js"></script>
+  <script src="history.js"></script>
+
+</body>
+</html>
