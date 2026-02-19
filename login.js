@@ -22,7 +22,7 @@
   }
 
   // --- DOM ---
-  const loginCard      = document.querySelector('.auth-card');
+  const loginCard      = document.getElementById('login-card');
   const registerCard   = document.getElementById('register-card');
   const loginForm      = document.getElementById('login-form');
   const registerForm   = document.getElementById('register-form');
@@ -34,16 +34,27 @@
   const btnLogin       = document.getElementById('btn-login');
   const btnRegister    = document.getElementById('btn-register');
 
+  // --- Ensure correct initial state ---
+  showCard('login');
+
+  function showCard(which) {
+    if (which === 'login') {
+      loginCard.style.display    = 'flex';
+      registerCard.style.display = 'none';
+    } else {
+      loginCard.style.display    = 'none';
+      registerCard.style.display = 'flex';
+    }
+  }
+
   // --- Toggle login / register ---
   btnShowReg.addEventListener('click', () => {
-    loginCard.classList.add('hidden');
-    registerCard.classList.remove('hidden');
+    showCard('register');
     clearError(authError);
   });
 
   btnShowLogin.addEventListener('click', () => {
-    registerCard.classList.add('hidden');
-    loginCard.classList.remove('hidden');
+    showCard('login');
     clearError(registerError);
   });
 
