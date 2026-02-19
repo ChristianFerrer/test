@@ -39,11 +39,11 @@
 
   function showCard(which) {
     if (which === 'login') {
-      loginCard.style.display    = 'flex';
-      registerCard.style.display = 'none';
+      loginCard.classList.remove('hidden');
+      registerCard.classList.add('hidden');
     } else {
-      loginCard.style.display    = 'none';
-      registerCard.style.display = 'flex';
+      loginCard.classList.add('hidden');
+      registerCard.classList.remove('hidden');
     }
   }
 
