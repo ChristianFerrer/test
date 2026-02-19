@@ -311,7 +311,7 @@
       // Kick off geocode asynchronously and patch the DOM when ready
       reverseGeocode(alert.lat, alert.lng).then(address => {
         const el = document.getElementById(cardId);
-        if (el) el.textContent = '📍 ' + (address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`);
+        if (el) el.innerHTML = '<img src="location-pin.png" style="width:13px;height:13px;object-fit:contain;vertical-align:middle;margin-right:3px;opacity:0.7"> ' + (address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`);
       });
 
       // Active = within the same 20-min window as the live radar
@@ -330,7 +330,7 @@
               <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
             </div>
             <div class="card-address-row">
-              <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+              <span class="card-address" id="${cardId}"><img src="location-pin.png" style="width:13px;height:13px;object-fit:contain;vertical-align:middle;margin-right:3px;opacity:0.7"> ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
             </div>
           </div>
         </div>`;
