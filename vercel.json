@@ -11,6 +11,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/history", "destination": "/history.html" }
+    { "source": "/history", "destination": "/history.html" },
+    { "source": "/login",   "destination": "/login.html" },
+    { "source": "/profile", "destination": "/profile.html" }
   ]
 }

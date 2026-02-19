@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#f5c518">
+  <title>Perfil - Pickpocket Alert</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== APP HEADER ==================== -->
+  <header class="app-header">
+    <div class="header-logo">
+      <span class="logo-icon">🕵️</span>
+      <div class="logo-text">
+        Pickpocket<strong>Alert</strong>
+        <span>Mi perfil</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="btn-logout" id="btn-logout" title="Cerrar sesión">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== PROFILE CONTENT ==================== -->
+  <div class="profile-scroll">
+
+    <!-- Avatar + info -->
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">?</div>
+      <div class="profile-hero-info">
+        <div class="profile-email" id="profile-email">Cargando...</div>
+        <div class="profile-since" id="profile-since"></div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-value" id="stat-total">–</span>
+        <span class="stat-label">Alertas enviadas</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-today">–</span>
+        <span class="stat-label">Hoy</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-streak">–</span>
+        <span class="stat-label">Días activo</span>
+      </div>
+    </div>
+
+    <!-- My recent alerts -->
+    <div class="section-header">
+      <span class="section-title">Mis últimas alertas</span>
+      <span class="section-badge" id="my-alerts-badge"></span>
+    </div>
+
+    <div id="my-alerts-list" class="alert-list-container" style="position:relative;top:auto;bottom:auto;height:auto;max-height:400px;overflow-y:auto;">
+      <div class="spinner">Cargando...</div>
+    </div>
+
+  </div>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item" aria-label="Mapa en vivo">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+      </svg>
+      <span>Mapa</span>
+    </a>
+    <a href="history.html" class="nav-item" aria-label="Historial de alertas">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>Historial</span>
+    </a>
+    <a href="profile.html" class="nav-item active" aria-label="Mi perfil">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+      </svg>
+      <span>Perfil</span>
+    </a>
+  </nav>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="utils.js"></script>
+  <script src="profile.js"></script>
+
+</body>
+</html>
