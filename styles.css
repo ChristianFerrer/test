@@ -719,18 +719,17 @@ html, body {
 }
 
 .auth-logo-icon {
-  font-size: 48px;
-  width: 64px; height: 64px;
+  width: 120px; height: 120px;
   object-fit: contain;
 }
 
 .auth-logo-text {
-  font-size: 24px; font-weight: 800;
+  font-size: 60px; font-weight: 800;
   color: var(--brand-black); line-height: 1.1;
 }
 
 .auth-logo-text span {
-  display: block; font-size: 12px;
+  display: block; font-size: 14px;
   font-weight: 500; color: var(--text-secondary);
 }
 
