@@ -1,23 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Anilla superior -->
-  <circle cx="50" cy="14" r="8" fill="none" stroke="#1a1a1a" stroke-width="5"/>
+  <!-- Boquilla (rectángulo rotado ~35°, arriba a la derecha) -->
+  <rect x="48" y="4" width="42" height="22" rx="5" ry="5"
+        transform="rotate(35 69 15)" fill="#1a1a1a"/>
 
-  <!-- Cámara de aire (rectángulo amarillo encima del cuerpo) -->
-  <rect x="28" y="22" width="28" height="18" rx="5" fill="#f5c518" stroke="#1a1a1a" stroke-width="3"/>
+  <!-- Cuerpo principal (círculo grande) -->
+  <circle cx="38" cy="62" r="34" fill="#1a1a1a"/>
 
-  <!-- Cuerpo principal del silbato -->
-  <path d="M14 48 Q14 72 40 72 L62 72 Q82 72 82 58 Q82 44 62 44 L14 44 Z" fill="#1a1a1a"/>
+  <!-- Círculo interior blanco -->
+  <circle cx="38" cy="62" r="18" fill="white"/>
 
-  <!-- Franja amarilla en el cuerpo -->
-  <path d="M18 52 Q18 68 40 68 L62 68 Q78 68 78 58 Q78 52 62 52 Z" fill="#f5c518"/>
+  <!-- Círculo interior relleno -->
+  <circle cx="38" cy="62" r="10" fill="#1a1a1a"/>
 
-  <!-- Boquilla derecha -->
-  <rect x="78" y="50" width="18" height="14" rx="7" fill="#1a1a1a"/>
+  <!-- Líneas de sonido (arriba izquierda del cuerpo) -->
+  <line x1="22" y1="22" x2="15" y2="15" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>
+  <line x1="30" y1="16" x2="27" y2="7"  stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>
+  <line x1="14" y1="30" x2="5"  y2="27" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"/>
 
-  <!-- Bola interna -->
-  <circle cx="40" cy="58" r="8" fill="#1a1a1a"/>
-  <circle cx="40" cy="58" r="5" fill="#e0b000"/>
-
-  <!-- Abertura izquierda -->
-  <ellipse cx="14" cy="58" rx="5" ry="8" fill="#f5c518"/>
+  <!-- Anilla abajo izquierda -->
+  <circle cx="13" cy="88" r="7" fill="none" stroke="#1a1a1a" stroke-width="5"/>
 </svg>
