@@ -118,24 +118,35 @@
     });
 
     alerts.forEach(alert => {
-      const timeStr = new Date(alert.created_at).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      const d = new Date(alert.created_at);
+      const dateStr = d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
       const dist = userPosition
         ? Math.round(haversineDistance(userPosition.lat, userPosition.lng, alert.lat, alert.lng))
         : null;
 
-      const popup = `
-        <div style="text-align:center">
+      const popupHtml = `
+        <div style="text-align:center;min-width:160px">
           <strong style="color:#1a1a1a">🕵️ Carterista</strong><br>
-          <span style="font-size:12px;color:#555">${timeStr}</span>
-          ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist}m de distancia</span>` : ''}
+          <span style="font-size:12px;color:#555">${dateStr} · ${timeStr}</span>
+          ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist < 1000 ? dist + 'm' : (dist/1000).toFixed(1)+'km'} de distancia</span>` : ''}
+          <br><span class="popup-addr" style="font-size:11px;color:#777;display:block;margin-top:4px">Cargando dirección...</span>
         </div>`;
 
       const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
-        .bindPopup(popup, { maxWidth: 180 })
+        .bindPopup(popupHtml, { maxWidth: 200 })
         .addTo(historyMap);
+
+      // Lazy-load address when popup opens
+      marker.on('popupopen', () => {
+        const addrEl = marker.getPopup().getElement().querySelector('.popup-addr');
+        if (addrEl && addrEl.dataset.loaded !== 'true') {
+          addrEl.dataset.loaded = 'true';
+          reverseGeocode(alert.lat, alert.lng).then(address => {
+            if (addrEl) addrEl.textContent = address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`;
+          });
+        }
+      });
 
       historyMarkers.push(marker);
     });
@@ -201,6 +212,41 @@
   }
 
   // ============================================================
+  // REVERSE GEOCODING
+  // ============================================================
+
+  // Simple in-memory cache to avoid duplicate Nominatim requests
+  const geocodeCache = new Map();
+
+  async function reverseGeocode(lat, lng) {
+    const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    if (geocodeCache.has(key)) return geocodeCache.get(key);
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=17&addressdetails=1`,
+        { headers: { 'Accept-Language': 'es' } }
+      );
+      if (!res.ok) throw new Error('nominatim error');
+      const json = await res.json();
+
+      // Build a short readable address: road + suburb/city
+      const a = json.address || {};
+      const parts = [
+        a.road || a.pedestrian || a.footway || a.path,
+        a.house_number,
+        a.suburb || a.neighbourhood || a.city_district || a.town || a.village || a.city,
+      ].filter(Boolean);
+      const address = parts.length ? parts.join(' ') : json.display_name.split(',').slice(0, 2).join(',').trim();
+
+      geocodeCache.set(key, address);
+      return address;
+    } catch {
+      return null;
+    }
+  }
+
+  // ============================================================
   // RENDER LIST
   // ============================================================
 
@@ -215,24 +261,47 @@
       return;
     }
 
-    listView.innerHTML = alerts.map((alert, index) => {
+    listView.innerHTML = alerts.map((alert) => {
       const d = new Date(alert.created_at);
-      const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Full date: dd/mm/yyyy  HH:MM
+      const dateStr = d.toLocaleDateString('es-ES', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      });
+      const timeStr = d.toLocaleTimeString('es-ES', {
+        hour: '2-digit', minute: '2-digit', hour12: false,
+      });
+      const fullDateStr = `${dateStr} · ${timeStr}`;
+
       const dist = Math.round(
         haversineDistance(userPosition.lat, userPosition.lng, alert.lat, alert.lng)
       );
+      const distStr = dist < 1000 ? dist + 'm' : (dist / 1000).toFixed(1) + 'km';
       const agoStr = formatTimeAgo(alert.created_at);
 
       // Intensity color based on recency (last 5 min = more vivid)
       const ageMin = (Date.now() - d.getTime()) / 60000;
       const isRecent = ageMin < 5;
 
+      // Render card immediately with coords as placeholder, then swap in address
+      const cardId = `card-addr-${alert.id}`;
+
+      // Kick off geocode asynchronously and patch the DOM when ready
+      reverseGeocode(alert.lat, alert.lng).then(address => {
+        const el = document.getElementById(cardId);
+        if (el) el.textContent = address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`;
+      });
+
       return `
-        <div class="alert-card" style="${isRecent ? 'border-color:rgba(230,57,70,0.4)' : ''}">
-          <span class="card-time">${timeStr}</span>
-          <span class="card-distance">${dist < 1000 ? dist + 'm' : (dist / 1000).toFixed(1) + 'km'}</span>
-          <span class="card-coords">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
-          <span class="card-ago" style="${isRecent ? 'color:var(--accent-orange)' : ''}">${agoStr}</span>
+        <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
+          <div class="card-main">
+            <span class="card-datetime">${fullDateStr}</span>
+            <span class="card-distance">${distStr}</span>
+          </div>
+          <div class="card-secondary">
+            <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+            <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
+          </div>
           <span class="card-icon">🕵️</span>
         </div>`;
     }).join('');
