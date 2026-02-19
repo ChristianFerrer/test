@@ -9,7 +9,9 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // --- STATE ---
-  const USER_ID = getOrCreateUserId();
+  // Use Supabase Auth user ID; falls back to anonymous local ID
+  let USER_ID = getOrCreateUserId();
+  window.__getAuthUserId && window.__getAuthUserId().then(id => { if (id) USER_ID = id; });
   let map = null;
   let userMarker = null;
   let accuracyCircle = null;
