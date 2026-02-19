@@ -294,6 +294,9 @@
         if (el) el.textContent = '📍 ' + (address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`);
       });
 
+      // Active = within the same 20-min window as the live radar
+      const isActive = ageMin < ALERT_AGE_MIN;
+
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
           <img class="card-icon" src="thief2.png" aria-hidden="true">
@@ -302,7 +305,7 @@
               <span class="card-datetime">${fullDateStr}</span>
               <div class="card-distance-wrap">
                 <span class="card-distance">${distStr}</span>
-                <span class="card-status">Activa</span>
+                <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? 'Activa' : 'Expirada'}</span>
               </div>
             </div>
             <div class="card-address-row">
