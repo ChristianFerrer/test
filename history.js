@@ -235,9 +235,10 @@
       const json = await res.json();
       const props = json.features?.[0]?.properties || {};
 
-      const street  = props.street || props.name || '';
+      // Use as many fallback fields as possible
+      const street  = props.street || props.name || props.locality || '';
       const number  = props.housenumber || '';
-      const area    = props.district || props.city || props.county || '';
+      const area    = props.district || props.suburb || props.city || props.county || props.state || '';
       const streetFull = street && number ? `${street}, ${number}` : street;
       const parts = [streetFull, area].filter(Boolean);
       const address = parts.length ? parts.join(' · ') : null;
@@ -249,17 +250,18 @@
       throw new Error('no address from photon');
     } catch {
       // Fallback: Nominatim with delay to respect rate limit
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 1000));
       try {
         const res2 = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=19&addressdetails=1&accept-language=es`
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&addressdetails=1&accept-language=es`,
+          { headers: { 'Accept': 'application/json', 'Accept-Language': 'es' } }
         );
         if (!res2.ok) throw new Error('nominatim ' + res2.status);
         const json2 = await res2.json();
         const a = json2.address || {};
-        const street = a.road || a.pedestrian || a.footway || a.path || '';
+        const street = a.road || a.pedestrian || a.footway || a.path || a.cycleway || '';
         const number = a.house_number || '';
-        const area   = a.neighbourhood || a.suburb || a.city_district || a.town || a.village || '';
+        const area   = a.neighbourhood || a.suburb || a.city_district || a.quarter || a.town || a.village || '';
         const streetFull = street && number ? `${street}, ${number}` : street;
         const parts = [streetFull, area].filter(Boolean);
         const address = parts.length
