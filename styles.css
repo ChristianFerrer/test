@@ -548,17 +548,35 @@ html, body {
   border: 1px solid var(--border-card);
   border-left: 5px solid var(--brand-yellow);
   border-radius: var(--radius-md);
-  padding: 12px 52px 12px 16px;
+  padding: 12px 14px;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
   box-shadow: var(--shadow-card);
-  position: relative; overflow: hidden;
+  /* no overflow:hidden, no fixed height — let content breathe */
   transition: border-color var(--tr-fast);
 }
 
 .alert-card--recent {
   border-left-color: var(--alert-red);
+}
+
+/* Left: thief icon */
+.card-icon {
+  width: 36px; height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+/* Right: all text content */
+.card-body {
+  flex: 1;
+  min-width: 0;          /* allow text to shrink/wrap */
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 /* Row 1: date + distance */
@@ -567,27 +585,19 @@ html, body {
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-/* Row 2: address (full width) */
+/* Row 2: address */
 .card-address-row {
   width: 100%;
 }
 
-/* Row 3: ago (right aligned) */
+/* Row 3: ago */
 .card-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-}
-
-.card-icon {
-  position: absolute; right: 12px; top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.18;
-  pointer-events: none;
-  width: 30px; height: 30px;
-  object-fit: contain;
 }
 
 .card-datetime {
@@ -605,8 +615,7 @@ html, body {
 .card-address {
   font-size: 12px; color: var(--text-secondary);
   line-height: 1.4;
-  /* Allow wrapping so full address is visible */
-  word-break: break-word;
+  word-break: break-word;   /* full address, wraps freely */
 }
 
 .card-ago {

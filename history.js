@@ -296,17 +296,19 @@
 
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
-          <div class="card-main">
-            <span class="card-datetime">${fullDateStr}</span>
-            <span class="card-distance">${distStr}</span>
+          <img class="card-icon" src="thief.png" aria-hidden="true">
+          <div class="card-body">
+            <div class="card-main">
+              <span class="card-datetime">${fullDateStr}</span>
+              <span class="card-distance">${distStr}</span>
+            </div>
+            <div class="card-address-row">
+              <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+            </div>
+            <div class="card-footer">
+              <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
+            </div>
           </div>
-          <div class="card-address-row">
-            <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
-          </div>
-          <div class="card-footer">
-            <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
-          </div>
-          <img class="card-icon" src="thief.png">
         </div>`;
     }).join('');
   }
