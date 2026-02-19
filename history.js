@@ -34,12 +34,14 @@
     if (view === 'list') {
       btnList.classList.add('active');
       btnMap.classList.remove('active');
-      listView.style.display = 'flex';
+      listView.classList.remove('hidden');
       mapViewContainer.classList.add('hidden');
+      // Re-render list in case it was stale
+      if (allAlerts.length > 0) renderList(allAlerts);
     } else {
       btnMap.classList.add('active');
       btnList.classList.remove('active');
-      listView.style.display = 'none';
+      listView.classList.add('hidden');
       mapViewContainer.classList.remove('hidden');
 
       // Initialize history map on first switch
@@ -47,7 +49,7 @@
         initHistoryMap();
       } else {
         // Refresh size in case layout changed
-        historyMap.invalidateSize();
+        setTimeout(() => historyMap.invalidateSize(), 50);
       }
       renderMapMarkers(allAlerts);
     }
@@ -111,10 +113,10 @@
 
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief.png" class="alert-marker-icon" style="width:22px;height:22px;object-fit:contain;transform:rotate(45deg)"></div></div>',
-      iconSize: [40, 48],
-      iconAnchor: [20, 48],
-      popupAnchor: [0, -50],
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief.png" class="alert-marker-icon"></div></div>',
+      iconSize: [46, 56],
+      iconAnchor: [23, 56],
+      popupAnchor: [0, -58],
     });
 
     alerts.forEach(alert => {
@@ -289,7 +291,7 @@
       // Kick off geocode asynchronously and patch the DOM when ready
       reverseGeocode(alert.lat, alert.lng).then(address => {
         const el = document.getElementById(cardId);
-        if (el) el.textContent = address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`;
+        if (el) el.textContent = '📍 ' + (address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`);
       });
 
       return `
@@ -298,11 +300,13 @@
             <span class="card-datetime">${fullDateStr}</span>
             <span class="card-distance">${distStr}</span>
           </div>
-          <div class="card-secondary">
-            <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+          <div class="card-address-row">
+            <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+          </div>
+          <div class="card-footer">
             <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
           </div>
-          <img class="card-icon" src="thief.png" style="width:28px;height:28px;object-fit:contain;opacity:0.25;position:absolute;right:14px;top:50%;transform:translateY(-50%)">
+          <img class="card-icon" src="thief.png">
         </div>`;
     }).join('');
   }
