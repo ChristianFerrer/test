@@ -218,54 +218,59 @@
   // REVERSE GEOCODING
   // ============================================================
 
-  // In-memory cache + throttled queue for Nominatim (max 1 req/s)
+  // In-memory cache
   const geocodeCache = new Map();
-  let geocodeQueue = Promise.resolve();
-
-  function geocodeAfterDelay(lat, lng) {
-    // Chain onto the queue so requests fire one per second
-    const result = geocodeQueue.then(() => fetchGeocode(lat, lng));
-    geocodeQueue = result.then(
-      () => new Promise(r => setTimeout(r, 1100)),
-      () => new Promise(r => setTimeout(r, 1100))
-    );
-    return result;
-  }
-
-  async function fetchGeocode(lat, lng) {
-    const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
-    if (geocodeCache.has(key)) return geocodeCache.get(key);
-
-    try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=19&addressdetails=1`,
-        { headers: { 'Accept-Language': 'es', 'User-Agent': 'Whistle-App/1.0' } }
-      );
-      if (!res.ok) throw new Error('nominatim ' + res.status);
-      const json = await res.json();
-
-      // Build precise address: road + house_number · neighbourhood
-      const a = json.address || {};
-      const street = a.road || a.pedestrian || a.footway || a.path || a.cycleway || '';
-      const number = a.house_number || '';
-      const area   = a.neighbourhood || a.suburb || a.city_district || a.quarter || a.town || a.village || '';
-      const streetFull = street && number ? `${street}, ${number}` : street;
-      const parts = [streetFull, area].filter(Boolean);
-      const address = parts.length
-        ? parts.join(' · ')
-        : json.display_name.split(',').slice(0, 3).join(',').trim();
-
-      geocodeCache.set(key, address);
-      return address;
-    } catch {
-      return null;
-    }
-  }
 
   async function reverseGeocode(lat, lng) {
     const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
     if (geocodeCache.has(key)) return geocodeCache.get(key);
-    return geocodeAfterDelay(lat, lng);
+
+    // Try Photon first (OSM-based, no strict rate limit, browser-friendly)
+    try {
+      const res = await fetch(
+        `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&lang=es`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      if (!res.ok) throw new Error('photon ' + res.status);
+      const json = await res.json();
+      const props = json.features?.[0]?.properties || {};
+
+      const street  = props.street || props.name || '';
+      const number  = props.housenumber || '';
+      const area    = props.district || props.city || props.county || '';
+      const streetFull = street && number ? `${street}, ${number}` : street;
+      const parts = [streetFull, area].filter(Boolean);
+      const address = parts.length ? parts.join(' · ') : null;
+
+      if (address) {
+        geocodeCache.set(key, address);
+        return address;
+      }
+      throw new Error('no address from photon');
+    } catch {
+      // Fallback: Nominatim with delay to respect rate limit
+      await new Promise(r => setTimeout(r, 300));
+      try {
+        const res2 = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=19&addressdetails=1&accept-language=es`
+        );
+        if (!res2.ok) throw new Error('nominatim ' + res2.status);
+        const json2 = await res2.json();
+        const a = json2.address || {};
+        const street = a.road || a.pedestrian || a.footway || a.path || '';
+        const number = a.house_number || '';
+        const area   = a.neighbourhood || a.suburb || a.city_district || a.town || a.village || '';
+        const streetFull = street && number ? `${street}, ${number}` : street;
+        const parts = [streetFull, area].filter(Boolean);
+        const address = parts.length
+          ? parts.join(' · ')
+          : json2.display_name?.split(',').slice(0, 2).join(',').trim() || null;
+        geocodeCache.set(key, address);
+        return address;
+      } catch {
+        return null;
+      }
+    }
   }
 
   // ============================================================
