@@ -111,10 +111,10 @@
 
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-dot-outer"><span class="alert-dot-inner">⚠️</span></div>',
-      iconSize: [34, 34],
-      iconAnchor: [17, 34],
-      popupAnchor: [0, -36],
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🕵️</span></div></div>',
+      iconSize: [40, 48],
+      iconAnchor: [20, 48],
+      popupAnchor: [0, -50],
     });
 
     alerts.forEach(alert => {
@@ -128,7 +128,7 @@
 
       const popup = `
         <div style="text-align:center">
-          <strong style="color:#e63946">⚠️ Carterista</strong><br>
+          <strong style="color:#1a1a1a">🕵️ Carterista</strong><br>
           <span style="font-size:12px;color:#555">${timeStr}</span>
           ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist}m de distancia</span>` : ''}
         </div>`;
@@ -233,7 +233,7 @@
           <span class="card-distance">${dist < 1000 ? dist + 'm' : (dist / 1000).toFixed(1) + 'km'}</span>
           <span class="card-coords">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
           <span class="card-ago" style="${isRecent ? 'color:var(--accent-orange)' : ''}">${agoStr}</span>
-          <span class="card-icon">⚠️</span>
+          <span class="card-icon">🕵️</span>
         </div>`;
     }).join('');
   }

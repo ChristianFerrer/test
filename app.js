@@ -170,13 +170,13 @@
   function createAlertMarker(alert) {
     if (alertMarkers.has(alert.id)) return; // already rendered
 
-    // Waze-style diamond marker
+    // Yellow diamond marker
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-dot-outer"><span class="alert-dot-inner">⚠️</span></div>',
-      iconSize: [34, 34],
-      iconAnchor: [17, 34],
-      popupAnchor: [0, -36],
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🕵️</span></div></div>',
+      iconSize: [40, 48],
+      iconAnchor: [20, 48],
+      popupAnchor: [0, -50],
     });
 
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
@@ -185,8 +185,8 @@
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
         `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <strong style="color:#e53935;font-size:14px">⚠️ Carterista</strong><br>
-          <span style="font-size:12px;color:#5f6368">${ageStr}</span>
+          <strong style="color:#1a1a1a;font-size:14px">🕵️ Carterista</strong><br>
+          <span style="font-size:12px;color:#555">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }
       )

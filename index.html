@@ -6,7 +6,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#f5c518">
   <title>Pickpocket Alert</title>
 
   <!-- Leaflet CSS - local copy to avoid CDN/integrity issues -->
@@ -27,8 +27,11 @@
   <!-- ==================== APP HEADER ==================== -->
   <header class="app-header">
     <div class="header-logo">
-      <span class="logo-icon">🚨</span>
-      <span class="logo-text">Pickpocket<strong>Alert</strong></span>
+      <span class="logo-icon">🕵️</span>
+      <div class="logo-text">
+        Pickpocket<strong>Alert</strong>
+        <span>Alertas en tiempo real</span>
+      </div>
     </div>
     <div class="header-right">
       <div class="gps-pill" id="gps-pill">
@@ -47,7 +50,7 @@
     <div class="panel-handle"></div>
     <div class="panel-row">
       <div class="panel-icon-wrap">
-        <span class="panel-icon">⚠️</span>
+        <span class="panel-icon">🕵️</span>
       </div>
       <div class="panel-text-wrap">
         <div class="panel-title-text" id="panel-title-text">Carteristas detectados</div>
@@ -58,7 +61,7 @@
 
   <!-- ==================== ALERT BUTTON ==================== -->
   <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
-    <span class="btn-icon">🚨</span>
+    <span class="btn-icon">🕵️</span>
     <span class="btn-label" id="btn-label">REPORTAR</span>
   </button>
 
