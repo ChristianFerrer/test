@@ -83,6 +83,8 @@ html, body {
 
 .logo-icon {
   font-size: 26px; line-height: 1;
+  width: 36px; height: 36px;
+  object-fit: contain;
 }
 
 .logo-text {
@@ -630,7 +632,11 @@ html, body {
   margin-bottom: 4px;
 }
 
-.auth-logo-icon { font-size: 48px; }
+.auth-logo-icon {
+  font-size: 48px;
+  width: 64px; height: 64px;
+  object-fit: contain;
+}
 
 .auth-logo-text {
   font-size: 24px; font-weight: 800;
