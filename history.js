@@ -218,35 +218,54 @@
   // REVERSE GEOCODING
   // ============================================================
 
-  // Simple in-memory cache to avoid duplicate Nominatim requests
+  // In-memory cache + throttled queue for Nominatim (max 1 req/s)
   const geocodeCache = new Map();
+  let geocodeQueue = Promise.resolve();
 
-  async function reverseGeocode(lat, lng) {
+  function geocodeAfterDelay(lat, lng) {
+    // Chain onto the queue so requests fire one per second
+    const result = geocodeQueue.then(() => fetchGeocode(lat, lng));
+    geocodeQueue = result.then(
+      () => new Promise(r => setTimeout(r, 1100)),
+      () => new Promise(r => setTimeout(r, 1100))
+    );
+    return result;
+  }
+
+  async function fetchGeocode(lat, lng) {
     const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
     if (geocodeCache.has(key)) return geocodeCache.get(key);
 
     try {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=19&addressdetails=1`,
-        { headers: { 'Accept-Language': 'es' } }
+        { headers: { 'Accept-Language': 'es', 'User-Agent': 'Whistle-App/1.0' } }
       );
-      if (!res.ok) throw new Error('nominatim error');
+      if (!res.ok) throw new Error('nominatim ' + res.status);
       const json = await res.json();
 
-      // Build precise address: road + house_number, neighbourhood/suburb
+      // Build precise address: road + house_number · neighbourhood
       const a = json.address || {};
       const street = a.road || a.pedestrian || a.footway || a.path || a.cycleway || '';
       const number = a.house_number || '';
-      const area   = a.neighbourhood || a.suburb || a.city_district || a.quarter || '';
+      const area   = a.neighbourhood || a.suburb || a.city_district || a.quarter || a.town || a.village || '';
       const streetFull = street && number ? `${street}, ${number}` : street;
       const parts = [streetFull, area].filter(Boolean);
-      const address = parts.length ? parts.join(' · ') : json.display_name.split(',').slice(0, 3).join(',').trim();
+      const address = parts.length
+        ? parts.join(' · ')
+        : json.display_name.split(',').slice(0, 3).join(',').trim();
 
       geocodeCache.set(key, address);
       return address;
     } catch {
       return null;
     }
+  }
+
+  async function reverseGeocode(lat, lng) {
+    const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    if (geocodeCache.has(key)) return geocodeCache.get(key);
+    return geocodeAfterDelay(lat, lng);
   }
 
   // ============================================================
