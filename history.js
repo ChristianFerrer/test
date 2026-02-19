@@ -300,7 +300,10 @@
           <div class="card-body">
             <div class="card-main">
               <span class="card-datetime">${fullDateStr}</span>
-              <span class="card-distance">${distStr}</span>
+              <div class="card-distance-wrap">
+                <span class="card-distance">${distStr}</span>
+                <span class="card-status">Activa</span>
+              </div>
             </div>
             <div class="card-address-row">
               <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>

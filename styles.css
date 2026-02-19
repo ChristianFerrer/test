@@ -523,7 +523,7 @@ html, body {
 .toggle-btn {
   padding: 7px 20px;
   border-radius: var(--radius-full);
-  border: 2px solid var(--border-card);
+  border: none;
   background: transparent;
   color: var(--text-secondary);
   font-size: 13px; font-weight: 700;
@@ -533,7 +533,7 @@ html, body {
 
 .toggle-btn.active {
   background: var(--brand-yellow);
-  border-color: var(--brand-black);
+  border: none;
   color: var(--brand-black);
   box-shadow: 0 2px 8px rgba(245,197,24,0.4);
 }
@@ -620,6 +620,21 @@ html, body {
   font-size: 15px; font-weight: 900;
   color: var(--alert-orange);
   white-space: nowrap; flex-shrink: 0;
+}
+
+.card-distance-wrap {
+  display: flex; flex-direction: column;
+  align-items: flex-end; flex-shrink: 0; gap: 2px;
+}
+
+.card-status {
+  font-size: 10px; font-weight: 800;
+  letter-spacing: 0.4px; text-transform: uppercase;
+  color: #fff;
+  background: #2e7d32;
+  border-radius: var(--radius-full);
+  padding: 1px 7px;
+  line-height: 1.6;
 }
 
 .card-address {
