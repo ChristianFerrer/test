@@ -366,13 +366,13 @@ html, body {
 .nav-item span { display: none; }
 
 .nav-item svg {
-  width: 28px; height: 28px;
+  width: 40px; height: 40px;
   stroke-width: 2;
   fill: none; stroke: currentColor;
 }
 
 .nav-icon-img {
-  width: 28px; height: 28px;
+  width: 40px; height: 40px;
   object-fit: contain;
   opacity: 0.45;
   transition: opacity var(--tr-fast);
