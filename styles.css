@@ -504,12 +504,12 @@ html, body {
 .btn-primary {
   background: var(--brand-yellow);
   color: var(--brand-black);
-  border: 2px solid var(--brand-black);
+  border: none;
   border-radius: var(--radius-lg);
   padding: 14px 36px;
   font-size: 15px; font-weight: 900;
   cursor: pointer; margin-top: 8px;
-  box-shadow: var(--shadow-button);
+  box-shadow: none;
   transition: transform var(--tr-fast);
   letter-spacing: 0.2px;
 }
@@ -703,7 +703,7 @@ html, body {
 .auth-body {
   min-height: 100vh;
   overflow-y: auto;
-  background: var(--brand-yellow-lt);
+  background: #f5c518;
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -755,16 +755,16 @@ html, body {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   padding: 13px 16px;
   border-radius: var(--radius-md);
-  border: 2px solid var(--border-card);
+  border: none;
   background: #fff;
   font-size: 15px; font-weight: 700;
   color: var(--brand-black);
   cursor: pointer;
-  transition: background var(--tr-fast), border-color var(--tr-fast);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background var(--tr-fast);
+  box-shadow: none;
 }
 
-.btn-google:hover { background: #f8f8f8; border-color: #bbb; }
+.btn-google:hover { background: #f8f8f8; }
 .btn-google:active { background: #f0f0f0; }
 
 /* Divider */
