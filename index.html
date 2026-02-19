@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#f5c518">
-  <title>Pickpocket Alert</title>
+  <title>Whistle</title>
 
   <!-- Leaflet CSS - local copy to avoid CDN/integrity issues -->
   <link rel="stylesheet" href="lib/leaflet.css">
@@ -20,16 +20,16 @@
   <div id="permission-overlay" class="permission-overlay hidden">
     <div class="perm-icon">📍</div>
     <h2>Necesitamos tu ubicación</h2>
-    <p>Esta app necesita acceso a tu GPS para mostrarte alertas cercanas y enviarte alertas de carteristas en tiempo real.</p>
+    <p>Whistle necesita acceso a tu GPS para mostrarte alertas cercanas y avisarte de carteristas en tiempo real.</p>
     <button class="btn-primary" id="request-location-btn">Activar ubicación</button>
   </div>
 
   <!-- ==================== APP HEADER ==================== -->
   <header class="app-header">
     <div class="header-logo">
-      <span class="logo-icon">🕵️</span>
+      <span class="logo-icon">🔔</span>
       <div class="logo-text">
-        Pickpocket<strong>Alert</strong>
+        <strong>Whistle</strong>
         <span>Alertas en tiempo real</span>
       </div>
     </div>
@@ -50,7 +50,7 @@
     <div class="panel-handle"></div>
     <div class="panel-row">
       <div class="panel-icon-wrap">
-        <span class="panel-icon">🕵️</span>
+        <span class="panel-icon">🔔</span>
       </div>
       <div class="panel-text-wrap">
         <div class="panel-title-text" id="panel-title-text">Carteristas detectados</div>
@@ -61,7 +61,7 @@
 
   <!-- ==================== ALERT BUTTON ==================== -->
   <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
-    <span class="btn-icon">🕵️</span>
+    <span class="btn-icon">🔔</span>
     <span class="btn-label" id="btn-label">REPORTAR</span>
   </button>
 

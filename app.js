@@ -175,7 +175,7 @@
     // Yellow diamond marker
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🕵️</span></div></div>',
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🔔</span></div></div>',
       iconSize: [40, 48],
       iconAnchor: [20, 48],
       popupAnchor: [0, -50],
@@ -187,7 +187,7 @@
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
         `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <strong style="color:#1a1a1a;font-size:14px">🕵️ Carterista</strong><br>
+          <strong style="color:#1a1a1a;font-size:14px">🔔 Whistle</strong><br>
           <span style="font-size:12px;color:#555">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }
@@ -238,7 +238,7 @@
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('[Pickpocket] loadNearbyAlerts error:', error);
+      console.error('[Whistle] loadNearbyAlerts error:', error);
       return;
     }
 
@@ -281,16 +281,16 @@
               createAlertMarker(alert);
               updateBadgeAndPanel();
               vibrate([200, 100, 200]);
-              showToast('⚠️ Carterista reportado cerca de ti');
+              showToast('🔔 Carterista reportado cerca de ti');
             }
           }
         }
       )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('[Pickpocket] Realtime connected');
+          console.log('[Whistle] Realtime connected');
         } else if (status === 'CHANNEL_ERROR') {
-          console.warn('[Pickpocket] Realtime error, will retry on focus');
+          console.warn('[Whistle] Realtime error, will retry on focus');
           realtimeChannel = null;
         }
       });
@@ -374,12 +374,12 @@
       });
 
     if (error) {
-      console.error('[Pickpocket] sendAlert error:', error);
+      console.error('[Whistle] sendAlert error:', error);
       removeAlertMarker(tempId);
       updateBadgeAndPanel();
       showToast('Error al enviar la alerta. Inténtalo de nuevo.');
     } else {
-      showToast('✅ Alerta enviada a usuarios cercanos');
+      showToast('✅ Alerta enviada a usuarios de Whistle cercanos');
     }
   }
 

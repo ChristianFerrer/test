@@ -121,7 +121,7 @@
             <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
             <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${formatTimeAgo(alert.created_at)}</span>
           </div>
-          <span class="card-icon">🕵️</span>
+          <span class="card-icon">🔔</span>
         </div>`;
     }).join('');
   }

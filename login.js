@@ -97,7 +97,7 @@
       registerForm.innerHTML = `
         <div class="auth-success">
           <div style="font-size:48px;margin-bottom:12px">✉️</div>
-          <p style="font-weight:700;font-size:16px;margin-bottom:6px">¡Cuenta creada!</p>
+          <p style="font-weight:700;font-size:16px;margin-bottom:6px">¡Bienvenido a Whistle!</p>
           <p style="font-size:13px;color:var(--text-secondary)">
             Revisa tu email para confirmar tu cuenta.<br>
             Si no ves el correo, mira en spam.

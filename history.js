@@ -111,7 +111,7 @@
 
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🕵️</span></div></div>',
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🔔</span></div></div>',
       iconSize: [40, 48],
       iconAnchor: [20, 48],
       popupAnchor: [0, -50],
@@ -127,7 +127,7 @@
 
       const popupHtml = `
         <div style="text-align:center;min-width:160px">
-          <strong style="color:#1a1a1a">🕵️ Carterista</strong><br>
+          <strong style="color:#1a1a1a">🔔 Whistle</strong><br>
           <span style="font-size:12px;color:#555">${dateStr} · ${timeStr}</span>
           ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist < 1000 ? dist + 'm' : (dist/1000).toFixed(1)+'km'} de distancia</span>` : ''}
           <br><span class="popup-addr" style="font-size:11px;color:#777;display:block;margin-top:4px">Cargando dirección...</span>
@@ -183,7 +183,7 @@
       .limit(300);
 
     if (error) {
-      console.error('[Pickpocket] loadHistory error:', error);
+      console.error('[Whistle] loadHistory error:', error);
       renderListError();
       return;
     }
@@ -302,7 +302,7 @@
             <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
             <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
           </div>
-          <span class="card-icon">🕵️</span>
+          <span class="card-icon">🔔</span>
         </div>`;
     }).join('');
   }
@@ -335,7 +335,7 @@
         refreshTimer = setInterval(loadHistory, 2 * 60 * 1000);
       },
       (err) => {
-        console.warn('[Pickpocket] Geolocation error on history:', err);
+        console.warn('[Whistle] Geolocation error on history:', err);
         listView.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">📍</div>

@@ -1,5 +1,5 @@
 // ============================================================
-// utils.js - Shared utilities for Pickpocket Alert App
+// utils.js - Shared utilities for Whistle App
 // ============================================================
 
 // --- SUPABASE CONFIG ---
@@ -16,10 +16,10 @@ const COOLDOWN_MS     = 30000; // milliseconds - cooldown between alerts
 // --- USER IDENTITY ---
 // Persistent anonymous device ID (no account needed)
 function getOrCreateUserId() {
-  let id = localStorage.getItem('pickpocket_user_id');
+  let id = localStorage.getItem('whistle_user_id');
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem('pickpocket_user_id', id);
+    localStorage.setItem('whistle_user_id', id);
   }
   return id;
 }
