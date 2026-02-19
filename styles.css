@@ -299,7 +299,7 @@ html, body {
   left: 0; right: 0;
   height: 60px;
   background: #fff;
-  border-bottom: 3px solid var(--brand-yellow);
+  border-bottom: 3px solid var(--alert-red);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   padding: 0 18px;
