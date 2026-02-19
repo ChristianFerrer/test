@@ -371,6 +371,17 @@ html, body {
   fill: none; stroke: currentColor;
 }
 
+.nav-icon-img {
+  width: 28px; height: 28px;
+  object-fit: contain;
+  opacity: 0.45;
+  transition: opacity var(--tr-fast);
+}
+
+.nav-item.active .nav-icon-img {
+  opacity: 1;
+}
+
 .nav-item.active { color: var(--brand-black); }
 
 /* Active nav indicator - yellow underline */
