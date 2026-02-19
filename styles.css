@@ -568,7 +568,7 @@ html, body {
   background: var(--brand-yellow);
   border: none;
   color: var(--brand-black);
-  box-shadow: 0 2px 8px rgba(245,197,24,0.4);
+  box-shadow: none;
 }
 
 .alert-list-container {
