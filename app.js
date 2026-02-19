@@ -29,6 +29,7 @@
   const gpsDot = document.getElementById('gps-dot');
   const gpsLabel = document.getElementById('gps-label');
   const alertBadge = document.getElementById('alert-badge');
+  const alertBadgeCount = document.getElementById('alert-badge-count');
   const bottomPanel = document.getElementById('bottom-panel');
   const panelTitleText = document.getElementById('panel-title-text');
   const panelSubtitle = document.getElementById('panel-subtitle');
@@ -323,7 +324,7 @@
 
     // Badge
     if (count > 0) {
-      alertBadge.textContent = count;
+      alertBadgeCount.textContent = count;
       alertBadge.classList.remove('hidden');
     } else {
       alertBadge.classList.add('hidden');

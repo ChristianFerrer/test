@@ -120,7 +120,7 @@ html, body {
   color: var(--brand-black);
 }
 
-/* Badge */
+/* Badge (generic, used in history header) */
 .badge {
   background: var(--alert-red);
   color: #fff;
@@ -135,6 +135,39 @@ html, body {
 
 .badge.hidden {
   opacity: 0; transform: scale(0.5); pointer-events: none;
+}
+
+/* Alert badge — thief icon + big red number */
+.alert-badge-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  transition: opacity var(--tr-fast), transform var(--tr-fast);
+}
+
+.alert-badge-wrap.hidden {
+  opacity: 0; transform: scale(0.5); pointer-events: none;
+}
+
+.badge-thief-icon {
+  width: 36px; height: 36px;
+  object-fit: contain;
+}
+
+.badge-count {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: var(--alert-red);
+  color: #fff;
+  font-size: 13px; font-weight: 900;
+  min-width: 20px; height: 20px;
+  border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(229,57,53,0.5);
+  line-height: 1;
 }
 
 /* ============================================================
