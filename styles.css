@@ -589,25 +589,25 @@ html, body {
   gap: 3px;
 }
 
-/* Row 1: date + distance */
-.card-main {
+/* Row 1: date + status */
+.card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Row 2: distance + ago */
+.card-mid-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
-/* Row 2: address */
+/* Row 3: address */
 .card-address-row {
   width: 100%;
-}
-
-/* Row 3: ago */
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 }
 
 .card-datetime {

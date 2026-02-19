@@ -171,7 +171,7 @@
     if (!userPosition) return;
 
     const box = getBoundingBox(userPosition.lat, userPosition.lng, HISTORY_RADIUS_M);
-    const todayStart = getTodayStart();
+    const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await supabase
       .from('alerts')
@@ -180,7 +180,7 @@
       .lte('lat', box.maxLat)
       .gte('lng', box.minLng)
       .lte('lng', box.maxLng)
-      .gte('created_at', todayStart)
+      .gte('created_at', last24h)
       .order('created_at', { ascending: false })
       .limit(300);
 
@@ -226,20 +226,20 @@
 
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=17&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=19&addressdetails=1`,
         { headers: { 'Accept-Language': 'es' } }
       );
       if (!res.ok) throw new Error('nominatim error');
       const json = await res.json();
 
-      // Build a short readable address: road + suburb/city
+      // Build precise address: road + house_number, neighbourhood/suburb
       const a = json.address || {};
-      const parts = [
-        a.road || a.pedestrian || a.footway || a.path,
-        a.house_number,
-        a.suburb || a.neighbourhood || a.city_district || a.town || a.village || a.city,
-      ].filter(Boolean);
-      const address = parts.length ? parts.join(' ') : json.display_name.split(',').slice(0, 2).join(',').trim();
+      const street = a.road || a.pedestrian || a.footway || a.path || a.cycleway || '';
+      const number = a.house_number || '';
+      const area   = a.neighbourhood || a.suburb || a.city_district || a.quarter || '';
+      const streetFull = street && number ? `${street}, ${number}` : street;
+      const parts = [streetFull, area].filter(Boolean);
+      const address = parts.length ? parts.join(' · ') : json.display_name.split(',').slice(0, 3).join(',').trim();
 
       geocodeCache.set(key, address);
       return address;
@@ -301,18 +301,16 @@
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
           <img class="card-icon" src="thief2.png" aria-hidden="true">
           <div class="card-body">
-            <div class="card-main">
+            <div class="card-top-row">
               <span class="card-datetime">${fullDateStr}</span>
-              <div class="card-distance-wrap">
-                <span class="card-distance">${distStr}</span>
-                <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? 'Activa' : 'Expirada'}</span>
-              </div>
+              <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? 'Activa' : 'Expirada'}</span>
+            </div>
+            <div class="card-mid-row">
+              <span class="card-distance">${distStr}</span>
+              <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
             </div>
             <div class="card-address-row">
               <span class="card-address" id="${cardId}">📍 ${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
-            </div>
-            <div class="card-footer">
-              <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
             </div>
           </div>
         </div>`;
