@@ -19,6 +19,7 @@
 
   // --- DOM REFS ---
   const historyCount = document.getElementById('history-count');
+  const historyCountNum = document.getElementById('history-count-num');
   const listView = document.getElementById('list-view');
   const mapViewContainer = document.getElementById('map-view-container');
   const btnList = document.getElementById('btn-list');
@@ -199,7 +200,7 @@
 
     // Update count badge
     if (within5km.length > 0) {
-      historyCount.textContent = within5km.length;
+      historyCountNum.textContent = within5km.length;
       historyCount.classList.remove('hidden');
     } else {
       historyCount.classList.add('hidden');
