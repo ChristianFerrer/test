@@ -307,6 +307,17 @@
   // BADGE & PANEL UPDATE
   // ============================================================
 
+  let panelAutoHideTimer = null;
+
+  function showPanel() {
+    bottomPanel.classList.add('visible');
+    // Auto-hide after 10 seconds
+    clearTimeout(panelAutoHideTimer);
+    panelAutoHideTimer = setTimeout(() => {
+      bottomPanel.classList.remove('visible');
+    }, 10000);
+  }
+
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
 
@@ -318,7 +329,7 @@
       alertBadge.classList.add('hidden');
     }
 
-    // Bottom panel
+    // Notification panel
     if (count > 0) {
       panelTitleText.textContent = count === 1
         ? 'Carterista detectado cerca'
@@ -326,8 +337,9 @@
       panelSubtitle.textContent = count === 1
         ? 'Hay 1 alerta activa en un radio de 50m'
         : `Hay ${count} alertas activas a tu alrededor`;
-      bottomPanel.classList.add('visible');
+      showPanel();
     } else {
+      clearTimeout(panelAutoHideTimer);
       bottomPanel.classList.remove('visible');
     }
   }
@@ -434,6 +446,11 @@
 
     // Alert button
     alertBtn.addEventListener('click', sendAlert);
+
+    // Badge click → show panel again
+    alertBadge.addEventListener('click', () => {
+      if (alertMarkers.size > 0) showPanel();
+    });
 
     // Visibility change
     document.addEventListener('visibilitychange', onVisibilityChange);
