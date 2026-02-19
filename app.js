@@ -175,7 +175,7 @@
     // Yellow diamond marker with thief icon
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief.png" class="alert-marker-icon"></div></div>',
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief2.png" class="alert-marker-icon"></div></div>',
       iconSize: [46, 56],
       iconAnchor: [23, 56],
       popupAnchor: [0, -58],
@@ -187,7 +187,7 @@
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
         `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <img src="thief.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">Carterista detectado</strong><br>
+          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">Carterista detectado</strong><br>
           <span style="font-size:12px;color:#555">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }

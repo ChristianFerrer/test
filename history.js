@@ -113,7 +113,7 @@
 
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief.png" class="alert-marker-icon"></div></div>',
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief2.png" class="alert-marker-icon"></div></div>',
       iconSize: [46, 56],
       iconAnchor: [23, 56],
       popupAnchor: [0, -58],
@@ -129,7 +129,7 @@
 
       const popupHtml = `
         <div style="text-align:center;min-width:160px">
-          <img src="thief.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:4px;display:block;margin:0 auto 4px"><strong style="color:#1a1a1a">Carterista detectado</strong><br>
+          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:4px;display:block;margin:0 auto 4px"><strong style="color:#1a1a1a">Carterista detectado</strong><br>
           <span style="font-size:12px;color:#555">${dateStr} · ${timeStr}</span>
           ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist < 1000 ? dist + 'm' : (dist/1000).toFixed(1)+'km'} de distancia</span>` : ''}
           <br><span class="popup-addr" style="font-size:11px;color:#777;display:block;margin-top:4px">Cargando dirección...</span>
@@ -296,7 +296,7 @@
 
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
-          <img class="card-icon" src="thief.png" aria-hidden="true">
+          <img class="card-icon" src="thief2.png" aria-hidden="true">
           <div class="card-body">
             <div class="card-main">
               <span class="card-datetime">${fullDateStr}</span>
