@@ -291,20 +291,20 @@ html, body {
 }
 
 /* ============================================================
-   BOTTOM PANEL - White card with yellow accent
+   TOP NOTIFICATION PANEL - slides down from below header
    ============================================================ */
 .bottom-panel {
   position: fixed;
-  bottom: var(--bottom-bar-height);
+  top: var(--header-height);
   left: 0; right: 0;
   height: var(--panel-height);
   background: #fff;
-  border-top: 3px solid var(--brand-yellow);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+  border-bottom: 3px solid var(--brand-yellow);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   padding: 10px 18px 14px;
   z-index: 400;
-  transform: translateY(100%);
+  transform: translateY(-100%);
   transition: transform var(--tr-med);
 }
 

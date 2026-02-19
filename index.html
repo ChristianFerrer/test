@@ -30,7 +30,7 @@
       <img class="logo-icon" src="whistle.png" alt="Whistle" aria-hidden="true">
       <div class="logo-text">
         <strong>Whistle</strong>
-        <span>Alertas en tiempo real</span>
+        <span>Alertas de carteristas a tu alrededor y en tiempo real</span>
       </div>
     </div>
     <div class="header-right">
@@ -42,15 +42,12 @@
     </div>
   </header>
 
-  <!-- ==================== MAP ==================== -->
-  <div id="map"></div>
-
-  <!-- ==================== BOTTOM PANEL ==================== -->
+  <!-- ==================== TOP NOTIFICATION PANEL ==================== -->
   <div id="bottom-panel" class="bottom-panel">
     <div class="panel-handle"></div>
     <div class="panel-row">
       <div class="panel-icon-wrap">
-        <span class="panel-icon">🔔</span>
+        <img src="thief.png" style="width:28px;height:28px;object-fit:contain;" alt="">
       </div>
       <div class="panel-text-wrap">
         <div class="panel-title-text" id="panel-title-text">Carteristas detectados</div>
@@ -59,19 +56,22 @@
     </div>
   </div>
 
+  <!-- ==================== MAP ==================== -->
+  <div id="map"></div>
+
   <!-- ==================== ALERT BUTTON ==================== -->
   <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
     <img class="btn-icon" src="whistle.png" alt="">
-    <span class="btn-label" id="btn-label">REPORTAR</span>
+    <span class="btn-label" id="btn-label"></span>
   </button>
 
   <!-- ==================== BOTTOM NAVIGATION ==================== -->
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active" aria-label="Mapa en vivo">
+    <a href="index.html" class="nav-item active" aria-label="Alertar">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
       </svg>
-      <span>Mapa</span>
+      <span>Alertar</span>
     </a>
     <a href="history.html" class="nav-item" aria-label="Historial de alertas">
       <svg viewBox="0 0 24 24" aria-hidden="true">

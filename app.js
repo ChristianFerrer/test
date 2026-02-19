@@ -172,13 +172,13 @@
   function createAlertMarker(alert) {
     if (alertMarkers.has(alert.id)) return; // already rendered
 
-    // Yellow diamond marker
+    // Yellow diamond marker with thief icon
     const alertIcon = L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><span class="alert-marker-icon">🔔</span></div></div>',
-      iconSize: [40, 48],
-      iconAnchor: [20, 48],
-      popupAnchor: [0, -50],
+      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief.png" class="alert-marker-icon"></div></div>',
+      iconSize: [46, 56],
+      iconAnchor: [23, 56],
+      popupAnchor: [0, -58],
     });
 
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
@@ -187,7 +187,7 @@
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
         `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <strong style="color:#1a1a1a;font-size:14px">🔔 Whistle</strong><br>
+          <img src="thief.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">Carterista detectado</strong><br>
           <span style="font-size:12px;color:#555">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }
@@ -397,7 +397,7 @@
         cooldownInterval = null;
         isOnCooldown = false;
         alertBtn.classList.remove('cooldown');
-        btnLabel.textContent = 'ALERTA';
+        btnLabel.textContent = '';
       } else {
         btnLabel.textContent = `${remaining}s`;
       }
