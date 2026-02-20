@@ -325,6 +325,20 @@
     }, 10000);
   }
 
+  function showOwnAlertPanel() {
+    const count = alertMarkers.size;
+    const panelIcon = document.getElementById('panel-icon');
+    if (panelIcon) panelIcon.src = 'whistle.png';
+    panelTitleText.textContent = 'Alerta de carteristas enviada a otros usuarios cerca';
+    panelSubtitle.textContent = count <= 1
+      ? 'Hay 1 alerta activa a tu alrededor'
+      : `Hay ${count} alertas activas a tu alrededor`;
+    showPanel();
+    setTimeout(() => {
+      if (panelIcon) panelIcon.src = 'thief2.png';
+    }, 10500);
+  }
+
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
 
@@ -377,7 +391,7 @@
       user_id: USER_ID,
     };
     createAlertMarker(tempAlert);
-    updateBadgeAndPanel();
+    showOwnAlertPanel();
     vibrate([100]);
 
     // Start cooldown UI
