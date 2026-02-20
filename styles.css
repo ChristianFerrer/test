@@ -1124,3 +1124,30 @@ html, body {
 .ios-copy-btn--copied {
   background: #34c759;
 }
+
+.ios-install-hint {
+  font-size: 13px;
+  color: #444;
+  margin: 10px 0 8px;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.ios-url-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #007AFF;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #007AFF;
+  background: #f0f6ff;
+  font-family: -apple-system, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  /* Allow text selection on iOS */
+  -webkit-user-select: all;
+  user-select: all;
+}
