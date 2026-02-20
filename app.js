@@ -326,16 +326,21 @@
   }
 
   function showOwnAlertPanel() {
-    const count = alertMarkers.size;
+    // Subtract 1 to exclude the user's own marker from the "nearby others" count
+    const nearby = Math.max(0, alertMarkers.size - 1);
     const panelIcon = document.getElementById('panel-icon');
+    bottomPanel.classList.add('bottom-panel--own');
     if (panelIcon) panelIcon.src = 'whistle.png';
     panelTitleText.textContent = 'Alerta de carteristas enviada a otros usuarios cerca';
-    panelSubtitle.textContent = count <= 1
+    panelSubtitle.textContent = nearby === 0
+      ? 'No hay otras alertas activas a tu alrededor'
+      : nearby === 1
       ? 'Hay 1 alerta activa a tu alrededor'
-      : `Hay ${count} alertas activas a tu alrededor`;
+      : `Hay ${nearby} alertas activas a tu alrededor`;
     showPanel();
     setTimeout(() => {
       if (panelIcon) panelIcon.src = 'thief2.png';
+      bottomPanel.classList.remove('bottom-panel--own');
     }, 10500);
   }
 

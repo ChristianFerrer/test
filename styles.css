@@ -374,6 +374,16 @@ html, body {
 
 .bottom-panel.visible { transform: translateY(0); }
 
+/* Blue variant — shown when current user sends their own alert */
+.bottom-panel--own {
+  border-bottom-color: #2563eb;
+  border-left-color:   #2563eb;
+  border-right-color:  #2563eb;
+}
+.bottom-panel--own .panel-title-text {
+  color: #2563eb;
+}
+
 /* Hide the handle — panel is now compact */
 .panel-handle { display: none; }
 
