@@ -416,8 +416,6 @@
       removeAlertMarker(tempId);
       updateBadgeAndPanel();
       showToast('Error al enviar la alerta. Inténtalo de nuevo.');
-    } else {
-      showToast('✅ Alerta enviada a usuarios de Whistle cercanos');
     }
   }
 
