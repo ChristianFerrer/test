@@ -958,6 +958,20 @@ html, body {
   display: none;
 }
 
+/* Admin link in header — visible only to admin user */
+.admin-link {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: var(--brand-black);
+  background: rgba(0,0,0,0.12);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background var(--tr-fast);
+}
+.admin-link:active { background: rgba(0,0,0,0.22); }
+
 /* Logout button in header */
 .btn-logout {
   background: rgba(0,0,0,0.10);
