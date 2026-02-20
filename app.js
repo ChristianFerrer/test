@@ -11,6 +11,7 @@
   // --- STATE ---
   // Use Supabase Auth user ID; falls back to anonymous local ID
   let USER_ID = getOrCreateUserId();
+  let pushInitialized = false;
   window.__getAuthUserId && window.__getAuthUserId().then(id => { if (id) USER_ID = id; });
   let map = null;
   let userMarker = null;
@@ -121,6 +122,11 @@
         initMap(lat, lng);
         loadNearbyAlerts();
         subscribeToAlerts();
+        // Init push notifications once on first GPS fix
+        if (!pushInitialized && window.initPush) {
+          pushInitialized = true;
+          window.initPush(USER_ID);
+        }
       }, 50);
     } else {
       if (userMarker) userMarker.setLatLng([lat, lng]);
