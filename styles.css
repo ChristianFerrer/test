@@ -1083,6 +1083,8 @@ html, body {
 .ios-install-step-icon--blue {
   background: #007AFF;
   color: #fff;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .ios-install-arrow {
