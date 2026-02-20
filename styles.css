@@ -442,9 +442,9 @@ html, body {
   opacity: 1;
 }
 
-/* Admin settings icon: convert black icon to white for dark nav */
+/* Admin settings icon: screen blend removes white bg, icon shows white */
 .nav-admin .nav-icon-img {
-  filter: brightness(0) invert(1);
+  mix-blend-mode: screen;
 }
 
 .nav-item.active { color: var(--brand-black); }
