@@ -981,3 +981,112 @@ html, body {
 }
 
 .btn-logout:active { background: rgba(0,0,0,0.20); }
+
+/* ============================================================
+   iOS PWA INSTALL BANNER
+   ============================================================ */
+#ios-install-banner {
+  position: fixed;
+  bottom: -100%;
+  left: 12px; right: 12px;
+  z-index: 9999;
+  background: #fff;
+  border-radius: 20px 20px 16px 16px;
+  box-shadow: 0 -4px 32px rgba(0,0,0,0.18), 0 2px 12px rgba(0,0,0,0.10);
+  padding: 20px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transition: bottom 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+#ios-install-banner.ios-install-visible {
+  bottom: 16px;
+}
+
+.ios-install-close {
+  position: absolute;
+  top: 12px; right: 14px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 28px; height: 28px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+
+.ios-install-icon img {
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  object-fit: contain;
+}
+
+.ios-install-body {
+  width: 100%;
+  text-align: center;
+}
+
+.ios-install-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.ios-install-sub {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.ios-install-steps {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.ios-install-steps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #1a1a1a;
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ios-install-step-icon {
+  width: 30px; height: 30px;
+  background: #f5c518;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: #1a1a1a;
+}
+
+.ios-share-icon {
+  margin-left: 4px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.ios-install-arrow {
+  font-size: 22px;
+  color: #007AFF;
+  animation: ios-arrow-bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes ios-arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
