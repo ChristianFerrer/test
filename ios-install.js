@@ -63,30 +63,17 @@
       </div>
       <div class="ios-install-body">
         <p class="ios-install-title">Ábrelo en Safari</p>
-        <p class="ios-install-sub">Para instalar Whistle y recibir notificaciones necesitas abrirla en <strong>Safari</strong>. El link ya está copiado:</p>
-        <ol class="ios-install-steps">
-          <li>
-            <span class="ios-install-step-icon ios-install-step-icon--blue">1</span>
-            Abre <strong>Safari</strong>
-            <svg viewBox="0 0 24 24" width="16" height="16" style="margin-left:4px;flex-shrink:0" fill="none" stroke="#007AFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-          </li>
-          <li>
-            <span class="ios-install-step-icon ios-install-step-icon--blue">2</span>
-            Toca la <strong>barra de dirección</strong> y pega
-          </li>
-        </ol>
+        <p class="ios-install-sub">Para instalar Whistle y recibir notificaciones necesitas abrirla en <strong>Safari</strong>.</p>
         <button class="ios-copy-btn" id="ios-copy-btn">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copiar link de nuevo
+          Copiar link
         </button>
+        <p class="ios-install-hint">Luego abre <strong>Safari</strong>, toca la barra de dirección y pega.</p>
       </div>
     `;
 
     document.body.appendChild(banner);
     requestAnimationFrame(() => requestAnimationFrame(() => banner.classList.add('ios-install-visible')));
-
-    // Auto-copy immediately when banner appears
-    copyToClipboard(pageUrl, false);
 
     document.getElementById('ios-install-close').addEventListener('click', () => {
       dismiss(banner, DISMISS_KEY_BROWSER);
