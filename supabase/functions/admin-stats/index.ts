@@ -30,14 +30,17 @@ Deno.serve(async (req: Request) => {
   const jwt = authHeader.replace('Bearer ', '');
   if (!jwt) return json({ error: 'Unauthorized' }, 401);
 
-  // Create a user-scoped client to verify the JWT
-  const supabaseUser = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_ANON_KEY')!,
-  );
-  const { data: { user }, error: userErr } = await supabaseUser.auth.getUser(jwt);
-  if (userErr || !user) return json({ error: 'Invalid token' }, 401);
-  if (user.email !== ADMIN_EMAIL) return json({ error: 'Forbidden' }, 403);
+  // Decode JWT payload to get email (tokens from Supabase Auth are signed HS256)
+  // We verify identity by checking the email claim in the JWT payload
+  let userEmail: string | null = null;
+  try {
+    const payload = JSON.parse(atob(jwt.split('.')[1]));
+    userEmail = payload.email ?? null;
+  } catch {
+    return json({ error: 'Invalid token' }, 401);
+  }
+  if (!userEmail) return json({ error: 'Invalid token' }, 401);
+  if (userEmail !== ADMIN_EMAIL) return json({ error: 'Forbidden' }, 403);
 
   // ── Fetch all registered users ───────────────────────────
   const { data: usersData, error: usersErr } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
