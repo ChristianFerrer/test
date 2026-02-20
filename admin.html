@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Whistle</title>
+  <link rel="icon" type="image/png" href="whistle-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="admin-header">
+    <div class="header-logo">
+      <img class="logo-icon" src="whistle.png" alt="Whistle">
+      <div class="logo-text">
+        <strong>Whistle</strong>
+        <span>Panel de Administración</span>
+      </div>
+    </div>
+    <div class="admin-header-right">
+      <span class="admin-badge">ADMIN</span>
+      <button class="btn-logout" id="btn-logout" title="Cerrar sesión">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="admin-main" id="admin-main">
+
+    <!-- Loading state -->
+    <div class="admin-loading" id="admin-loading">
+      <div class="spinner">Cargando estadísticas…</div>
+    </div>
+
+    <!-- Dashboard (hidden until data loads) -->
+    <div id="admin-dashboard" class="hidden">
+
+      <!-- ── KPI CARDS ── -->
+      <section class="admin-section">
+        <h2 class="admin-section-title">Resumen general</h2>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">👥</div>
+            <div class="kpi-value" id="kpi-users">—</div>
+            <div class="kpi-label">Usuarios registrados</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🚨</div>
+            <div class="kpi-value" id="kpi-alerts">—</div>
+            <div class="kpi-label">Alertas totales</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📱</div>
+            <div class="kpi-value" id="kpi-push">—</div>
+            <div class="kpi-label">Push activos</div>
+          </div>
+          <div class="kpi-card kpi-card--yellow">
+            <div class="kpi-icon">📅</div>
+            <div class="kpi-value" id="kpi-24h">—</div>
+            <div class="kpi-label">Alertas últimas 24h</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📆</div>
+            <div class="kpi-value" id="kpi-7d">—</div>
+            <div class="kpi-label">Alertas últimos 7 días</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🗓️</div>
+            <div class="kpi-value" id="kpi-30d">—</div>
+            <div class="kpi-label">Alertas últimos 30 días</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ALERTS CHART (last 7 days) ── -->
+      <section class="admin-section">
+        <h2 class="admin-section-title">Alertas por día — últimos 7 días</h2>
+        <div class="chart-wrap" id="chart-wrap">
+          <!-- rendered by admin.js -->
+        </div>
+      </section>
+
+      <!-- ── TOP REPORTERS ── -->
+      <section class="admin-section">
+        <h2 class="admin-section-title">Top 5 reportadores (últimos 30 días)</h2>
+        <div class="top-list" id="top-list">
+          <!-- rendered by admin.js -->
+        </div>
+      </section>
+
+      <!-- ── USERS TABLE ── -->
+      <section class="admin-section">
+        <div class="section-row">
+          <h2 class="admin-section-title">Usuarios</h2>
+          <input class="admin-search" type="search" id="user-search" placeholder="Buscar por email…">
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th class="sortable active" data-col="alerts">Alertas ↓</th>
+                <th>Última alerta</th>
+                <th>Push</th>
+                <th>Registro</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <!-- rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+        <div class="table-pagination" id="table-pagination"></div>
+      </section>
+
+    </div><!-- /#admin-dashboard -->
+
+  </main>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="utils.js"></script>
+  <script src="auth-guard.js"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
