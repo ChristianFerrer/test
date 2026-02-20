@@ -958,13 +958,6 @@ html, body {
   display: none;
 }
 
-/* Admin nav button — visible only to admin user */
-.nav-admin svg {
-  stroke: var(--brand-yellow);
-  fill: var(--brand-yellow);
-  opacity: 0.9;
-}
-.nav-admin:active svg { opacity: 0.6; }
 
 /* Logout button in header */
 .btn-logout {
