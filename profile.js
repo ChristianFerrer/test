@@ -113,15 +113,16 @@
 
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
-          <div class="card-main">
-            <span class="card-datetime">${dateStr} · ${timeStr}</span>
-            <span class="card-distance" style="color:var(--brand-black);font-size:13px">Tú</span>
-          </div>
-          <div class="card-secondary">
-            <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
-            <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${formatTimeAgo(alert.created_at)}</span>
-          </div>
           <img src="whistle.png" class="card-icon" alt="" style="width:36px;height:36px;object-fit:contain;opacity:0.75;flex-shrink:0;">
+          <div class="card-body">
+            <div class="card-top-row">
+              <span class="card-datetime">${dateStr} · ${timeStr}</span>
+              <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${formatTimeAgo(alert.created_at)}</span>
+            </div>
+            <div class="card-address-row">
+              <span class="card-address" id="${cardId}">${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}</span>
+            </div>
+          </div>
         </div>`;
     }).join('');
   }
