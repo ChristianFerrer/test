@@ -53,7 +53,7 @@ Deno.serve(async (req: Request) => {
   // ── Fetch all alerts ─────────────────────────────────────
   const { data: alerts, error: alertsErr } = await supabaseAdmin
     .from('alerts')
-    .select('id, user_id, created_at')
+    .select('id, user_id, lat, lng, created_at')
     .order('created_at', { ascending: false });
   if (alertsErr) return json({ error: alertsErr.message }, 500);
 
@@ -119,6 +119,18 @@ Deno.serve(async (req: Request) => {
     push_active: pushByUser.has(u.id),
   })).sort((a, b) => b.alerts - a.alerts);
 
+  // Build alerts list with reporter email (last 200)
+  const alertsList = alerts.slice(0, 200).map(a => {
+    const u = users.find(u => u.id === a.user_id);
+    return {
+      id:         a.id,
+      email:      u?.email ?? a.user_id.slice(0, 8) + '…',
+      lat:        a.lat,
+      lng:        a.lng,
+      created_at: a.created_at,
+    };
+  });
+
   return json({
     kpi: {
       total_users:    users.length,
@@ -128,9 +140,10 @@ Deno.serve(async (req: Request) => {
       alerts_7d:      alertsLast7d,
       alerts_30d:     alertsLast30d,
     },
-    alerts_by_day: alertsByDay,
+    alerts_by_day:  alertsByDay,
     top5_reporters: top5,
-    users: userList,
+    users:          userList,
+    alerts_list:    alertsList,
   });
 });
 

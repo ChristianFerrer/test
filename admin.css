@@ -311,6 +311,25 @@
 .push-yes { color: #2e7d32; font-weight: 700; }
 .push-no  { color: var(--text-muted); }
 
+.td-coord {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.map-link {
+  display: inline-block;
+  background: var(--brand-yellow);
+  color: var(--brand-black);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: opacity var(--tr-fast);
+}
+.map-link:hover { opacity: 0.8; }
+
 /* ── Pagination ── */
 .table-pagination {
   display: flex;

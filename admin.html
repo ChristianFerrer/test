@@ -93,6 +93,31 @@
         </div>
       </section>
 
+      <!-- ── ALERTS TABLE ── -->
+      <section class="admin-section">
+        <div class="section-row">
+          <h2 class="admin-section-title">Alertas recientes (últimas 200)</h2>
+          <input class="admin-search" type="search" id="alert-search" placeholder="Buscar por email o coordenadas…">
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table" id="alerts-table">
+            <thead>
+              <tr>
+                <th>Reportado por</th>
+                <th>Fecha y hora</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Mapa</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-tbody">
+              <!-- rendered by admin.js -->
+            </tbody>
+          </table>
+        </div>
+        <div class="table-pagination" id="alerts-pagination"></div>
+      </section>
+
       <!-- ── USERS TABLE ── -->
       <section class="admin-section">
         <div class="section-row">

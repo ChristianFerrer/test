@@ -12,19 +12,27 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // ── DOM refs ─────────────────────────────────────────────
-  const loading      = document.getElementById('admin-loading');
-  const dashboard    = document.getElementById('admin-dashboard');
-  const btnLogout    = document.getElementById('btn-logout');
-  const userSearch   = document.getElementById('user-search');
-  const usersTbody   = document.getElementById('users-tbody');
-  const pagination   = document.getElementById('table-pagination');
+  const loading        = document.getElementById('admin-loading');
+  const dashboard      = document.getElementById('admin-dashboard');
+  const btnLogout      = document.getElementById('btn-logout');
+  const userSearch     = document.getElementById('user-search');
+  const usersTbody     = document.getElementById('users-tbody');
+  const pagination     = document.getElementById('table-pagination');
+  const alertSearch    = document.getElementById('alert-search');
+  const alertsTbody    = document.getElementById('alerts-tbody');
+  const alertsPagination = document.getElementById('alerts-pagination');
 
   // ── State ─────────────────────────────────────────────────
-  let allUsers   = [];
-  let filtered   = [];
-  let currentPage = 1;
-  let sortCol    = 'alerts';
-  let sortDir    = -1; // -1 = desc, 1 = asc
+  let allUsers      = [];
+  let filtered      = [];
+  let currentPage   = 1;
+  let sortCol       = 'alerts';
+  let sortDir       = -1;
+
+  let allAlerts     = [];
+  let filteredAlerts = [];
+  let alertsPage    = 1;
+  const ALERTS_PAGE_SIZE = 20;
 
   // ── Boot ─────────────────────────────────────────────────
   async function boot() {
@@ -70,6 +78,9 @@
     allUsers = data.users;
     filtered = [...allUsers];
     renderTable();
+    allAlerts = data.alerts_list || [];
+    filteredAlerts = [...allAlerts];
+    renderAlertsTable();
 
     loading.classList.add('hidden');
     dashboard.classList.remove('hidden');
@@ -126,6 +137,50 @@
           <span class="top-count">${r.count}</span>
         </div>`;
     }).join('');
+  }
+
+  // ── Alerts Table ──────────────────────────────────────────
+  function renderAlertsTable() {
+    const start = (alertsPage - 1) * ALERTS_PAGE_SIZE;
+    const page  = filteredAlerts.slice(start, start + ALERTS_PAGE_SIZE);
+
+    if (!page.length) {
+      alertsTbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">Sin alertas</td></tr>';
+      alertsPagination.innerHTML = '';
+      return;
+    }
+
+    alertsTbody.innerHTML = page.map(a => {
+      const dt = new Date(a.created_at);
+      const fecha = dt.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' });
+      const hora  = dt.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+      const lat   = parseFloat(a.lat).toFixed(5);
+      const lng   = parseFloat(a.lng).toFixed(5);
+      const mapUrl = `https://www.google.com/maps?q=${a.lat},${a.lng}`;
+      return `
+        <tr>
+          <td class="td-email">${a.email}</td>
+          <td class="td-center td-date">${fecha} ${hora}</td>
+          <td class="td-center td-coord">${lat}</td>
+          <td class="td-center td-coord">${lng}</td>
+          <td class="td-center"><a class="map-link" href="${mapUrl}" target="_blank" rel="noopener">📍 Ver</a></td>
+        </tr>`;
+    }).join('');
+
+    // Pagination
+    const total = Math.ceil(filteredAlerts.length / ALERTS_PAGE_SIZE);
+    if (total <= 1) { alertsPagination.innerHTML = ''; return; }
+    let html = '';
+    if (alertsPage > 1) html += `<button class="page-btn" data-p="${alertsPage - 1}">← Anterior</button>`;
+    html += `<span class="page-info">Página ${alertsPage} de ${total} (${filteredAlerts.length} alertas)</span>`;
+    if (alertsPage < total) html += `<button class="page-btn" data-p="${alertsPage + 1}">Siguiente →</button>`;
+    alertsPagination.innerHTML = html;
+    alertsPagination.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alertsPage = parseInt(btn.dataset.p);
+        renderAlertsTable();
+      });
+    });
   }
 
   // ── Users Table ───────────────────────────────────────────
@@ -200,6 +255,20 @@
     filtered.sort((a, b) => sortDir * (b[sortCol] - a[sortCol]));
     currentPage = 1;
     renderTable();
+  });
+
+  // ── Alert Search ──────────────────────────────────────────
+  alertSearch.addEventListener('input', () => {
+    const q = alertSearch.value.trim().toLowerCase();
+    filteredAlerts = q
+      ? allAlerts.filter(a =>
+          a.email.toLowerCase().includes(q) ||
+          String(a.lat).includes(q) ||
+          String(a.lng).includes(q)
+        )
+      : [...allAlerts];
+    alertsPage = 1;
+    renderAlertsTable();
   });
 
   // ── Logout ────────────────────────────────────────────────
