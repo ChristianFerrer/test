@@ -1080,6 +1080,11 @@ html, body {
   flex-shrink: 0;
 }
 
+.ios-install-step-icon--blue {
+  background: #007AFF;
+  color: #fff;
+}
+
 .ios-install-arrow {
   font-size: 22px;
   color: #007AFF;
@@ -1089,4 +1094,31 @@ html, body {
 @keyframes ios-arrow-bounce {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(6px); }
+}
+
+.ios-copy-btn {
+  margin-top: 12px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  background: #007AFF;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.ios-copy-btn:active {
+  background: #0062cc;
+  transform: scale(0.97);
+}
+
+.ios-copy-btn--copied {
+  background: #34c759;
 }
