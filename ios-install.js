@@ -31,12 +31,17 @@
     return ts && Date.now() - parseInt(ts, 10) < DISMISS_TTL;
   }
 
+  // Only show the "Add to Home Screen" install banner on app pages (after login),
+  // not on the login page itself.
+  const isLoginPage = /login\.html/i.test(window.location.pathname) ||
+                      window.location.pathname === '/' && document.getElementById('login-card') !== null;
+
   if (!isSafari) {
     // ── Wrong browser: ask user to open in Safari ──────────────
     if (isDismissed(DISMISS_KEY_BROWSER)) return;
     setTimeout(showOpenInSafariBanner, 1000);
-  } else {
-    // ── Safari but not installed: show Add to Home Screen steps ─
+  } else if (!isLoginPage) {
+    // ── Safari + app page + not installed: show Add to Home Screen steps ─
     if (isDismissed(DISMISS_KEY_SAFARI)) return;
     setTimeout(showInstallBanner, 1200);
   }
