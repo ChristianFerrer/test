@@ -435,6 +435,7 @@ html, body {
   width: 40px; height: 40px;
   object-fit: contain;
   opacity: 0.45;
+  filter: invert(1);
   transition: opacity var(--tr-fast);
 }
 
