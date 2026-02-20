@@ -435,12 +435,16 @@ html, body {
   width: 40px; height: 40px;
   object-fit: contain;
   opacity: 0.45;
-  filter: invert(1);
   transition: opacity var(--tr-fast);
 }
 
 .nav-item.active .nav-icon-img {
   opacity: 1;
+}
+
+/* Admin settings icon needs invert to be visible on dark nav */
+.nav-admin .nav-icon-img {
+  filter: invert(1);
 }
 
 .nav-item.active { color: var(--brand-black); }
