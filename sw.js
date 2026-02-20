@@ -23,8 +23,8 @@ self.addEventListener('push', (e) => {
   const title   = data.title || '⚠️ Whistle — Carterista detectado';
   const options = {
     body:    data.body    || 'Se ha reportado un carterista cerca de tu ubicación.',
-    icon:    data.icon    || '/thief2.png',
-    badge:   data.badge   || '/thief2.png',
+    icon:    data.icon    || '/thief2-icon.png',
+    badge:   data.badge   || '/thief2-icon.png',
     tag:     data.tag     || 'whistle-alert',
     renotify: true,
     vibrate: [200, 100, 200],

@@ -238,8 +238,8 @@ Deno.serve(async (req: Request) => {
     const payload = JSON.stringify({
       title: '⚠️ Whistle — Carterista detectado',
       body:  'Se ha reportado un carterista cerca de tu ubicación. ¡Ten cuidado!',
-      icon:  '/thief2.png',
-      badge: '/thief2.png',
+      icon:  '/thief2-icon.png',
+      badge: '/thief2-icon.png',
       tag:   'whistle-alert',
       url:   '/',
     });
