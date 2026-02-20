@@ -28,6 +28,7 @@ self.addEventListener('push', (e) => {
     tag:     data.tag     || 'whistle-alert',
     renotify: true,
     vibrate: [200, 100, 200],
+    sound:   '/whistle.wav',
     data: {
       url: data.url || '/',
     },
@@ -36,7 +37,16 @@ self.addEventListener('push', (e) => {
     ],
   };
 
-  e.waitUntil(self.registration.showNotification(title, options));
+  // Show notification, then try to play whistle sound in any open app windows
+  e.waitUntil(
+    self.registration.showNotification(title, options).then(() => {
+      return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'PLAY_WHISTLE' });
+        });
+      });
+    })
+  );
 });
 
 // ── Notification click ──────────────────────────────────────

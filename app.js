@@ -8,6 +8,31 @@
   // --- SUPABASE CLIENT ---
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // --- WHISTLE SOUND ---
+  let whistleAudio = null;
+  function playWhistle() {
+    try {
+      if (!whistleAudio) {
+        whistleAudio = new Audio('whistle.wav');
+        whistleAudio.volume = 0.85;
+      }
+      // Reset and play
+      whistleAudio.currentTime = 0;
+      whistleAudio.play().catch(() => {/* autoplay blocked - ignore */});
+    } catch (err) {
+      console.warn('[Whistle] Could not play sound:', err);
+    }
+  }
+
+  // Listen for PLAY_WHISTLE message from service worker (push while app is open)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'PLAY_WHISTLE') {
+        playWhistle();
+      }
+    });
+  }
+
   // --- STATE ---
   // Use Supabase Auth user ID; falls back to anonymous local ID
   let USER_ID = getOrCreateUserId();
@@ -288,6 +313,7 @@
               createAlertMarker(alert);
               updateBadgeAndPanel();
               vibrate([200, 100, 200]);
+              playWhistle();
               showToast('🔔 Carterista reportado cerca de ti');
             }
           }
