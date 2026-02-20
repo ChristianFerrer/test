@@ -891,8 +891,8 @@ html, body {
 .stat-card {
   background: #fff;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  border-top: 3px solid var(--brand-yellow);
+  box-shadow: none;
+  border: none;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   padding: 14px 8px;
@@ -921,11 +921,12 @@ html, body {
 
 .section-badge {
   background: var(--brand-yellow);
-  border: 1.5px solid var(--brand-black);
+  border: none;
   border-radius: var(--radius-full);
   padding: 2px 8px;
   font-size: 12px; font-weight: 800;
   color: var(--brand-black);
+  box-shadow: none;
   display: none;
 }
 
