@@ -8,27 +8,49 @@
   // --- SUPABASE CLIENT ---
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // --- WHISTLE SOUND ---
-  let whistleAudio = null;
-  function playWhistle() {
+  // --- ALERT SOUND ---
+  // iOS/PC require audio to be unlocked by a user gesture first.
+  // We create + silently play the audio on the first tap anywhere,
+  // so subsequent programmatic plays are always allowed.
+  let alertAudio = null;
+  let audioUnlocked = false;
+
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
     try {
-      if (!whistleAudio) {
-        whistleAudio = new Audio('whistle.wav');
-        whistleAudio.volume = 0.85;
+      alertAudio = new Audio('pickpoket.wav');
+      alertAudio.volume = 0;
+      alertAudio.play().then(() => {
+        alertAudio.pause();
+        alertAudio.currentTime = 0;
+        alertAudio.volume = 1.0;
+      }).catch(() => {});
+    } catch (e) {}
+  }
+
+  function playAlertSound() {
+    try {
+      if (!alertAudio) {
+        alertAudio = new Audio('pickpoket.wav');
+        alertAudio.volume = 1.0;
       }
-      // Reset and play
-      whistleAudio.currentTime = 0;
-      whistleAudio.play().catch(() => {/* autoplay blocked - ignore */});
+      alertAudio.currentTime = 0;
+      alertAudio.play().catch(() => {/* autoplay still blocked */});
     } catch (err) {
       console.warn('[Whistle] Could not play sound:', err);
     }
   }
 
+  // Unlock audio context on first user interaction (required by iOS + Chrome)
+  document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  document.addEventListener('click',      unlockAudio, { once: true, passive: true });
+
   // Listen for PLAY_WHISTLE message from service worker (push while app is open)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'PLAY_WHISTLE') {
-        playWhistle();
+        playAlertSound();
       }
     });
   }
@@ -313,7 +335,7 @@
               createAlertMarker(alert);
               updateBadgeAndPanel();
               vibrate([200, 100, 200]);
-              playWhistle();
+              playAlertSound();
               showToast('🔔 Carterista reportado cerca de ti');
             }
           }

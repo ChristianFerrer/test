@@ -28,7 +28,7 @@ self.addEventListener('push', (e) => {
     tag:     data.tag     || 'whistle-alert',
     renotify: true,
     vibrate: [200, 100, 200],
-    sound:   '/whistle.wav',
+    sound:   '/pickpoket.wav',
     data: {
       url: data.url || '/',
     },
