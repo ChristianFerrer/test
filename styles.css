@@ -442,9 +442,9 @@ html, body {
   opacity: 1;
 }
 
-/* Admin settings icon needs invert to be visible on dark nav */
+/* Admin settings icon: convert black icon to white for dark nav */
 .nav-admin .nav-icon-img {
-  filter: invert(1);
+  filter: brightness(0) invert(1);
 }
 
 .nav-item.active { color: var(--brand-black); }
