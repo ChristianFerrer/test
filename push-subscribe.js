@@ -44,7 +44,26 @@
     }
   }
 
-  // Main: register SW + subscribe
+  // Actually subscribe and save
+  async function doSubscribe(registration, userId) {
+    try {
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        });
+      }
+      await saveSubscription(subscription, userId);
+      // Hide banner on success
+      const banner = document.getElementById('push-banner');
+      if (banner) banner.classList.add('hidden');
+    } catch (err) {
+      console.warn('[Whistle Push] doSubscribe error:', err);
+    }
+  }
+
+  // Main: register SW + handle permission flow
   async function initPush(userId) {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.log('[Whistle Push] Push not supported in this browser.');
@@ -52,30 +71,39 @@
     }
 
     try {
-      // Register (or get existing) service worker
       const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
       await navigator.serviceWorker.ready;
 
-      // Check existing permission
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        console.log('[Whistle Push] Notification permission denied.');
+      const currentPermission = Notification.permission;
+
+      if (currentPermission === 'granted') {
+        // Already granted — subscribe silently
+        await doSubscribe(registration, userId);
         return;
       }
 
-      // Check if already subscribed
-      let subscription = await registration.pushManager.getSubscription();
-
-      if (!subscription) {
-        // Subscribe with VAPID
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
-        });
+      if (currentPermission === 'denied') {
+        // User blocked notifications — nothing we can do
+        console.log('[Whistle Push] Notifications blocked by user.');
+        return;
       }
 
-      // Save / refresh subscription in Supabase
-      await saveSubscription(subscription, userId);
+      // Permission is 'default' — show banner and wait for user tap
+      // (Safari iOS requires a user gesture before requestPermission)
+      const banner = document.getElementById('push-banner');
+      const bannerBtn = document.getElementById('push-banner-btn');
+
+      if (banner && bannerBtn) {
+        banner.classList.remove('hidden');
+        bannerBtn.addEventListener('click', async () => {
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            await doSubscribe(registration, userId);
+          } else {
+            banner.classList.add('hidden');
+          }
+        }, { once: true });
+      }
 
     } catch (err) {
       console.warn('[Whistle Push] initPush error:', err);

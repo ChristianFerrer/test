@@ -171,6 +171,34 @@ html, body {
 }
 
 /* ============================================================
+   PUSH PERMISSION BANNER
+   ============================================================ */
+.push-banner {
+  position: fixed;
+  top: var(--header-height);
+  left: 0; right: 0;
+  background: var(--brand-black);
+  color: #fff;
+  font-size: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 600;
+}
+.push-banner span { flex: 1; line-height: 1.4; }
+.push-banner button {
+  background: var(--brand-yellow);
+  color: var(--brand-black);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 12px; font-weight: 800;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+}
+
+/* ============================================================
    MAP
    ============================================================ */
 #map {
