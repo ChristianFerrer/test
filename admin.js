@@ -45,6 +45,7 @@
       const res = await fetch(EDGE_FUNC_URL, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
+          'apikey': SUPABASE_ANON_KEY,
           'Content-Type': 'application/json',
         },
       });
