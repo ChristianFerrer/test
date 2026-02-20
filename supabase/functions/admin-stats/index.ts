@@ -30,12 +30,15 @@ Deno.serve(async (req: Request) => {
   const jwt = authHeader.replace('Bearer ', '');
   if (!jwt) return json({ error: 'Unauthorized' }, 401);
 
-  // Decode JWT payload to get email (tokens from Supabase Auth are signed HS256)
-  // We verify identity by checking the email claim in the JWT payload
+  // Decode JWT payload to get email
   let userEmail: string | null = null;
   try {
     const payload = JSON.parse(atob(jwt.split('.')[1]));
-    userEmail = payload.email ?? null;
+    // Email can be in different places depending on provider (email vs OAuth)
+    userEmail = payload.email
+      ?? payload.user_metadata?.email
+      ?? payload.app_metadata?.email
+      ?? null;
   } catch {
     return json({ error: 'Invalid token' }, 401);
   }
