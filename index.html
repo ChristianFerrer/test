@@ -28,9 +28,9 @@
   <!-- ==================== LOCATION PERMISSION OVERLAY ==================== -->
   <div id="permission-overlay" class="permission-overlay hidden">
     <div class="perm-icon">📍</div>
-    <h2>Necesitamos tu ubicación</h2>
-    <p>Whistle necesita acceso a tu GPS para mostrarte alertas cercanas y avisarte de carteristas en tiempo real.</p>
-    <button class="btn-primary" id="request-location-btn">Activar ubicación</button>
+    <h2 data-i18n="map.perm_title">Necesitamos tu ubicación</h2>
+    <p data-i18n="map.perm_body">Whistle necesita acceso a tu GPS para mostrarte alertas cercanas y avisarte de carteristas en tiempo real.</p>
+    <button class="btn-primary" id="request-location-btn" data-i18n="map.perm_btn">Activar ubicación</button>
   </div>
 
   <!-- ==================== APP HEADER ==================== -->
@@ -39,13 +39,13 @@
       <img class="logo-icon" src="whistle.png" alt="Whistle" aria-hidden="true">
       <div class="logo-text">
         <strong>Whistle</strong>
-        <span>Alertas de carteristas a tu alrededor y en tiempo real</span>
+        <span data-i18n="map.tagline">Alertas de carteristas a tu alrededor y en tiempo real</span>
       </div>
     </div>
     <div class="header-right">
       <div class="gps-pill" id="gps-pill">
         <div class="gps-dot" id="gps-dot"></div>
-        <span id="gps-label">Sin GPS</span>
+        <span id="gps-label" data-i18n="map.gps_none">Sin GPS</span>
       </div>
       <div id="alert-badge" class="alert-badge-wrap hidden" style="cursor:pointer;" title="Ver alerta">
         <img src="thief2.png" class="badge-thief-icon" alt="">
@@ -67,8 +67,8 @@
 
   <!-- ==================== PUSH PERMISSION BANNER ==================== -->
   <div id="push-banner" class="push-banner hidden">
-    <span>🔔 Activa las notificaciones para recibir alertas cuando el app esté cerrada</span>
-    <button id="push-banner-btn">Activar</button>
+    <span data-i18n="map.push_banner">🔔 Activa las notificaciones para recibir alertas cuando el app esté cerrada</span>
+    <button id="push-banner-btn" data-i18n="map.push_btn">Activar</button>
   </div>
 
   <!-- ==================== MAP ==================== -->
@@ -109,6 +109,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <!-- Shared utilities -->
   <script src="utils.js"></script>
+  <!-- i18n must load before other scripts -->
+  <script src="i18n.js"></script>
   <!-- Session guard - redirects to login if not authenticated -->
   <script src="auth-guard.js"></script>
   <!-- Web Push subscription -->

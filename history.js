@@ -120,20 +120,21 @@
       popupAnchor: [0, -58],
     });
 
+    const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
     alerts.forEach(alert => {
       const d = new Date(alert.created_at);
-      const dateStr = d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const timeStr = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const dateStr = d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
       const dist = userPosition
         ? Math.round(haversineDistance(userPosition.lat, userPosition.lng, alert.lat, alert.lng))
         : null;
 
       const popupHtml = `
         <div style="text-align:center;min-width:160px">
-          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:4px;display:block;margin:0 auto 4px"><strong style="color:#1a1a1a">Carterista detectado</strong><br>
+          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;margin-bottom:4px;display:block;margin:0 auto 4px"><strong style="color:#1a1a1a">${t('history.popup_title')}</strong><br>
           <span style="font-size:12px;color:#555">${dateStr} · ${timeStr}</span>
-          ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist < 1000 ? dist + 'm' : (dist/1000).toFixed(1)+'km'} de distancia</span>` : ''}
-          <br><span class="popup-addr" style="font-size:11px;color:#777;display:block;margin-top:4px">Cargando dirección...</span>
+          ${dist !== null ? `<br><span style="font-size:12px;color:#888">${dist < 1000 ? dist + 'm' : (dist/1000).toFixed(1)+'km'} ${t('history.distance')}</span>` : ''}
+          <br><span class="popup-addr" style="font-size:11px;color:#777;display:block;margin-top:4px">${t('history.loading_addr')}</span>
         </div>`;
 
       const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
@@ -284,20 +285,21 @@
       listView.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
-          <p>Sin alertas hoy en un radio de 5km</p>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Las alertas aparecerán aquí cuando otros usuarios las reporten</p>
+          <p>${t('history.empty')}</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.empty_sub')}</p>
         </div>`;
       return;
     }
 
+    const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
     listView.innerHTML = alerts.map((alert) => {
       const d = new Date(alert.created_at);
 
       // Full date: dd/mm/yyyy  HH:MM
-      const dateStr = d.toLocaleDateString('es-ES', {
+      const dateStr = d.toLocaleDateString(locale, {
         day: '2-digit', month: '2-digit', year: 'numeric',
       });
-      const timeStr = d.toLocaleTimeString('es-ES', {
+      const timeStr = d.toLocaleTimeString(locale, {
         hour: '2-digit', minute: '2-digit', hour12: false,
       });
       const fullDateStr = `${dateStr} · ${timeStr}`;
@@ -330,7 +332,7 @@
           <div class="card-body">
             <div class="card-top-row">
               <span class="card-datetime">${fullDateStr}</span>
-              <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? 'Activa' : 'Expirada'}</span>
+              <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? t('history.active') : t('history.expired')}</span>
             </div>
             <div class="card-mid-row">
               <span class="card-distance">${distStr}</span>
@@ -348,9 +350,9 @@
     listView.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">❌</div>
-        <p>Error al cargar el historial</p>
-        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Verifica tu conexión e inténtalo de nuevo</p>
-        <button class="btn-primary" style="margin-top:16px;font-size:14px;padding:10px 24px" onclick="loadHistory()">Reintentar</button>
+        <p>${t('history.error')}</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.error_sub')}</p>
+        <button class="btn-primary" style="margin-top:16px;font-size:14px;padding:10px 24px" onclick="loadHistory()">${t('history.retry')}</button>
       </div>`;
   }
 
@@ -360,7 +362,7 @@
 
   function startGeolocation() {
     if (!('geolocation' in navigator)) {
-      listView.innerHTML = `<div class="empty-state"><div class="empty-icon">📍</div><p>Geolocalización no disponible</p></div>`;
+      listView.innerHTML = `<div class="empty-state"><div class="empty-icon">📍</div><p>${t('history.no_gps')}</p></div>`;
       return;
     }
 
@@ -376,8 +378,8 @@
         listView.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">📍</div>
-            <p>Necesitamos tu ubicación</p>
-            <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Activa el GPS para ver el historial de tu zona</p>
+            <p>${t('history.need_gps')}</p>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.need_gps_sub')}</p>
           </div>`;
       },
       {
@@ -397,7 +399,7 @@
     btnList.addEventListener('click', () => setView('list'));
     btnMap.addEventListener('click', () => {
       if (!userPosition) {
-        showToast('Esperando señal GPS...');
+        showToast(t('history.wait_gps'));
         return;
       }
       setView('map');

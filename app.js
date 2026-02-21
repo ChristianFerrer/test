@@ -149,9 +149,9 @@
   function setGpsStatus(status) {
     // status: 'searching' | 'active' | 'error'
     gpsDot.className = 'gps-dot' + (status === 'active' ? ' active' : status === 'error' ? ' error' : '');
-    if (status === 'searching') gpsLabel.textContent = 'Buscando...';
-    else if (status === 'active') gpsLabel.textContent = 'GPS activo';
-    else gpsLabel.textContent = 'Sin GPS';
+    if (status === 'searching') gpsLabel.textContent = t('map.gps_searching');
+    else if (status === 'active') gpsLabel.textContent = t('map.gps_active');
+    else gpsLabel.textContent = t('map.gps_none');
   }
 
   function onPositionSuccess(pos) {
@@ -195,13 +195,13 @@
       // Permission denied
       permissionOverlay.classList.remove('hidden');
     } else {
-      showToast('Error de GPS: ' + err.message);
+      showToast(t('map.gps_error') + err.message);
     }
   }
 
   function startGeolocation() {
     if (!('geolocation' in navigator)) {
-      showToast('Tu navegador no soporta geolocalización');
+      showToast(t('map.no_gps_browser'));
       setGpsStatus('error');
       return;
     }
@@ -236,12 +236,12 @@
     });
 
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
-    const ageStr = ageMin < 1 ? 'justo ahora' : `hace ${ageMin} min`;
+    const ageStr = ageMin < 1 ? t('map.popup_ago') : t('map.popup_ago_min', { n: ageMin });
 
     const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
       .bindPopup(
         `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">Carterista detectado</strong><br>
+          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">${t('map.popup_title')}</strong><br>
           <span style="font-size:12px;color:#555">${ageStr}</span>
         </div>`,
         { maxWidth: 160 }
@@ -336,7 +336,7 @@
               updateBadgeAndPanel();
               vibrate([200, 100, 200]);
               playAlertSound();
-              showToast('🔔 Carterista reportado cerca de ti');
+              showToast(t('map.nearby_toast'));
             }
           }
         }
@@ -379,12 +379,12 @@
     const panelIcon = document.getElementById('panel-icon');
     bottomPanel.classList.add('bottom-panel--own');
     if (panelIcon) panelIcon.src = 'whistle.png';
-    panelTitleText.textContent = 'Alerta de carteristas enviada a otros usuarios cerca';
+    panelTitleText.textContent = t('map.own_panel_title');
     panelSubtitle.textContent = nearby === 0
-      ? 'No hay otras alertas activas a tu alrededor'
+      ? t('map.own_panel_no_others')
       : nearby === 1
-      ? 'Hay 1 alerta activa a tu alrededor'
-      : `Hay ${nearby} alertas activas a tu alrededor`;
+      ? t('map.own_panel_one')
+      : t('map.own_panel_many', { n: nearby });
     showPanel();
     setTimeout(() => {
       if (panelIcon) panelIcon.src = 'thief2.png';
@@ -406,11 +406,11 @@
     // Notification panel
     if (count > 0) {
       panelTitleText.textContent = count === 1
-        ? 'Carterista detectado cerca'
-        : `${count} alertas en un radio de 50m`;
+        ? t('map.panel_title_one')
+        : t('map.panel_title_many', { n: count });
       panelSubtitle.textContent = count === 1
-        ? 'Hay 1 alerta activa en un radio de 50m'
-        : `Hay ${count} alertas activas a tu alrededor`;
+        ? t('map.panel_sub_one')
+        : t('map.panel_sub_many', { n: count });
       showPanel();
     } else {
       clearTimeout(panelAutoHideTimer);
@@ -426,7 +426,7 @@
     if (isOnCooldown) return;
 
     if (!userPosition) {
-      showToast('Esperando señal GPS...');
+      showToast(t('map.waiting_gps'));
       return;
     }
 
@@ -463,7 +463,7 @@
       console.error('[Whistle] sendAlert error:', error);
       removeAlertMarker(tempId);
       updateBadgeAndPanel();
-      showToast('Error al enviar la alerta. Inténtalo de nuevo.');
+      showToast(t('map.send_error'));
     }
   }
 

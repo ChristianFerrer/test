@@ -29,7 +29,7 @@
       <img class="logo-icon" src="whistle.png" alt="Whistle" aria-hidden="true">
       <div class="logo-text">
         <strong>Whistle</strong>
-        <span>Alertas de carteristas en las últimas 24h en 5km a la redonda</span>
+        <span data-i18n="history.tagline">Alertas de carteristas en las últimas 24h en 5km a la redonda</span>
       </div>
     </div>
     <div class="header-right">
@@ -42,13 +42,13 @@
 
   <!-- ==================== VIEW TOGGLE ==================== -->
   <div class="view-toggle-bar">
-    <button class="toggle-btn active" id="btn-list" data-view="list">Lista</button>
-    <button class="toggle-btn" id="btn-map" data-view="map">Mapa</button>
+    <button class="toggle-btn active" id="btn-list" data-view="list" data-i18n="history.list">Lista</button>
+    <button class="toggle-btn" id="btn-map" data-view="map" data-i18n="history.map">Mapa</button>
   </div>
 
   <!-- ==================== LIST VIEW ==================== -->
   <div id="list-view" class="alert-list-container">
-    <div class="spinner">Cargando alertas...</div>
+    <div class="spinner" data-i18n="history.loading">Cargando alertas...</div>
   </div>
 
   <!-- ==================== MAP VIEW ==================== -->
@@ -82,6 +82,7 @@
   <script src="lib/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="utils.js"></script>
+  <script src="i18n.js"></script>
   <script src="auth-guard.js"></script>
   <script src="history.js"></script>
 

@@ -25,7 +25,7 @@
       <img class="logo-icon" src="whistle.png" alt="Whistle" aria-hidden="true">
       <div class="logo-text">
         <strong>Whistle</strong>
-        <span>Mi perfil</span>
+        <span data-i18n="profile.title">Mi perfil</span>
       </div>
     </div>
     <div class="header-right">
@@ -44,7 +44,7 @@
     <div class="profile-hero">
       <div class="profile-avatar" id="profile-avatar">?</div>
       <div class="profile-hero-info">
-        <div class="profile-email" id="profile-email">Cargando...</div>
+        <div class="profile-email" id="profile-email" data-i18n="profile.loading">Cargando...</div>
         <div class="profile-since" id="profile-since"></div>
       </div>
     </div>
@@ -53,21 +53,21 @@
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-value" id="stat-total">–</span>
-        <span class="stat-label">Alertas enviadas</span>
+        <span class="stat-label" data-i18n="profile.stat_total">Alertas enviadas</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="stat-today">–</span>
-        <span class="stat-label">Hoy</span>
+        <span class="stat-label" data-i18n="profile.stat_today">Hoy</span>
       </div>
       <div class="stat-card">
         <span class="stat-value" id="stat-streak">–</span>
-        <span class="stat-label">Días activo</span>
+        <span class="stat-label" data-i18n="profile.stat_streak">Días activo</span>
       </div>
     </div>
 
     <!-- My recent alerts -->
     <div class="section-header">
-      <span class="section-title">Mis últimas alertas</span>
+      <span class="section-title" data-i18n="profile.my_alerts">Mis últimas alertas</span>
       <span class="section-badge" id="my-alerts-badge"></span>
     </div>
 
@@ -102,6 +102,7 @@
   <!-- ==================== SCRIPTS ==================== -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="utils.js"></script>
+  <script src="i18n.js"></script>
   <script src="auth-guard.js"></script>
   <script src="profile.js"></script>
 

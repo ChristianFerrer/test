@@ -39,13 +39,14 @@
   // ============================================================
 
   function renderUserInfo(user) {
-    const email = user.email || 'Usuario anónimo';
+    const email = user.email || t('profile.anonymous');
     const initial = email.charAt(0).toUpperCase();
     const createdAt = new Date(user.created_at);
+    const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
 
     profileAvatar.textContent = initial;
     profileEmail.textContent  = email;
-    profileSince.textContent  = 'Miembro desde ' + createdAt.toLocaleDateString('es-ES', {
+    profileSince.textContent  = t('profile.since') + createdAt.toLocaleDateString(locale, {
       day: 'numeric', month: 'long', year: 'numeric',
     });
   }
@@ -63,7 +64,7 @@
       .limit(50);
 
     if (error) {
-      myAlertsList.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>Error al cargar tus alertas</p></div>`;
+      myAlertsList.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>${t('profile.error')}</p></div>`;
       return;
     }
 
@@ -91,16 +92,17 @@
       myAlertsList.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">🔍</div>
-          <p>Aún no has enviado ninguna alerta</p>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Usa el botón REPORTAR en el mapa para avisar a otros usuarios</p>
+          <p>${t('profile.no_alerts')}</p>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('profile.no_alerts_sub')}</p>
         </div>`;
       return;
     }
 
     myAlertsList.innerHTML = data.map(alert => {
       const d = new Date(alert.created_at);
-      const dateStr = d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const timeStr = d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+      const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
+      const dateStr = d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
       const cardId  = `my-addr-${alert.id}`;
       const ageMin  = (Date.now() - d.getTime()) / 60000;
       const isRecent = ageMin < 5;

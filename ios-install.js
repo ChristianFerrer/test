@@ -62,13 +62,13 @@
         <img src="whistle-icon.png" alt="Whistle">
       </div>
       <div class="ios-install-body">
-        <p class="ios-install-title">Ábrelo en Safari</p>
-        <p class="ios-install-sub">Para instalar Whistle y recibir notificaciones necesitas abrirla en <strong>Safari</strong>.</p>
+        <p class="ios-install-title">${t('ios.safari_title')}</p>
+        <p class="ios-install-sub">${t('ios.safari_sub')}</p>
         <button class="ios-copy-btn" id="ios-copy-btn">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copiar link
+          ${t('ios.copy_btn')}
         </button>
-        <p class="ios-install-hint">Luego abre <strong>Safari</strong>, toca la barra de dirección y pega.</p>
+        <p class="ios-install-hint">${t('ios.copy_hint')}</p>
       </div>
     `;
 
@@ -89,11 +89,11 @@
       if (!showFeedback) return;
       const btn = document.getElementById('ios-copy-btn');
       if (btn) {
-        btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ¡Copiado!';
+        btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${t('ios.copied')}`;
         btn.classList.add('ios-copy-btn--copied');
         setTimeout(() => {
           if (btn) {
-            btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar link de nuevo';
+            btn.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> ${t('ios.copy_again')}`;
             btn.classList.remove('ios-copy-btn--copied');
           }
         }, 2000);
@@ -133,27 +133,27 @@
         <img src="whistle-icon.png" alt="Whistle">
       </div>
       <div class="ios-install-body">
-        <p class="ios-install-title">Instala Whistle en tu iPhone</p>
-        <p class="ios-install-sub">Para recibir alertas aunque tengas la app cerrada, agrégala a tu pantalla de inicio.</p>
+        <p class="ios-install-title">${t('ios.install_title')}</p>
+        <p class="ios-install-sub">${t('ios.install_sub')}</p>
         <ol class="ios-install-steps">
           <li>
             <span class="ios-install-step-icon">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
             </span>
-            Toca el botón <strong>Compartir</strong>
+            ${t('ios.step1')}
             <svg class="ios-share-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#007AFF" stroke-width="2.2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
           </li>
           <li>
             <span class="ios-install-step-icon">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             </span>
-            Selecciona <strong>"Agregar a pantalla de inicio"</strong>
+            ${t('ios.step2')}
           </li>
           <li>
             <span class="ios-install-step-icon">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            Toca <strong>"Agregar"</strong> arriba a la derecha
+            ${t('ios.step3')}
           </li>
         </ol>
       </div>

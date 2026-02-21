@@ -62,10 +62,11 @@ function getBoundingBox(lat, lng, radiusMeters) {
  */
 function formatTimeAgo(isoString) {
   const mins = Math.floor((Date.now() - new Date(isoString)) / 60000);
-  if (mins < 1) return 'ahora';
-  if (mins < 60) return `hace ${mins}m`;
+  const _t = window.t || (k => k);
+  if (mins < 1) return _t('time.now');
+  if (mins < 60) return _t('time.mins_ago', { n: mins });
   const hrs = Math.floor(mins / 60);
-  return `hace ${hrs}h`;
+  return _t('time.hours_ago', { n: hrs });
 }
 
 /**

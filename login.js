@@ -108,11 +108,8 @@
       registerForm.innerHTML = `
         <div class="auth-success">
           <div style="font-size:48px;margin-bottom:12px">✉️</div>
-          <p style="font-weight:700;font-size:16px;margin-bottom:6px">¡Bienvenido a Whistle!</p>
-          <p style="font-size:13px;color:var(--text-secondary)">
-            Revisa tu email para confirmar tu cuenta.<br>
-            Si no ves el correo, mira en spam.
-          </p>
+          <p style="font-weight:700;font-size:16px;margin-bottom:6px">${t('register.success_title')}</p>
+          <p style="font-size:13px;color:var(--text-secondary)">${t('register.success_body')}</p>
         </div>`;
     }
   });
@@ -134,11 +131,11 @@
   }
 
   function translateError(msg) {
-    if (msg.includes('Invalid login credentials')) return 'Email o contraseña incorrectos.';
-    if (msg.includes('Email not confirmed'))       return 'Confirma tu email antes de entrar.';
-    if (msg.includes('User already registered'))   return 'Ya existe una cuenta con ese email.';
-    if (msg.includes('Password should be'))        return 'La contraseña debe tener al menos 6 caracteres.';
-    if (msg.includes('rate limit'))                return 'Demasiados intentos. Espera un momento.';
+    if (msg.includes('Invalid login credentials')) return t('error.invalid_credentials');
+    if (msg.includes('Email not confirmed'))       return t('error.email_not_confirmed');
+    if (msg.includes('User already registered'))   return t('error.already_registered');
+    if (msg.includes('Password should be'))        return t('error.password_too_short');
+    if (msg.includes('rate limit'))                return t('error.rate_limit');
     return msg;
   }
 
