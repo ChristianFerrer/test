@@ -67,6 +67,7 @@
   let alertMarkers = new Map();     // alert.id -> L.Marker
   let alertTimestamps = new Map();  // alert.id -> Date.now() (ms)
   let realtimeChannel = null;
+  let notifiedAlertIds = new Set(); // track alerts already shown to avoid duplicates
   let isOnCooldown = false;
   let cooldownInterval = null;
   let watchId = null;
@@ -301,7 +302,10 @@
       haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= ALERT_RADIUS_M
     );
 
-    nearby.forEach(alert => createAlertMarker(alert));
+    nearby.forEach(alert => {
+      createAlertMarker(alert);
+      notifiedAlertIds.add(alert.id); // mark as seen so realtime doesn't re-notify
+    });
     updateBadgeAndPanel();
   }
 
@@ -334,9 +338,13 @@
             if (ageMin <= ALERT_AGE_MIN) {
               createAlertMarker(alert);
               updateBadgeAndPanel();
-              vibrate([200, 100, 200]);
-              playAlertSound();
-              showToast(t('map.nearby_toast'));
+              // Only notify once per unique alert ID
+              if (!notifiedAlertIds.has(alert.id)) {
+                notifiedAlertIds.add(alert.id);
+                vibrate([200, 100, 200]);
+                playAlertSound();
+                showToast(t('map.nearby_toast'));
+              }
             }
           }
         }
