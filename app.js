@@ -535,9 +535,9 @@
     if (!userPosition || osmContextLoaded) return;
     const { lat, lng } = userPosition;
 
-    // Bounding box (~5.5 km each side) — much faster than around: on Overpass
-    const R = 0.05; // degrees ≈ 5.5 km
-    const s = lat - R, n = lat + R, w = lng - R, e = lng + R;
+    // Bounding box via getBoundingBox() — same helper used by the heatmap
+    const box = getBoundingBox(lat, lng, OSM_RADIUS_M);
+    const s = box.minLat, n = box.maxLat, w = box.minLng, e = box.maxLng;
 
     // Overpass QL — stations, attractions, markets within bbox
     const q = `[out:json][timeout:25];(
