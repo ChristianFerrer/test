@@ -450,29 +450,41 @@
     if (!userPosition || !map) return;
     showToast(t('map.heatmap_loading'), 2000);
 
-    const box = getBoundingBox(userPosition.lat, userPosition.lng, HEATMAP_RADIUS_M);
+    const box    = getBoundingBox(userPosition.lat, userPosition.lng, HEATMAP_RADIUS_M);
     const cutoff = new Date(Date.now() - HEATMAP_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-    const { data, error } = await supabase
-      .from('alerts')
-      .select('lat, lng, created_at')
-      .gte('lat', box.minLat).lte('lat', box.maxLat)
-      .gte('lng', box.minLng).lte('lng', box.maxLng)
-      .gte('created_at', cutoff)
-      .limit(2000);
-
-    if (error || !data || data.length === 0) return;
+    // Run Supabase + Overpass in parallel — heatmap works even if Overpass fails
+    const [alertResult, osmResult] = await Promise.allSettled([
+      supabase
+        .from('alerts')
+        .select('lat, lng, created_at')
+        .gte('lat', box.minLat).lte('lat', box.maxLat)
+        .gte('lng', box.minLng).lte('lng', box.maxLng)
+        .gte('created_at', cutoff)
+        .limit(2000),
+      fetchOsmHeatPoints(box),
+    ]);
 
     const now = Date.now();
-    const points = data.map(a => {
-      // Weight: recent alerts = 1.0, alerts 30 days old = 0.1 (linear decay)
-      const ageDays = (now - new Date(a.created_at).getTime()) / 86400000;
-      const weight  = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
-      return [a.lat, a.lng, weight];
-    });
+
+    // Real Whistle alerts: weight 0.1 (old) → 1.0 (fresh), linear decay
+    const alertPoints = (alertResult.status === 'fulfilled' && alertResult.value.data)
+      ? alertResult.value.data.map(a => {
+          const ageDays = (now - new Date(a.created_at).getTime()) / 86400000;
+          const weight  = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
+          return [a.lat, a.lng, weight];
+        })
+      : [];
+
+    // OSM POI baseline: fixed weight OSM_POI_WEIGHT (0.2)
+    // Real alerts dominate when present; POIs provide signal in cold-start areas
+    const osmPoints = osmResult.status === 'fulfilled' ? osmResult.value : [];
+
+    const allPoints = [...alertPoints, ...osmPoints];
+    if (allPoints.length === 0) return;
 
     if (heatLayer) map.removeLayer(heatLayer);
-    heatLayer = L.heatLayer(points, {
+    heatLayer = L.heatLayer(allPoints, {
       radius: 35,
       blur: 25,
       maxZoom: 17,
@@ -481,6 +493,46 @@
 
     heatmapLoaded = true;
     if (heatmapVisible) heatLayer.addTo(map);
+  }
+
+  /** Fetches OSM POIs and returns them as low-weight heatmap points [lat, lng, weight] */
+  async function fetchOsmHeatPoints(box) {
+    const { minLat: s, maxLat: n, minLng: w, maxLng: e } = box;
+    const q = `[out:json][timeout:25];(
+      node["public_transport"="station"]["name"](${s},${w},${n},${e});
+      node["railway"="station"]["name"](${s},${w},${n},${e});
+      node["railway"="subway_entrance"]["name"](${s},${w},${n},${e});
+      node["tourism"="attraction"]["name"](${s},${w},${n},${e});
+      node["tourism"="museum"]["name"](${s},${w},${n},${e});
+      node["amenity"="marketplace"]["name"](${s},${w},${n},${e});
+      node["shop"="mall"]["name"](${s},${w},${n},${e});
+    );out 100;`;
+
+    const endpoints = [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+    ];
+
+    for (const endpoint of endpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'data=' + encodeURIComponent(q),
+        });
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (json.remark && json.remark.includes('timed out')) continue;
+        const points = (json.elements || [])
+          .filter(el => el.lat && el.lon)
+          .map(el => [el.lat, el.lon, OSM_POI_WEIGHT]);
+        console.log(`[Whistle] OSM baseline: ${points.length} POIs → heatmap`);
+        return points;
+      } catch (e) {
+        console.warn(`[Whistle] OSM baseline ${endpoint} failed:`, e.message);
+      }
+    }
+    return []; // Overpass unavailable — heatmap still works with real alerts only
   }
 
   function toggleHeatmap() {
