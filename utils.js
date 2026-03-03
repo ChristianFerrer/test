@@ -13,6 +13,15 @@ const ALERT_AGE_MIN   = 20;   // minutes - max age for live map alerts
 const HISTORY_RADIUS_M = 5000; // meters - history screen radius (5 km)
 const COOLDOWN_MS     = 30000; // milliseconds - cooldown between alerts
 
+// --- CLUSTERING (alert validation) ---
+const CLUSTER_RADIUS_M  = 100; // meters  - radius to group alerts as same incident
+const CLUSTER_MIN_USERS = 2;   // distinct users needed to mark an alert as verified
+const CLUSTER_TIME_MIN  = 10;  // minutes - time window for clustering
+
+// --- HEATMAP ---
+const HEATMAP_DAYS     = 30;   // days of historical data for risk heatmap
+const HEATMAP_RADIUS_M = 10000; // 10 km around user for heatmap query
+
 // --- USER IDENTITY ---
 // Persistent anonymous device ID (no account needed)
 function getOrCreateUserId() {

@@ -69,6 +69,13 @@
     'map.popup_title':      { es: 'Carterista detectado',        en: 'Pickpocket detected' },
     'map.popup_ago':        { es: 'justo ahora',                 en: 'just now' },
     'map.popup_ago_min':    { es: 'hace {n} min',                en: '{n} min ago' },
+    'map.verified':         { es: '✓ Verificada por {n} personas', en: '✓ Verified by {n} people' },
+    'map.heatmap_on':       { es: '🔥 Zonas de riesgo',          en: '🔥 Risk zones' },
+    'map.heatmap_off':      { es: '✕ Ocultar zonas',             en: '✕ Hide zones' },
+    'map.heatmap_legend':   { es: 'Nivel de riesgo histórico',   en: 'Historical risk level' },
+    'map.heatmap_lo':       { es: 'Bajo',                        en: 'Low' },
+    'map.heatmap_hi':       { es: 'Alto',                        en: 'High' },
+    'map.heatmap_loading':  { es: 'Cargando zonas de riesgo...', en: 'Loading risk zones...' },
 
     // ── NAV ────────────────────────────────────────────────────
     'nav.alert':            { es: 'Alertar',                     en: 'Alert' },

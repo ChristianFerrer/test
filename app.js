@@ -65,12 +65,18 @@
   let accuracyCircle = null;
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
+  let alertData    = new Map();     // alert.id -> raw alert object (for clustering)
   let alertTimestamps = new Map();  // alert.id -> Date.now() (ms)
   let realtimeChannel = null;
   let notifiedAlertIds = new Set(); // track alerts already shown to avoid duplicates
   let isOnCooldown = false;
   let cooldownInterval = null;
   let watchId = null;
+
+  // --- HEATMAP STATE ---
+  let heatLayer      = null;        // Leaflet.heat layer
+  let heatmapVisible = false;       // toggle state
+  let heatmapLoaded  = false;       // data already fetched
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -82,8 +88,10 @@
   const bottomPanel = document.getElementById('bottom-panel');
   const panelTitleText = document.getElementById('panel-title-text');
   const panelSubtitle = document.getElementById('panel-subtitle');
-  const alertBtn = document.getElementById('alert-btn');
-  const btnLabel = document.getElementById('btn-label');
+  const alertBtn     = document.getElementById('alert-btn');
+  const btnLabel     = document.getElementById('btn-label');
+  const heatmapBtn   = document.getElementById('heatmap-btn');
+  const riskLegend   = document.getElementById('risk-legend');
 
   // ============================================================
   // MAP INITIALIZATION
@@ -141,6 +149,9 @@
       map.invalidateSize({ animate: false });
       map.setView([lat, lng], 18);
     }, 100);
+
+    // Show heatmap toggle button now that the map is ready
+    if (heatmapBtn) heatmapBtn.style.display = 'flex';
   }
 
   // ============================================================
@@ -224,29 +235,90 @@
   // ALERT MARKERS
   // ============================================================
 
-  function createAlertMarker(alert) {
-    if (alertMarkers.has(alert.id)) return; // already rendered
-
-    // Yellow diamond marker with thief icon
-    const alertIcon = L.divIcon({
+  /** Build a Leaflet divIcon; verified alerts get a green ring + checkmark badge */
+  function buildMarkerIcon(verified) {
+    const badge = verified ? '<div class="verified-badge">✓</div>' : '';
+    const pinCls = verified
+      ? 'alert-marker-pin alert-marker-pin--verified'
+      : 'alert-marker-pin';
+    return L.divIcon({
       className: '',
-      html: '<div class="alert-marker-wrap"><div class="alert-marker-pin"><img src="thief2.png" class="alert-marker-icon"></div></div>',
+      html: `<div class="alert-marker-wrap">${badge}<div class="${pinCls}"><img src="thief2.png" class="alert-marker-icon"></div></div>`,
       iconSize: [46, 56],
       iconAnchor: [23, 56],
       popupAnchor: [0, -58],
     });
+  }
 
+  /** Build popup HTML for an alert */
+  function buildPopupHtml(alert, verified) {
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
     const ageStr = ageMin < 1 ? t('map.popup_ago') : t('map.popup_ago_min', { n: ageMin });
+    // Count corroborating alerts (others within cluster distance/time)
+    let corroborators = 0;
+    if (verified) {
+      const aTime = new Date(alert.created_at).getTime();
+      alertData.forEach((b) => {
+        if (b.id === alert.id) return;
+        if (alert.user_id && b.user_id && alert.user_id === b.user_id) return;
+        const timeDiff = Math.abs(aTime - new Date(b.created_at).getTime()) / 60000;
+        if (timeDiff <= CLUSTER_TIME_MIN &&
+            haversineDistance(alert.lat, alert.lng, b.lat, b.lng) <= CLUSTER_RADIUS_M) {
+          corroborators++;
+        }
+      });
+    }
+    const verifiedHtml = verified
+      ? `<div style="color:#2e7d32;font-weight:700;font-size:11px;margin-top:5px">${t('map.verified', { n: corroborators + 1 })}</div>`
+      : '';
+    return `<div style="text-align:center;font-family:-apple-system,sans-serif;padding:2px 0">
+      <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px">
+      <strong style="color:#1a1a1a;font-size:14px">${t('map.popup_title')}</strong><br>
+      <span style="font-size:12px;color:#555">${ageStr}</span>
+      ${verifiedHtml}
+    </div>`;
+  }
 
-    const marker = L.marker([alert.lat, alert.lng], { icon: alertIcon })
-      .bindPopup(
-        `<div style="text-align:center;font-family:-apple-system,sans-serif">
-          <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px"><strong style="color:#1a1a1a;font-size:14px">${t('map.popup_title')}</strong><br>
-          <span style="font-size:12px;color:#555">${ageStr}</span>
-        </div>`,
-        { maxWidth: 160 }
-      )
+  /** Returns the Set of alert IDs that are corroborated by CLUSTER_MIN_USERS distinct users */
+  function computeVerifiedSet() {
+    const verified = new Set();
+    const alerts = Array.from(alertData.values());
+    for (const a of alerts) {
+      const aTime = new Date(a.created_at).getTime();
+      let corrobCount = 0;
+      for (const b of alerts) {
+        if (a.id === b.id) continue;
+        if (a.user_id && b.user_id && a.user_id === b.user_id) continue; // same user
+        const timeDiff = Math.abs(aTime - new Date(b.created_at).getTime()) / 60000;
+        if (timeDiff > CLUSTER_TIME_MIN) continue;
+        if (haversineDistance(a.lat, a.lng, b.lat, b.lng) <= CLUSTER_RADIUS_M) {
+          corrobCount++;
+        }
+      }
+      if (corrobCount >= CLUSTER_MIN_USERS - 1) verified.add(a.id);
+    }
+    return verified;
+  }
+
+  /** Recompute verification for all markers and update icons/popups */
+  function refreshVerification() {
+    const verified = computeVerifiedSet();
+    alertData.forEach((alert, id) => {
+      const marker = alertMarkers.get(id);
+      if (!marker) return;
+      const isVerified = verified.has(id);
+      marker.setIcon(buildMarkerIcon(isVerified));
+      marker.setPopupContent(buildPopupHtml(alert, isVerified));
+    });
+  }
+
+  function createAlertMarker(alert) {
+    if (alertMarkers.has(alert.id)) return; // already rendered
+
+    alertData.set(alert.id, alert); // store raw data for clustering
+
+    const marker = L.marker([alert.lat, alert.lng], { icon: buildMarkerIcon(false) })
+      .bindPopup(buildPopupHtml(alert, false), { maxWidth: 180 })
       .addTo(map);
 
     alertMarkers.set(alert.id, marker);
@@ -260,6 +332,7 @@
     }
     alertMarkers.delete(id);
     alertTimestamps.delete(id);
+    alertData.delete(id);
   }
 
   function purgeExpiredAlerts() {
@@ -306,6 +379,7 @@
       createAlertMarker(alert);
       notifiedAlertIds.add(alert.id); // mark as seen so realtime doesn't re-notify
     });
+    refreshVerification(); // compute clusters after all markers are loaded
     updateBadgeAndPanel();
   }
 
@@ -337,6 +411,7 @@
             const ageMin = (Date.now() - new Date(alert.created_at)) / 60000;
             if (ageMin <= ALERT_AGE_MIN) {
               createAlertMarker(alert);
+              refreshVerification(); // re-evaluate clusters with the new alert
               updateBadgeAndPanel();
               // Only notify once per unique alert ID
               if (!notifiedAlertIds.has(alert.id)) {
@@ -363,6 +438,67 @@
     if (realtimeChannel) {
       supabase.removeChannel(realtimeChannel);
       realtimeChannel = null;
+    }
+  }
+
+  // ============================================================
+  // HEATMAP - Risk zones (historical data)
+  // ============================================================
+
+  async function loadHeatmapData() {
+    if (!userPosition || !map) return;
+    showToast(t('map.heatmap_loading'), 2000);
+
+    const box = getBoundingBox(userPosition.lat, userPosition.lng, HEATMAP_RADIUS_M);
+    const cutoff = new Date(Date.now() - HEATMAP_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabase
+      .from('alerts')
+      .select('lat, lng, created_at')
+      .gte('lat', box.minLat).lte('lat', box.maxLat)
+      .gte('lng', box.minLng).lte('lng', box.maxLng)
+      .gte('created_at', cutoff)
+      .limit(2000);
+
+    if (error || !data || data.length === 0) return;
+
+    const now = Date.now();
+    const points = data.map(a => {
+      // Weight: recent alerts = 1.0, alerts 30 days old = 0.1 (linear decay)
+      const ageDays = (now - new Date(a.created_at).getTime()) / 86400000;
+      const weight  = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
+      return [a.lat, a.lng, weight];
+    });
+
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = L.heatLayer(points, {
+      radius: 35,
+      blur: 25,
+      maxZoom: 17,
+      gradient: { 0.4: '#2196F3', 0.65: '#FF9800', 1: '#F44336' },
+    });
+
+    heatmapLoaded = true;
+    if (heatmapVisible) heatLayer.addTo(map);
+  }
+
+  function toggleHeatmap() {
+    heatmapVisible = !heatmapVisible;
+
+    if (heatmapVisible) {
+      heatmapBtn.classList.add('active');
+      heatmapBtn.querySelector('#heatmap-btn-label').textContent = t('map.heatmap_off');
+      riskLegend.classList.remove('hidden');
+      if (!heatmapLoaded) {
+        loadHeatmapData();
+      } else if (heatLayer) {
+        heatLayer.addTo(map);
+      }
+    } else {
+      heatmapBtn.classList.remove('active');
+      heatmapBtn.querySelector('#heatmap-btn-label').textContent = t('map.heatmap_on');
+      riskLegend.classList.add('hidden');
+      if (heatLayer) map.removeLayer(heatLayer);
     }
   }
 
@@ -531,6 +667,9 @@
     alertBadge.addEventListener('click', () => {
       if (alertMarkers.size > 0) showPanel();
     });
+
+    // Heatmap toggle
+    if (heatmapBtn) heatmapBtn.addEventListener('click', toggleHeatmap);
 
     // Visibility change
     document.addEventListener('visibilitychange', onVisibilityChange);

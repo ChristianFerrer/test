@@ -262,6 +262,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative; /* needed for verified-badge absolute positioning */
 }
 
 .alert-marker-pin {
@@ -285,6 +286,99 @@ html, body {
 @keyframes marker-pop {
   0%   { transform: rotate(-45deg) scale(0.4); opacity: 0; }
   100% { transform: rotate(-45deg) scale(1); opacity: 1; }
+}
+
+/* Verified alert marker — green ring around the diamond */
+.alert-marker-pin--verified {
+  box-shadow: 0 4px 16px rgba(46, 125, 50, 0.45), 0 0 0 3px #2e7d32;
+}
+
+/* Green checkmark badge in the top-right corner of verified markers */
+.verified-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  background: #2e7d32;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ============================================================
+   HEATMAP TOGGLE BUTTON
+   ============================================================ */
+.heatmap-toggle {
+  position: fixed;
+  bottom: calc(68px + 14px);   /* above bottom nav */
+  left: 12px;
+  z-index: 500;
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  display: none;               /* shown only after GPS ready */
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.heatmap-toggle.active {
+  background: #e64a19;
+  color: #fff;
+  border-color: #e64a19;
+}
+
+/* ============================================================
+   RISK LEGEND
+   ============================================================ */
+.risk-legend {
+  position: fixed;
+  bottom: calc(68px + 14px);
+  right: 12px;
+  z-index: 500;
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  min-width: 120px;
+}
+.risk-legend-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #555;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.risk-legend-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #2196F3, #FF9800, #F44336);
+  margin-bottom: 3px;
+}
+.risk-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #777;
+  font-weight: 600;
 }
 
 /* ============================================================
