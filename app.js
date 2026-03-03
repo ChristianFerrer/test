@@ -535,8 +535,8 @@
     if (!userPosition || osmContextLoaded) return;
     const { lat, lng } = userPosition;
 
-    // Overpass QL: stations, tourist attractions, markets within 6 km
-    const q = `[out:json][timeout:20];(
+    // Overpass QL — stations, attractions, markets within 6 km
+    const q = `[out:json][timeout:25];(
       node["public_transport"="station"]["name"](around:6000,${lat},${lng});
       node["railway"="station"]["name"](around:6000,${lat},${lng});
       node["railway"="subway_entrance"]["name"](around:6000,${lat},${lng});
@@ -546,38 +546,62 @@
       node["shop"="mall"]["name"](around:6000,${lat},${lng});
     );out 60;`;
 
-    try {
-      const res = await fetch('https://overpass-api.de/api/interpreter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: q,
-      });
-      if (!res.ok) return;
-      const json = await res.json();
-      osmContextLoaded = true;
+    // Try multiple endpoints for reliability
+    const endpoints = [
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
+    ];
 
-      (json.elements || []).forEach(el => {
-        if (!el.lat || !el.lon) return;
-        const tags  = el.tags || {};
-        const emoji = getPoiEmoji(tags);
-        const name  = tags.name || '';
-
-        const icon = L.divIcon({
-          className: '',
-          html: `<div class="osm-poi">${emoji}</div>`,
-          iconSize:   [30, 30],
-          iconAnchor: [15, 15],
+    let json = null;
+    for (const endpoint of endpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          // Overpass requires form-encoded body with "data=" key
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'data=' + encodeURIComponent(q),
         });
-
-        const marker = L.marker([el.lat, el.lon], { icon, zIndexOffset: -200, interactive: !!name });
-        if (name) {
-          marker.bindTooltip(name, { direction: 'top', offset: [0, -15], className: 'osm-tooltip' });
+        if (!res.ok) {
+          console.warn(`[Whistle] OSM ${endpoint} → HTTP ${res.status}`);
+          continue;
         }
-        osmMarkers.push(marker);
-      });
-    } catch (e) {
-      console.warn('[Whistle] OSM context failed:', e);
+        json = await res.json();
+        console.log(`[Whistle] OSM loaded from ${endpoint}: ${(json.elements || []).length} POIs`);
+        break;
+      } catch (e) {
+        console.warn(`[Whistle] OSM ${endpoint} failed:`, e.message);
+      }
     }
+
+    // Mark as loaded (even on failure) so we don't retry on every toggle
+    osmContextLoaded = true;
+
+    if (!json || !(json.elements || []).length) {
+      console.warn('[Whistle] OSM: no POIs returned');
+      return;
+    }
+
+    json.elements.forEach(el => {
+      if (!el.lat || !el.lon) return;
+      const tags  = el.tags || {};
+      const emoji = getPoiEmoji(tags);
+      const name  = tags.name || '';
+
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="osm-poi">${emoji}</div>`,
+        iconSize:   [34, 34],
+        iconAnchor: [17, 17],
+      });
+
+      const marker = L.marker([el.lat, el.lon], { icon, zIndexOffset: -200, interactive: true });
+      marker.bindTooltip(name || emoji, {
+        direction: 'top',
+        offset: [0, -17],
+        className: 'osm-tooltip',
+      });
+      osmMarkers.push(marker);
+    });
   }
 
   function showOsmContext() {
