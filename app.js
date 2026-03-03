@@ -535,15 +535,19 @@
     if (!userPosition || osmContextLoaded) return;
     const { lat, lng } = userPosition;
 
-    // Overpass QL — stations, attractions, markets within 6 km
+    // Bounding box (~5.5 km each side) — much faster than around: on Overpass
+    const R = 0.05; // degrees ≈ 5.5 km
+    const s = lat - R, n = lat + R, w = lng - R, e = lng + R;
+
+    // Overpass QL — stations, attractions, markets within bbox
     const q = `[out:json][timeout:25];(
-      node["public_transport"="station"]["name"](around:6000,${lat},${lng});
-      node["railway"="station"]["name"](around:6000,${lat},${lng});
-      node["railway"="subway_entrance"]["name"](around:6000,${lat},${lng});
-      node["tourism"="attraction"]["name"](around:6000,${lat},${lng});
-      node["tourism"="museum"]["name"](around:6000,${lat},${lng});
-      node["amenity"="marketplace"]["name"](around:6000,${lat},${lng});
-      node["shop"="mall"]["name"](around:6000,${lat},${lng});
+      node["public_transport"="station"]["name"](${s},${w},${n},${e});
+      node["railway"="station"]["name"](${s},${w},${n},${e});
+      node["railway"="subway_entrance"]["name"](${s},${w},${n},${e});
+      node["tourism"="attraction"]["name"](${s},${w},${n},${e});
+      node["tourism"="museum"]["name"](${s},${w},${n},${e});
+      node["amenity"="marketplace"]["name"](${s},${w},${n},${e});
+      node["shop"="mall"]["name"](${s},${w},${n},${e});
     );out 60;`;
 
     // Try multiple endpoints for reliability
