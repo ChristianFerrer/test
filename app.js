@@ -78,6 +78,10 @@
   let heatmapVisible = false;       // toggle state
   let heatmapLoaded  = false;       // data already fetched
 
+  // --- OSM CONTEXT LAYER ---
+  let osmMarkers        = [];       // L.Marker[] for POIs
+  let osmContextLoaded  = false;    // Overpass API already queried
+
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
   const requestLocationBtn = document.getElementById('request-location-btn');
@@ -494,12 +498,94 @@
       } else if (heatLayer) {
         heatLayer.addTo(map);
       }
+      // Load OSM context layer alongside the heatmap
+      if (!osmContextLoaded) {
+        loadOsmContext().then(() => { if (heatmapVisible) showOsmContext(); });
+      } else {
+        showOsmContext();
+      }
     } else {
       heatmapBtn.classList.remove('active');
       heatmapBtn.querySelector('#heatmap-btn-label').textContent = t('map.heatmap_on');
       riskLegend.classList.add('hidden');
       if (heatLayer) map.removeLayer(heatLayer);
+      hideOsmContext();
     }
+  }
+
+  // ============================================================
+  // OSM CONTEXT LAYER - Points of interest (visual context only)
+  // ============================================================
+
+  /** Returns the right emoji for a set of OSM tags */
+  function getPoiEmoji(tags) {
+    if (tags.public_transport === 'station' || tags.railway === 'station' ||
+        tags.railway === 'subway_entrance')                    return '🚇';
+    if (tags.amenity === 'bus_station')                        return '🚌';
+    if (tags.tourism === 'attraction' || tags.tourism === 'museum' ||
+        tags.tourism === 'gallery' || tags.historic)           return '🏛️';
+    if (tags.amenity === 'marketplace' || tags.shop === 'market') return '🛒';
+    if (tags.shop === 'mall' || tags.shop === 'department_store') return '🏬';
+    if (tags.leisure === 'stadium' || tags.leisure === 'sports_centre') return '🏟️';
+    if (tags.amenity === 'theatre' || tags.amenity === 'cinema')        return '🎭';
+    return '📍';
+  }
+
+  async function loadOsmContext() {
+    if (!userPosition || osmContextLoaded) return;
+    const { lat, lng } = userPosition;
+
+    // Overpass QL: stations, tourist attractions, markets within 6 km
+    const q = `[out:json][timeout:20];(
+      node["public_transport"="station"]["name"](around:6000,${lat},${lng});
+      node["railway"="station"]["name"](around:6000,${lat},${lng});
+      node["railway"="subway_entrance"]["name"](around:6000,${lat},${lng});
+      node["tourism"="attraction"]["name"](around:6000,${lat},${lng});
+      node["tourism"="museum"]["name"](around:6000,${lat},${lng});
+      node["amenity"="marketplace"]["name"](around:6000,${lat},${lng});
+      node["shop"="mall"]["name"](around:6000,${lat},${lng});
+    );out 60;`;
+
+    try {
+      const res = await fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: q,
+      });
+      if (!res.ok) return;
+      const json = await res.json();
+      osmContextLoaded = true;
+
+      (json.elements || []).forEach(el => {
+        if (!el.lat || !el.lon) return;
+        const tags  = el.tags || {};
+        const emoji = getPoiEmoji(tags);
+        const name  = tags.name || '';
+
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="osm-poi">${emoji}</div>`,
+          iconSize:   [30, 30],
+          iconAnchor: [15, 15],
+        });
+
+        const marker = L.marker([el.lat, el.lon], { icon, zIndexOffset: -200, interactive: !!name });
+        if (name) {
+          marker.bindTooltip(name, { direction: 'top', offset: [0, -15], className: 'osm-tooltip' });
+        }
+        osmMarkers.push(marker);
+      });
+    } catch (e) {
+      console.warn('[Whistle] OSM context failed:', e);
+    }
+  }
+
+  function showOsmContext() {
+    osmMarkers.forEach(m => { if (!map.hasLayer(m)) m.addTo(map); });
+  }
+
+  function hideOsmContext() {
+    osmMarkers.forEach(m => { if (map.hasLayer(m)) map.removeLayer(m); });
   }
 
   // ============================================================

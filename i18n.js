@@ -76,6 +76,9 @@
     'map.heatmap_lo':       { es: 'Bajo',                        en: 'Low' },
     'map.heatmap_hi':       { es: 'Alto',                        en: 'High' },
     'map.heatmap_loading':  { es: 'Cargando zonas de riesgo...', en: 'Loading risk zones...' },
+    'map.poi_station':      { es: 'Estaciones',                  en: 'Stations' },
+    'map.poi_attraction':   { es: 'Atracciones',                 en: 'Attractions' },
+    'map.poi_market':       { es: 'Mercados',                    en: 'Markets' },
 
     // ── NAV ────────────────────────────────────────────────────
     'nav.alert':            { es: 'Alertar',                     en: 'Alert' },
