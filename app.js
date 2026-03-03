@@ -78,9 +78,6 @@
   let heatmapVisible = false;       // toggle state
   let heatmapLoaded  = false;       // data already fetched
 
-  // --- OSM CONTEXT LAYER ---
-  let osmMarkers        = [];       // L.Marker[] for POIs
-  let osmContextLoaded  = false;    // Overpass API already queried
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -498,123 +495,14 @@
       } else if (heatLayer) {
         heatLayer.addTo(map);
       }
-      // Load OSM context layer alongside the heatmap
-      if (!osmContextLoaded) {
-        loadOsmContext().then(() => { if (heatmapVisible) showOsmContext(); });
-      } else {
-        showOsmContext();
-      }
     } else {
       heatmapBtn.classList.remove('active');
       heatmapBtn.querySelector('#heatmap-btn-label').textContent = t('map.heatmap_on');
       riskLegend.classList.add('hidden');
       if (heatLayer) map.removeLayer(heatLayer);
-      hideOsmContext();
     }
   }
 
-  // ============================================================
-  // OSM CONTEXT LAYER - Points of interest (visual context only)
-  // ============================================================
-
-  /** Returns the right emoji for a set of OSM tags */
-  function getPoiEmoji(tags) {
-    if (tags.public_transport === 'station' || tags.railway === 'station' ||
-        tags.railway === 'subway_entrance')                    return '🚇';
-    if (tags.amenity === 'bus_station')                        return '🚌';
-    if (tags.tourism === 'attraction' || tags.tourism === 'museum' ||
-        tags.tourism === 'gallery' || tags.historic)           return '🏛️';
-    if (tags.amenity === 'marketplace' || tags.shop === 'market') return '🛒';
-    if (tags.shop === 'mall' || tags.shop === 'department_store') return '🏬';
-    if (tags.leisure === 'stadium' || tags.leisure === 'sports_centre') return '🏟️';
-    if (tags.amenity === 'theatre' || tags.amenity === 'cinema')        return '🎭';
-    return '📍';
-  }
-
-  async function loadOsmContext() {
-    if (!userPosition || osmContextLoaded) return;
-    const { lat, lng } = userPosition;
-
-    // Bounding box via getBoundingBox() — same helper used by the heatmap
-    const box = getBoundingBox(lat, lng, OSM_RADIUS_M);
-    const s = box.minLat, n = box.maxLat, w = box.minLng, e = box.maxLng;
-
-    // Overpass QL — stations, attractions, markets within bbox
-    const q = `[out:json][timeout:25];(
-      node["public_transport"="station"]["name"](${s},${w},${n},${e});
-      node["railway"="station"]["name"](${s},${w},${n},${e});
-      node["railway"="subway_entrance"]["name"](${s},${w},${n},${e});
-      node["tourism"="attraction"]["name"](${s},${w},${n},${e});
-      node["tourism"="museum"]["name"](${s},${w},${n},${e});
-      node["amenity"="marketplace"]["name"](${s},${w},${n},${e});
-      node["shop"="mall"]["name"](${s},${w},${n},${e});
-    );out 60;`;
-
-    // Try multiple endpoints for reliability
-    const endpoints = [
-      'https://overpass-api.de/api/interpreter',
-      'https://overpass.kumi.systems/api/interpreter',
-    ];
-
-    let json = null;
-    for (const endpoint of endpoints) {
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          // Overpass requires form-encoded body with "data=" key
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'data=' + encodeURIComponent(q),
-        });
-        if (!res.ok) {
-          console.warn(`[Whistle] OSM ${endpoint} → HTTP ${res.status}`);
-          continue;
-        }
-        json = await res.json();
-        console.log(`[Whistle] OSM loaded from ${endpoint}: ${(json.elements || []).length} POIs`);
-        break;
-      } catch (e) {
-        console.warn(`[Whistle] OSM ${endpoint} failed:`, e.message);
-      }
-    }
-
-    // Mark as loaded (even on failure) so we don't retry on every toggle
-    osmContextLoaded = true;
-
-    if (!json || !(json.elements || []).length) {
-      console.warn('[Whistle] OSM: no POIs returned');
-      return;
-    }
-
-    json.elements.forEach(el => {
-      if (!el.lat || !el.lon) return;
-      const tags  = el.tags || {};
-      const emoji = getPoiEmoji(tags);
-      const name  = tags.name || '';
-
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="osm-poi">${emoji}</div>`,
-        iconSize:   [34, 34],
-        iconAnchor: [17, 17],
-      });
-
-      const marker = L.marker([el.lat, el.lon], { icon, zIndexOffset: -200, interactive: true });
-      marker.bindTooltip(name || emoji, {
-        direction: 'top',
-        offset: [0, -17],
-        className: 'osm-tooltip',
-      });
-      osmMarkers.push(marker);
-    });
-  }
-
-  function showOsmContext() {
-    osmMarkers.forEach(m => { if (!map.hasLayer(m)) m.addTo(map); });
-  }
-
-  function hideOsmContext() {
-    osmMarkers.forEach(m => { if (map.hasLayer(m)) map.removeLayer(m); });
-  }
 
   // ============================================================
   // BADGE & PANEL UPDATE

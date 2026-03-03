@@ -22,8 +22,6 @@ const CLUSTER_TIME_MIN  = 10;  // minutes - time window for clustering
 const HEATMAP_DAYS     = 30;   // days of historical data for risk heatmap
 const HEATMAP_RADIUS_M = 10000; // 10 km around user for heatmap query
 
-// --- OSM CONTEXT ---
-const OSM_RADIUS_M = 6000; // 6 km around user for POI context layer
 
 // --- USER IDENTITY ---
 // Persistent anonymous device ID (no account needed)
