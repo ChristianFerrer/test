@@ -590,8 +590,30 @@
     }, 10500);
   }
 
+  const riskBanner = document.getElementById('risk-banner');
+  const RISK_RECENT_MIN = 30; // alerts within last N minutes count as "recent"
+
+  function updateRiskBanner() {
+    const cutoff = Date.now() - RISK_RECENT_MIN * 60 * 1000;
+    const recentCount = Array.from(alertData.values())
+      .filter(a => new Date(a.created_at).getTime() >= cutoff)
+      .length;
+
+    if (recentCount >= 2) {
+      riskBanner.textContent = t('map.risk_zone_high', { n: recentCount });
+      riskBanner.classList.remove('hidden', 'warn');
+    } else if (recentCount === 1) {
+      riskBanner.textContent = t('map.risk_zone_low', { n: recentCount });
+      riskBanner.classList.remove('hidden');
+      riskBanner.classList.add('warn');
+    } else {
+      riskBanner.classList.add('hidden');
+    }
+  }
+
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
+    updateRiskBanner();
 
     // Badge
     if (count > 0) {
