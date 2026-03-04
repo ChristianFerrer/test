@@ -564,11 +564,14 @@
 
   function showPanel() {
     bottomPanel.classList.add('visible');
-    // Auto-hide after 10 seconds
+    riskLegend.classList.add('panel-open');
     clearTimeout(panelAutoHideTimer);
-    panelAutoHideTimer = setTimeout(() => {
-      bottomPanel.classList.remove('visible');
-    }, 10000);
+    panelAutoHideTimer = setTimeout(hidePanel, 10000);
+  }
+
+  function hidePanel() {
+    bottomPanel.classList.remove('visible');
+    riskLegend.classList.remove('panel-open');
   }
 
   function showOwnAlertPanel() {
@@ -634,7 +637,7 @@
       showPanel();
     } else {
       clearTimeout(panelAutoHideTimer);
-      bottomPanel.classList.remove('visible');
+      hidePanel();
     }
   }
 
