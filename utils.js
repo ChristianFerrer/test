@@ -23,6 +23,11 @@ const HEATMAP_DAYS     = 30;   // days of historical data for risk heatmap
 const HEATMAP_RADIUS_M = 10000; // 10 km around user for heatmap query
 const OSM_POI_WEIGHT   = 0.2;  // weight of OSM POI baseline points (real alerts are 0.1–1.0)
 
+// --- SURGE DETECTION ---
+const SURGE_WINDOW_MIN = 30;   // compare alerts in last N min vs historical average
+const SURGE_THRESHOLD  = 3;    // rate must be ≥ 3× historical average to flag as surge
+const SURGE_MIN_COUNT  = 2;    // need at least N alerts to consider a surge (avoid noise)
+
 
 // --- USER IDENTITY ---
 // Persistent anonymous device ID (no account needed)

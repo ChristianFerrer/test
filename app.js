@@ -78,6 +78,9 @@
   let heatmapVisible = false;       // toggle state
   let heatmapLoaded  = false;       // data already fetched
 
+  // --- SURGE DETECTION STATE ---
+  let historicalBaseline = 0;       // avg alerts per 30-min at current hour (last 30 days)
+
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -181,6 +184,7 @@
       setTimeout(() => {
         initMap(lat, lng);
         loadNearbyAlerts();
+        loadSurgeBaseline();
         subscribeToAlerts();
         // Init push notifications once on first GPS fix
         if (!pushInitialized && window.initPush) {
@@ -465,14 +469,21 @@
       fetchOsmHeatPoints(box),
     ]);
 
-    const now = Date.now();
+    const now         = Date.now();
+    const currentHour = new Date().getHours();
 
-    // Real Whistle alerts: weight 0.1 (old) → 1.0 (fresh), linear decay
+    // Real Whistle alerts: combined recency × time-of-day weight
+    //   recency:  1.0 (today) → 0.1 (30 days old), linear decay
+    //   time-of-day: 1.0 (same hour) → 0.3 (≥6h different), linear decay
+    //   → alerts that happened at THIS time of day are emphasised
     const alertPoints = (alertResult.status === 'fulfilled' && alertResult.value.data)
       ? alertResult.value.data.map(a => {
-          const ageDays = (now - new Date(a.created_at).getTime()) / 86400000;
-          const weight  = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
-          return [a.lat, a.lng, weight];
+          const ageDays      = (now - new Date(a.created_at).getTime()) / 86400000;
+          const recencyW     = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
+          const alertHour    = new Date(a.created_at).getHours();
+          const hourDiff     = Math.min(Math.abs(alertHour - currentHour), 24 - Math.abs(alertHour - currentHour));
+          const timeW        = Math.max(0.3, 1 - hourDiff / 6);
+          return [a.lat, a.lng, recencyW * timeW];
         })
       : [];
 
@@ -594,15 +605,48 @@
   }
 
   const riskBanner = document.getElementById('risk-banner');
-  const RISK_RECENT_MIN = 30; // alerts within last N minutes count as "recent"
+
+  /** Fetches 30-day historical alert count for the immediate area at the current hour.
+   *  Called once on first GPS fix. Result stored in historicalBaseline. */
+  async function loadSurgeBaseline() {
+    if (!userPosition) return;
+    const box    = getBoundingBox(userPosition.lat, userPosition.lng, ALERT_RADIUS_M);
+    const cutoff = new Date(Date.now() - HEATMAP_DAYS * 24 * 60 * 60 * 1000).toISOString();
+    const currentHour = new Date().getHours();
+
+    const { data } = await supabase
+      .from('alerts')
+      .select('created_at')
+      .gte('lat', box.minLat).lte('lat', box.maxLat)
+      .gte('lng', box.minLng).lte('lng', box.maxLng)
+      .gte('created_at', cutoff);
+
+    if (!data || data.length === 0) return;
+
+    // Keep only alerts within ±1 hour of current time (handles midnight wrap)
+    const sameHour = data.filter(a => {
+      const h = new Date(a.created_at).getHours();
+      return Math.min(Math.abs(h - currentHour), 24 - Math.abs(h - currentHour)) <= 1;
+    });
+
+    // Average per 30-min slot: total / 30 days / 2 slots per hour
+    historicalBaseline = sameHour.length / (HEATMAP_DAYS * 2);
+    console.log(`[Whistle] Surge baseline: ${sameHour.length} historical → avg ${historicalBaseline.toFixed(2)} alerts/30min`);
+  }
 
   function updateRiskBanner() {
-    const cutoff = Date.now() - RISK_RECENT_MIN * 60 * 1000;
+    const cutoff      = Date.now() - SURGE_WINDOW_MIN * 60 * 1000;
     const recentCount = Array.from(alertData.values())
       .filter(a => new Date(a.created_at).getTime() >= cutoff)
       .length;
 
-    if (recentCount >= 2) {
+    const surgeRatio = historicalBaseline > 0 ? recentCount / historicalBaseline : 0;
+    const isSurge    = recentCount >= SURGE_MIN_COUNT && surgeRatio >= SURGE_THRESHOLD;
+
+    if (isSurge) {
+      riskBanner.textContent = t('map.risk_surge', { n: recentCount, x: Math.round(surgeRatio) });
+      riskBanner.classList.remove('hidden', 'warn');
+    } else if (recentCount >= 2) {
       riskBanner.textContent = t('map.risk_zone_high', { n: recentCount });
       riskBanner.classList.remove('hidden', 'warn');
     } else if (recentCount === 1) {

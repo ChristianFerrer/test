@@ -76,8 +76,9 @@
     'map.heatmap_lo':       { es: 'Bajo',                        en: 'Low' },
     'map.heatmap_hi':       { es: 'Alto',                        en: 'High' },
     'map.heatmap_loading':  { es: 'Cargando zonas de riesgo...', en: 'Loading risk zones...' },
-    'map.risk_zone_high':   { es: '🚨 Zona de alto riesgo · {n} alertas recientes', en: '🚨 High risk zone · {n} recent alerts' },
-    'map.risk_zone_low':    { es: '⚠️ Precaución · {n} alerta cerca',               en: '⚠️ Caution · {n} alert nearby' },
+    'map.risk_zone_high':   { es: '🚨 Zona de alto riesgo · {n} alertas recientes',       en: '🚨 High risk zone · {n} recent alerts' },
+    'map.risk_zone_low':    { es: '⚠️ Precaución · {n} alerta cerca',                    en: '⚠️ Caution · {n} alert nearby' },
+    'map.risk_surge':       { es: '🚨 Actividad inusual · {n} alertas ({x}× lo habitual)', en: '🚨 Unusual activity · {n} alerts ({x}× above normal)' },
 
     // ── NAV ────────────────────────────────────────────────────
     'nav.alert':            { es: 'Alertar',                     en: 'Alert' },
