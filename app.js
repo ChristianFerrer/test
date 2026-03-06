@@ -835,13 +835,21 @@
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
     updateRiskBanner();
-    // Calm zone: visible only when GPS is ready and no nearby alerts
+    // Status chip: always visible once GPS is ready, colour adapts to alert count
     if (calmZone) {
-      if (count === 0 && userPosition) {
-        calmZone.textContent = buildCalmText();
-        calmZone.classList.remove('hidden');
+      if (!userPosition) {
+        calmZone.className = 'calm-zone hidden';
+      } else if (count === 0) {
+        calmZone.className = 'calm-zone calm-zone--safe';
+        calmZone.textContent = t('zone.status_safe');
+      } else if (count < 3) {
+        calmZone.className = 'calm-zone calm-zone--warn';
+        calmZone.textContent = count === 1
+          ? t('zone.status_warn_1')
+          : t('zone.status_warn_n', { n: count });
       } else {
-        calmZone.classList.add('hidden');
+        calmZone.className = 'calm-zone calm-zone--danger';
+        calmZone.textContent = t('zone.status_danger', { n: count });
       }
     }
 

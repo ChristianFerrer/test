@@ -161,6 +161,11 @@
     'zone.calm_d':          { es: '✅ Tranquila · {n}d',           en: '✅ Quiet · {n}d' },
     'zone.calm_long':       { es: '✅ Tranquila · 30d+',           en: '✅ Quiet · 30d+' },
     'zone.peak_hours':      { es: '⚠️ Pico hab.: {h1}h–{h2}h',   en: '⚠️ Usual peak: {h1}h–{h2}h' },
+    // Status chip (always-visible top indicator)
+    'zone.status_safe':   { es: '✅ Zona tranquila · 0 alertas en 100m',       en: '✅ Quiet zone · 0 alerts in 100m' },
+    'zone.status_warn_1': { es: '⚠️ Precaución · 1 alerta cercana',            en: '⚠️ Caution · 1 alert nearby' },
+    'zone.status_warn_n': { es: '⚠️ Precaución · {n} alertas cercanas',       en: '⚠️ Caution · {n} alerts nearby' },
+    'zone.status_danger': { es: '🚨 Actividad elevada · {n} alertas cercanas', en: '🚨 High activity · {n} alerts nearby' },
 
     // ── PUSH ───────────────────────────────────────────────────
     'push.not_supported':   { es: '[Whistle Push] Push no soportado en este navegador.', en: '[Whistle Push] Push not supported in this browser.' },
