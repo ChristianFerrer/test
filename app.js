@@ -62,7 +62,7 @@
   window.__getAuthUserId && window.__getAuthUserId().then(id => { if (id) USER_ID = id; });
   let map = null;
   let userMarker = null;
-  let accuracyCircle = null;
+  let radarMarker    = null;
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
   let alertData    = new Map();     // alert.id -> raw alert object (for clustering)
@@ -152,25 +152,63 @@
 
     userMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
 
-    // Accuracy circle (50m alert radius visualisation)
-    accuracyCircle = L.circle([lat, lng], {
-      radius: ALERT_RADIUS_M,
-      color: '#4cc9f0',
-      fillColor: '#4cc9f0',
-      fillOpacity: 0.04,
-      weight: 1,
-      opacity: 0.3,
-      dashArray: '4 6',
-    }).addTo(map);
+    // Radar resizes when user zooms in/out
+    map.on('zoomend', updateRadar);
 
     // Force Leaflet to recalculate its size after the overlay is hidden
     setTimeout(() => {
       map.invalidateSize({ animate: false });
       map.setView([lat, lng], 18);
+      updateRadar(); // draw radar once map is fully laid out
     }, 100);
 
     // Show heatmap toggle button now that the map is ready
     if (heatmapBtn) heatmapBtn.style.display = 'flex';
+  }
+
+  // ============================================================
+  // RADAR OVERLAY – animated 100m sweep centred on user
+  // ============================================================
+
+  /** Returns the diameter in CSS pixels for ALERT_RADIUS_M at current zoom */
+  function getRadarDiamPx(lat) {
+    if (!map) return 200;
+    const mpp = (40075016.686 * Math.cos(lat * Math.PI / 180))
+                / (Math.pow(2, map.getZoom()) * 256);
+    return Math.round(ALERT_RADIUS_M / mpp) * 2; // diameter = 2 × radius
+  }
+
+  function buildRadarIcon(lat) {
+    const d = getRadarDiamPx(lat);
+    const html = `<div class="radar-wrap" style="width:${d}px;height:${d}px">
+      <div class="radar-fill"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-cross-h"></div>
+      <div class="radar-cross-v"></div>
+    </div>`;
+    return L.divIcon({
+      className: '',
+      html,
+      iconSize:   [d, d],
+      iconAnchor: [d / 2, d / 2],
+    });
+  }
+
+  function updateRadar() {
+    if (!userPosition || !map) return;
+    const { lat, lng } = userPosition;
+    const icon = buildRadarIcon(lat);
+    if (radarMarker) {
+      radarMarker.setLatLng([lat, lng]);
+      radarMarker.setIcon(icon);
+    } else {
+      radarMarker = L.marker([lat, lng], {
+        icon,
+        zIndexOffset: -200,   // render below alert markers
+        interactive: false,
+      }).addTo(map);
+    }
   }
 
   // ============================================================
@@ -212,7 +250,7 @@
       }, 50);
     } else {
       if (userMarker) userMarker.setLatLng([lat, lng]);
-      if (accuracyCircle) accuracyCircle.setLatLng([lat, lng]);
+      updateRadar();
       // Re-center map gently if user moved significantly
       if (map) {
         const mapCenter = map.getCenter();

@@ -407,6 +407,65 @@ html, body {
 .calm-zone--danger { background: rgba(255,235,238,0.97); border: 1.5px solid #ef9a9a; color: #b71c1c; box-shadow: 0 2px 10px rgba(244,67,54,0.15); }
 
 /* ============================================================
+   RADAR OVERLAY - animated 100m sweep around user position
+   ============================================================ */
+.radar-wrap {
+  border-radius: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  position: relative;
+}
+/* Subtle radial fill */
+.radar-fill {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(76,201,240,0.09) 0%,
+    rgba(76,201,240,0.02) 65%,
+    transparent 100%);
+}
+/* Rotating sweep conic */
+.radar-sweep {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(76,201,240,0.55) 0deg,
+    rgba(76,201,240,0.18) 55deg,
+    transparent 85deg,
+    transparent 360deg
+  );
+  animation: radar-rotate 3s linear infinite;
+}
+/* Glowing outer ring */
+.radar-ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(76,201,240,0.75);
+  box-shadow: 0 0 16px rgba(76,201,240,0.30),
+              inset 0 0 16px rgba(76,201,240,0.06);
+}
+/* Crosshair lines */
+.radar-cross-h {
+  position: absolute;
+  top: 50%; left: 6%; right: 6%;
+  height: 1px;
+  background: rgba(76,201,240,0.20);
+  transform: translateY(-50%);
+}
+.radar-cross-v {
+  position: absolute;
+  left: 50%; top: 6%; bottom: 6%;
+  width: 1px;
+  background: rgba(76,201,240,0.20);
+  transform: translateX(-50%);
+}
+@keyframes radar-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ============================================================
    ZONE INSIGHT CHIPS - score + peak hours, left side above heatmap btn
    ============================================================ */
 .zone-chips {
