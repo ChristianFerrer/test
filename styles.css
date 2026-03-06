@@ -603,22 +603,21 @@ html, body {
 .panel-own-details {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  margin-top: 1px;
+  gap: 2px;
+  margin-top: 2px;
 }
 
+/* All three sub-lines: identical style — black, same size, same weight */
 .panel-own-line {
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand-black);
   line-height: 1.5;
 }
 
+/* Countdown inherits everything from .panel-own-line; only add tabular nums */
 .panel-own-countdown {
-  font-size: 12px;
-  font-weight: 800;
-  color: #2563eb;                /* blue — urgency / time */
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.4px;
 }
 
 /* ============================================================

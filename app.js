@@ -620,24 +620,35 @@
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   }
 
-  // ── Count nearby community members (proxy for push recipients) ──
-  async function countNearbyUsers() {
-    if (!userPosition) return 0;
-    const box    = getBoundingBox(userPosition.lat, userPosition.lng, ALERT_RADIUS_M);
-    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data } = await supabase
-      .from('alerts')
-      .select('user_id')
-      .gte('lat', box.minLat).lte('lat', box.maxLat)
-      .gte('lng', box.minLng).lte('lng', box.maxLng)
-      .gte('created_at', cutoff);
-    if (!data) return 0;
-    const distinct = new Set(data.map(a => a.user_id).filter(Boolean));
-    distinct.delete(USER_ID);   // exclude self
-    return distinct.size;
+  // ── Foot-traffic estimate (proxy for people who could receive the alert) ──
+  // Based on time-of-day + day-of-week + deterministic location variance.
+  // Used until the app has enough real users to report actual push recipients.
+  function estimateFootTraffic() {
+    const hour = new Date().getHours();
+    const day  = new Date().getDay();          // 0 = Sun, 6 = Sat
+    const isWeekend = day === 0 || day === 6;
+
+    // Base people within 200 m by time-of-day
+    let base;
+    if      (hour >= 8  && hour <= 9)  base = 85;  // morning rush
+    else if (hour >= 13 && hour <= 14) base = 65;  // lunch rush
+    else if (hour >= 18 && hour <= 20) base = 95;  // evening rush
+    else if (hour >= 10 && hour <= 17) base = 45;  // normal daytime
+    else if (hour >= 21 && hour <= 23) base = 28;  // late evening
+    else                               base = 8;   // night (0 – 7h)
+
+    if (isWeekend) base = Math.round(base * 0.75); // fewer commuters on weekends
+
+    // Small deterministic variance keyed to location so the same spot is consistent
+    if (userPosition) {
+      const seed = Math.abs(Math.round(userPosition.lat * 1000 + userPosition.lng * 1000)) % 21;
+      base += (seed - 10);   // ± 10 person variance
+    }
+
+    return Math.max(5, base);
   }
 
-  async function showOwnAlertPanel() {
+  function showOwnAlertPanel() {
     const panelIcon = document.getElementById('panel-icon');
 
     // Switch panel to own-alert style
@@ -657,9 +668,15 @@
     // Line 2: user count (async — show placeholder first)
     if (panelOwnUsers) panelOwnUsers.textContent = t('map.own_panel_users_wait');
 
-    // Line 3: countdown (starts at ALERT_AGE_MIN × 60 seconds)
+    // Line 2: foot-traffic estimate (synchronous — no loading state needed)
+    const estimated = estimateFootTraffic();
+    if (panelOwnUsers) {
+      panelOwnUsers.textContent = t('map.own_panel_users_n', { n: estimated });
+    }
+
+    // Line 3: countdown — 20 seconds
     stopCountdown();
-    countdownEndTime = Date.now() + ALERT_AGE_MIN * 60 * 1000;
+    countdownEndTime = Date.now() + 20 * 1000;
 
     const tick = () => {
       const remaining = countdownEndTime - Date.now();
@@ -671,16 +688,8 @@
     tick();
     countdownInterval = setInterval(tick, 1000);
 
-    // Show panel for 30 s (long enough to read all three lines)
-    showPanel(30000);
-
-    // Async: fetch real user count and update line 2
-    const userCount = await countNearbyUsers();
-    if (panelOwnUsers) {
-      panelOwnUsers.textContent = userCount > 0
-        ? t('map.own_panel_users_n', { n: userCount })
-        : t('map.own_panel_users_0');
-    }
+    // Show panel for the same 20 s so it auto-hides when countdown ends
+    showPanel(20000);
   }
 
   const riskBanner = document.getElementById('risk-banner');
