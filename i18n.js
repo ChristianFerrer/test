@@ -146,6 +146,16 @@
     'ios.step2':            { es: 'Selecciona <strong>"Agregar a pantalla de inicio"</strong>', en: 'Select <strong>"Add to Home Screen"</strong>' },
     'ios.step3':            { es: 'Toca <strong>"Agregar"</strong> arriba a la derecha', en: 'Tap <strong>"Add"</strong> in the top right' },
 
+    // ── ZONE INSIGHTS ─────────────────────────────────────────
+    'zone.score_safe':      { es: '🟢 Segura · {n}/100',          en: '🟢 Safe · {n}/100' },
+    'zone.score_moderate':  { es: '🟡 Moderada · {n}/100',        en: '🟡 Moderate · {n}/100' },
+    'zone.score_risk':      { es: '🔴 Riesgo · {n}/100',          en: '🔴 Risk · {n}/100' },
+    'zone.calm_min':        { es: '✅ Tranquila · {n}min',         en: '✅ Quiet · {n}min' },
+    'zone.calm_h':          { es: '✅ Tranquila · {n}h',           en: '✅ Quiet · {n}h' },
+    'zone.calm_d':          { es: '✅ Tranquila · {n}d',           en: '✅ Quiet · {n}d' },
+    'zone.calm_long':       { es: '✅ Tranquila · 30d+',           en: '✅ Quiet · 30d+' },
+    'zone.peak_hours':      { es: '⚠️ Pico hab.: {h1}h–{h2}h',   en: '⚠️ Usual peak: {h1}h–{h2}h' },
+
     // ── PUSH ───────────────────────────────────────────────────
     'push.not_supported':   { es: '[Whistle Push] Push no soportado en este navegador.', en: '[Whistle Push] Push not supported in this browser.' },
     'push.blocked':         { es: '[Whistle Push] Notificaciones bloqueadas por el usuario.', en: '[Whistle Push] Notifications blocked by user.' },

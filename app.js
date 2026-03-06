@@ -81,6 +81,10 @@
   // --- SURGE DETECTION STATE ---
   let historicalBaseline = 0;       // avg alerts per 30-min at current hour (last 30 days)
 
+  // --- ZONE INSIGHTS STATE ---
+  let zoneLastAlertTime  = null;    // ms-epoch of most recent historical alert in zone
+  let zoneInsightsReady  = false;   // true once loadZoneInsights() has resolved
+
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -96,6 +100,9 @@
   const btnLabel     = document.getElementById('btn-label');
   const heatmapBtn   = document.getElementById('heatmap-btn');
   const riskLegend   = document.getElementById('risk-legend');
+  const zoneChips    = document.getElementById('zone-chips');
+  const zoneScoreChip = document.getElementById('zone-score-chip');
+  const zonePeakChip  = document.getElementById('zone-peak-chip');
 
   // ============================================================
   // MAP INITIALIZATION
@@ -187,6 +194,7 @@
         initMap(lat, lng);
         loadNearbyAlerts();
         loadSurgeBaseline();
+        loadZoneInsights();
         subscribeToAlerts();
         // Init push notifications once on first GPS fix
         if (!pushInitialized && window.initPush) {
@@ -636,6 +644,95 @@
     console.log(`[Whistle] Surge baseline: ${sameHour.length} historical → avg ${historicalBaseline.toFixed(2)} alerts/30min`);
   }
 
+  // ============================================================
+  // ZONE INSIGHTS - Safety score, calm duration, peak hours
+  // ============================================================
+
+  /** Returns the calm-zone chip label with live duration suffix when data is ready */
+  function buildCalmText() {
+    if (!zoneInsightsReady) return t('map.calm_zone');
+    if (zoneLastAlertTime === null) return t('zone.calm_long'); // ≥30 days calm
+    const calmMin = Math.floor((Date.now() - zoneLastAlertTime) / 60000);
+    if (calmMin < 60)   return t('zone.calm_min', { n: calmMin });
+    if (calmMin < 1440) return t('zone.calm_h',   { n: Math.floor(calmMin / 60) });
+    return t('zone.calm_d', { n: Math.floor(calmMin / 1440) });
+  }
+
+  /** Fetches 30-day historical data for the 200m zone and renders score + peak chips */
+  async function loadZoneInsights() {
+    if (!userPosition) return;
+
+    const box    = getBoundingBox(userPosition.lat, userPosition.lng, ALERT_RADIUS_M);
+    const cutoff = new Date(Date.now() - ZONE_INSIGHT_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data } = await supabase
+      .from('alerts')
+      .select('lat, lng, created_at')
+      .gte('lat', box.minLat).lte('lat', box.maxLat)
+      .gte('lng', box.minLng).lte('lng', box.maxLng)
+      .gte('created_at', cutoff)
+      .order('created_at', { ascending: false });
+
+    if (!data) return;
+
+    // Precise Haversine filter
+    const nearby = data.filter(a =>
+      haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= ALERT_RADIUS_M
+    );
+
+    // --- Safety score (last 7 days, recency-weighted 1.0→0) ---
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const recent7d = nearby.filter(a => new Date(a.created_at).getTime() >= sevenDaysAgo);
+    const weightedSum = recent7d.reduce((sum, a) => {
+      const ageDays = (Date.now() - new Date(a.created_at).getTime()) / 86400000;
+      return sum + Math.max(0, 1 - ageDays / 7);
+    }, 0);
+    const score = Math.max(0, Math.round(100 - weightedSum * ZONE_SCORE_WEIGHT));
+
+    // --- Last alert time (for calm-duration chip) ---
+    zoneLastAlertTime = nearby.length > 0
+      ? new Date(nearby[0].created_at).getTime()
+      : null;
+
+    // --- Peak hour (counts by hour-of-day across 30 days) ---
+    const hourCounts = new Array(24).fill(0);
+    nearby.forEach(a => { hourCounts[new Date(a.created_at).getHours()]++; });
+    const maxCount = Math.max(...hourCounts);
+    const peakHour = maxCount >= ZONE_PEAK_MIN_DATA ? hourCounts.indexOf(maxCount) : null;
+
+    zoneInsightsReady = true;
+    console.log(`[Whistle] Zone insights: score=${score}, peak=${peakHour}h, lastAlert=${zoneLastAlertTime ? new Date(zoneLastAlertTime).toLocaleTimeString() : 'none'}`);
+
+    // --- Render score chip ---
+    if (zoneScoreChip) {
+      if (score >= 80) {
+        zoneScoreChip.className = 'zone-chip zone-chip--safe';
+        zoneScoreChip.textContent = t('zone.score_safe', { n: score });
+      } else if (score >= 50) {
+        zoneScoreChip.className = 'zone-chip zone-chip--moderate';
+        zoneScoreChip.textContent = t('zone.score_moderate', { n: score });
+      } else {
+        zoneScoreChip.className = 'zone-chip zone-chip--risk';
+        zoneScoreChip.textContent = t('zone.score_risk', { n: score });
+      }
+    }
+
+    // --- Render peak hour chip ---
+    if (zonePeakChip) {
+      if (peakHour !== null) {
+        zonePeakChip.className = 'zone-chip zone-chip--peak';
+        zonePeakChip.textContent = t('zone.peak_hours', { h1: peakHour, h2: (peakHour + 1) % 24 });
+      } else {
+        zonePeakChip.className = 'zone-chip hidden';
+      }
+    }
+
+    if (zoneChips) zoneChips.classList.remove('hidden');
+
+    // Refresh calm chip now that we have the last-alert timestamp
+    updateBadgeAndPanel();
+  }
+
   function updateRiskBanner() {
     const cutoff      = Date.now() - SURGE_WINDOW_MIN * 60 * 1000;
     const recentCount = Array.from(alertData.values())
@@ -666,7 +763,7 @@
     // Calm zone: visible only when GPS is ready and no nearby alerts
     if (calmZone) {
       if (count === 0 && userPosition) {
-        calmZone.textContent = t('map.calm_zone');
+        calmZone.textContent = buildCalmText();
         calmZone.classList.remove('hidden');
       } else {
         calmZone.classList.add('hidden');

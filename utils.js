@@ -28,6 +28,11 @@ const SURGE_WINDOW_MIN = 30;   // compare alerts in last N min vs historical ave
 const SURGE_THRESHOLD  = 3;    // rate must be ≥ 3× historical average to flag as surge
 const SURGE_MIN_COUNT  = 2;    // need at least N alerts to consider a surge (avoid noise)
 
+// --- ZONE INSIGHTS ---
+const ZONE_INSIGHT_DAYS  = 30; // days of history for safety score & peak hours
+const ZONE_SCORE_WEIGHT  = 15; // score penalty per recent (recency-weighted) alert
+const ZONE_PEAK_MIN_DATA = 3;  // min alerts needed before showing peak hour
+
 
 // --- USER IDENTITY ---
 // Persistent anonymous device ID (no account needed)

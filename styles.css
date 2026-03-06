@@ -406,6 +406,45 @@ html, body {
 .calm-zone.hidden { opacity: 0; }
 
 /* ============================================================
+   ZONE INSIGHT CHIPS - score + peak hours, left side above heatmap btn
+   ============================================================ */
+.zone-chips {
+  position: fixed;
+  left: 12px;
+  /* heatmap btn is at bottom: calc(68px + 14px) = 82px, ~32px tall → top at ~114px;
+     chips start at 128px (14px gap above heatmap btn top) */
+  bottom: calc(var(--bottom-bar-height) + 14px + 46px);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  pointer-events: none;
+}
+
+.zone-chip {
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 14px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #444;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  white-space: nowrap;
+  line-height: 1.35;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Score colour variants */
+.zone-chip--safe     { border-color: #a5d6a7; color: #1b5e20; background: rgba(232,245,233,0.97); }
+.zone-chip--moderate { border-color: #ffcc80; color: #bf360c; background: rgba(255,243,224,0.97); }
+.zone-chip--risk     { border-color: #ef9a9a; color: #b71c1c; background: rgba(255,235,238,0.97); }
+/* Peak hour chip */
+.zone-chip--peak     { border-color: #ffcc80; color: #bf360c; background: rgba(255,243,224,0.97); }
+
+/* ============================================================
    RISK ZONE BANNER - contextual warning when user is in danger area
    ============================================================ */
 .risk-banner {
