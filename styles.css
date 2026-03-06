@@ -424,19 +424,21 @@ html, body {
     rgba(76,201,240,0.02) 65%,
     transparent 100%);
 }
-/* Rotating sweep conic – sharp leading edge + long fading trail */
+/* Rotating sweep conic – trail BEHIND the needle (wake effect) */
+/* 0→195° clean transparent area ahead of needle                  */
+/* 195→360° trail that builds up to the needle at 360°=0°         */
 .radar-sweep {
   position: absolute; inset: 0;
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    rgba(76,201,240,0.95) 0deg,    /* bright sweep arm */
-    rgba(76,201,240,0.75) 2deg,    /* bright core just behind */
-    rgba(76,201,240,0.40) 18deg,   /* quick initial decay */
-    rgba(76,201,240,0.18) 55deg,   /* slow fade through mid-trail */
-    rgba(76,201,240,0.06) 120deg,  /* near-transparent long tail */
-    transparent              165deg,
-    transparent              360deg
+    transparent              0deg,    /* clean zone ahead of needle */
+    transparent              195deg,
+    rgba(76,201,240,0.05)    225deg,  /* faint start of wake */
+    rgba(76,201,240,0.18)    290deg,  /* building up */
+    rgba(76,201,240,0.50)    346deg,  /* strong glow */
+    rgba(76,201,240,0.95)    358deg,  /* bright needle */
+    rgba(76,201,240,0.95)    360deg   /* needle tip (wraps to 0°) */
   );
   animation: radar-rotate 3s linear infinite;
 }
