@@ -193,7 +193,7 @@
     const isFirstFix = !userPosition;
 
     userPosition = { lat, lng };
-    setGpsStatus('active', pos.coords.accuracy);
+    setGpsStatus('active');
     permissionOverlay.classList.add('hidden');
 
     if (isFirstFix) {
@@ -665,18 +665,15 @@
     // Line 1: reach
     if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach');
 
-    // Line 2: user count (async — show placeholder first)
-    if (panelOwnUsers) panelOwnUsers.textContent = t('map.own_panel_users_wait');
-
     // Line 2: foot-traffic estimate (synchronous — no loading state needed)
     const estimated = estimateFootTraffic();
     if (panelOwnUsers) {
       panelOwnUsers.textContent = t('map.own_panel_users_n', { n: estimated });
     }
 
-    // Line 3: countdown — 20 seconds
+    // Line 3: countdown — 20 minutes (matches alert active lifetime)
     stopCountdown();
-    countdownEndTime = Date.now() + 20 * 1000;
+    countdownEndTime = Date.now() + ALERT_AGE_MIN * 60 * 1000;
 
     const tick = () => {
       const remaining = countdownEndTime - Date.now();

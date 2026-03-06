@@ -46,7 +46,7 @@
     // ── INDEX / MAP ────────────────────────────────────────────
     'map.tagline':          { es: 'Alertas de carteristas a tu alrededor y en tiempo real', en: 'Real-time pickpocket alerts around you' },
     'map.gps_searching':    { es: 'Buscando...',                 en: 'Searching...' },
-    'map.gps_active':       { es: 'GPS activo · ±{m}m',          en: 'GPS active · ±{m}m' },
+    'map.gps_active':       { es: 'GPS activo',                   en: 'GPS active' },
     'map.gps_none':         { es: 'Sin GPS',                     en: 'No GPS' },
     'map.no_gps_browser':   { es: 'Tu navegador no soporta geolocalización', en: 'Your browser does not support geolocation' },
     'map.gps_error':        { es: 'Error de GPS: ',              en: 'GPS error: ' },
