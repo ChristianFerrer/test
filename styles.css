@@ -424,16 +424,19 @@ html, body {
     rgba(76,201,240,0.02) 65%,
     transparent 100%);
 }
-/* Rotating sweep conic */
+/* Rotating sweep conic – sharp leading edge + long fading trail */
 .radar-sweep {
   position: absolute; inset: 0;
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    rgba(76,201,240,0.55) 0deg,
-    rgba(76,201,240,0.18) 55deg,
-    transparent 85deg,
-    transparent 360deg
+    rgba(76,201,240,0.95) 0deg,    /* bright sweep arm */
+    rgba(76,201,240,0.75) 2deg,    /* bright core just behind */
+    rgba(76,201,240,0.40) 18deg,   /* quick initial decay */
+    rgba(76,201,240,0.18) 55deg,   /* slow fade through mid-trail */
+    rgba(76,201,240,0.06) 120deg,  /* near-transparent long tail */
+    transparent              165deg,
+    transparent              360deg
   );
   animation: radar-rotate 3s linear infinite;
 }
