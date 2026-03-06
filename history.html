@@ -44,10 +44,16 @@
   <div class="view-toggle-bar">
     <button class="toggle-btn active" id="btn-list" data-view="list" data-i18n="history.list">Lista</button>
     <button class="toggle-btn" id="btn-map" data-view="map" data-i18n="history.map">Mapa</button>
+    <div class="filter-bar">
+      <button class="filter-pill active" id="filter-24h" data-i18n="history.filter_24h">24h</button>
+      <button class="filter-pill" id="filter-7d" data-i18n="history.filter_7d">7 d&#237;as</button>
+      <button class="filter-pill" id="filter-30d" data-i18n="history.filter_30d">30 d&#237;as</button>
+    </div>
   </div>
+  <div id="history-summary" class="history-summary"></div>
 
   <!-- ==================== LIST VIEW ==================== -->
-  <div id="list-view" class="alert-list-container">
+  <div id="list-view" class="alert-list-container" style="top: calc(var(--header-height) + 50px + 32px);">
     <div class="spinner" data-i18n="history.loading">Cargando alertas...</div>
   </div>
 
@@ -58,23 +64,27 @@
 
   <!-- ==================== BOTTOM NAVIGATION ==================== -->
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item" aria-label="Alertar">
+    <a href="index.html" class="nav-item" aria-label="Radar">
       <img src="radar.png" class="nav-icon-img" alt="">
+      <span class="nav-label" data-i18n="nav.alert">Radar</span>
     </a>
-    <a href="history.html" class="nav-item active" aria-label="Historial de alertas">
+    <a href="history.html" class="nav-item active" aria-label="Historial">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
       </svg>
+      <span class="nav-label" data-i18n="nav.history">Historial</span>
     </a>
-    <a href="profile.html" class="nav-item" aria-label="Mi perfil">
+    <a href="profile.html" class="nav-item" aria-label="Perfil">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
       </svg>
+      <span class="nav-label" data-i18n="nav.profile">Perfil</span>
     </a>
     <a href="admin.html" id="admin-link" class="nav-item nav-admin hidden" aria-label="Admin">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
       </svg>
+      <span class="nav-label" data-i18n="nav.admin">Admin</span>
     </a>
   </nav>
 

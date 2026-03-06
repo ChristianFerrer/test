@@ -46,7 +46,7 @@
     // ── INDEX / MAP ────────────────────────────────────────────
     'map.tagline':          { es: 'Alertas de carteristas a tu alrededor y en tiempo real', en: 'Real-time pickpocket alerts around you' },
     'map.gps_searching':    { es: 'Buscando...',                 en: 'Searching...' },
-    'map.gps_active':       { es: 'GPS activo',                  en: 'GPS active' },
+    'map.gps_active':       { es: 'GPS activo · ±{m}m',          en: 'GPS active · ±{m}m' },
     'map.gps_none':         { es: 'Sin GPS',                     en: 'No GPS' },
     'map.no_gps_browser':   { es: 'Tu navegador no soporta geolocalización', en: 'Your browser does not support geolocation' },
     'map.gps_error':        { es: 'Error de GPS: ',              en: 'GPS error: ' },
@@ -81,9 +81,9 @@
     'map.risk_surge':       { es: '🚨 Actividad inusual · {n} alertas ({x}× lo habitual)', en: '🚨 Unusual activity · {n} alerts ({x}× above normal)' },
 
     // ── NAV ────────────────────────────────────────────────────
-    'nav.alert':            { es: 'Alertar',                     en: 'Alert' },
-    'nav.history':          { es: 'Historial de alertas',        en: 'Alert history' },
-    'nav.profile':          { es: 'Mi perfil',                   en: 'My profile' },
+    'nav.alert':            { es: 'Radar',                       en: 'Radar' },
+    'nav.history':          { es: 'Historial',                   en: 'History' },
+    'nav.profile':          { es: 'Perfil',                      en: 'Profile' },
     'nav.admin':            { es: 'Admin',                       en: 'Admin' },
 
     // ── HISTORY ────────────────────────────────────────────────
@@ -105,6 +105,13 @@
     'history.loading_addr': { es: 'Cargando dirección...',       en: 'Loading address...' },
     'history.popup_title':  { es: 'Carterista detectado',        en: 'Pickpocket detected' },
     'history.distance':     { es: 'de distancia',                en: 'away' },
+    'history.filter_24h':   { es: '24h',                         en: '24h' },
+    'history.filter_7d':    { es: '7 días',                      en: '7 days' },
+    'history.filter_30d':   { es: '30 días',                     en: '30 days' },
+    'history.summary_one':  { es: '1 alerta en tu zona',         en: '1 alert in your area' },
+    'history.summary_many': { es: '{n} alertas · {z} zonas activas', en: '{n} alerts · {z} active zones' },
+    'history.verified':     { es: '✓ Verificada',                en: '✓ Verified' },
+    'history.empty_period': { es: 'Sin alertas en este período', en: 'No alerts in this period' },
 
     // ── PROFILE ────────────────────────────────────────────────
     'profile.title':        { es: 'Mi perfil',                   en: 'My profile' },
@@ -112,8 +119,10 @@
     'profile.since':        { es: 'Miembro desde ',              en: 'Member since ' },
     'profile.stat_total':   { es: 'Alertas enviadas',            en: 'Alerts sent' },
     'profile.stat_today':   { es: 'Hoy',                         en: 'Today' },
-    'profile.stat_streak':  { es: 'Días activo',                 en: 'Active days' },
+    'profile.stat_streak':  { es: 'Racha',                       en: 'Streak' },
+    'profile.stat_reach':   { es: '~Personas avisadas',          en: '~People warned' },
     'profile.my_alerts':    { es: 'Mis últimas alertas',         en: 'My recent alerts' },
+    'map.calm_zone':        { es: '✅ Zona tranquila',            en: '✅ Quiet zone' },
     'profile.no_alerts':    { es: 'Aún no has enviado ninguna alerta', en: "You haven't sent any alerts yet" },
     'profile.no_alerts_sub':{ es: 'Usa el botón REPORTAR en el mapa para avisar a otros usuarios', en: 'Use the REPORT button on the map to warn other users' },
     'profile.error':        { es: 'Error al cargar tus alertas', en: 'Error loading your alerts' },

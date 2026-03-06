@@ -162,13 +162,15 @@
   // USER LOCATION TRACKING
   // ============================================================
 
-  function setGpsStatus(status) {
+  function setGpsStatus(status, accuracy) {
     // status: 'searching' | 'active' | 'error'
     gpsDot.className = 'gps-dot' + (status === 'active' ? ' active' : status === 'error' ? ' error' : '');
     if (status === 'searching') gpsLabel.textContent = t('map.gps_searching');
-    else if (status === 'active') gpsLabel.textContent = t('map.gps_active');
+    else if (status === 'active') gpsLabel.textContent = t('map.gps_active', { m: Math.round(accuracy || 0) });
     else gpsLabel.textContent = t('map.gps_none');
   }
+
+  const calmZone = document.getElementById('calm-zone');
 
   function onPositionSuccess(pos) {
     const lat = pos.coords.latitude;
@@ -176,7 +178,7 @@
     const isFirstFix = !userPosition;
 
     userPosition = { lat, lng };
-    setGpsStatus('active');
+    setGpsStatus('active', pos.coords.accuracy);
     permissionOverlay.classList.add('hidden');
 
     if (isFirstFix) {
@@ -661,6 +663,15 @@
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
     updateRiskBanner();
+    // Calm zone: visible only when GPS is ready and no nearby alerts
+    if (calmZone) {
+      if (count === 0 && userPosition) {
+        calmZone.textContent = t('map.calm_zone');
+        calmZone.classList.remove('hidden');
+      } else {
+        calmZone.classList.add('hidden');
+      }
+    }
 
     // Badge
     if (count > 0) {

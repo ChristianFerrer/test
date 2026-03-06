@@ -387,6 +387,25 @@ html, body {
 
 
 /* ============================================================
+   CALM ZONE CHIP - shown when no nearby alerts
+   ============================================================ */
+.calm-zone {
+  position: fixed;
+  bottom: calc(var(--bottom-bar-height) + 14px);
+  left: 50%; transform: translateX(-50%);
+  z-index: 500;
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid #c8e6c9;
+  color: #2e7d32;
+  font-size: 13px; font-weight: 700;
+  padding: 8px 18px; border-radius: 24px;
+  box-shadow: 0 2px 10px rgba(46,125,50,0.15);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.calm-zone.hidden { opacity: 0; }
+
+/* ============================================================
    RISK ZONE BANNER - contextual warning when user is in danger area
    ============================================================ */
 .risk-banner {
@@ -562,17 +581,23 @@ html, body {
   transition: color var(--tr-fast);
 }
 
-/* Hide any leftover text labels */
-.nav-item span { display: none; }
+/* Nav labels */
+.nav-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-top: 2px;
+  color: currentColor;
+  line-height: 1;
+}
 
 .nav-item svg {
-  width: 40px; height: 40px;
+  width: 28px; height: 28px;
   stroke-width: 2;
   fill: none; stroke: currentColor;
 }
 
 .nav-icon-img {
-  width: 40px; height: 40px;
+  width: 28px; height: 28px;
   object-fit: contain;
   opacity: 0.45;
   transition: opacity var(--tr-fast);
@@ -738,6 +763,37 @@ html, body {
   border: none;
   color: var(--brand-black);
   box-shadow: none;
+}
+
+/* History filter pills */
+.filter-bar {
+  display: flex; gap: 6px; margin-left: auto;
+}
+.filter-pill {
+  padding: 4px 12px; border-radius: 20px;
+  border: 1.5px solid #e0e0e0;
+  background: transparent; font-size: 11px; font-weight: 700;
+  color: var(--text-secondary); cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-pill.active {
+  background: var(--brand-black); color: #fff; border-color: var(--brand-black);
+}
+
+/* History summary bar */
+.history-summary {
+  padding: 8px 16px 4px;
+  font-size: 12px; font-weight: 700; color: var(--text-secondary);
+  display: none;
+}
+.history-summary.visible { display: block; }
+
+/* Verified badge on history cards */
+.card-verified {
+  font-size: 10px; font-weight: 800;
+  color: #2e7d32; background: #e8f5e9;
+  border-radius: 10px; padding: 2px 7px;
+  margin-left: auto;
 }
 
 .alert-list-container {
@@ -1051,10 +1107,10 @@ html, body {
   margin-top: 3px;
 }
 
-/* Stats row */
+/* Stats row — 4 columns when 4 stat cards */
 .stats-row {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; padding: 14px 14px 4px;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 8px; padding: 14px 14px 4px;
 }
 
 .stat-card {

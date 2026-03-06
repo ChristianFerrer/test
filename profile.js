@@ -14,6 +14,7 @@
   const statTotal      = document.getElementById('stat-total');
   const statToday      = document.getElementById('stat-today');
   const statStreak     = document.getElementById('stat-streak');
+  const statReach      = document.getElementById('stat-reach');
   const myAlertsList   = document.getElementById('my-alerts-list');
   const myAlertsBadge  = document.getElementById('my-alerts-badge');
   const btnLogout      = document.getElementById('btn-logout');
@@ -73,14 +74,35 @@
     const todayStart = getTodayStart();
     const todayCount = data.filter(a => a.created_at >= todayStart).length;
 
-    // Active days: count distinct dates
-    const distinctDays = new Set(
-      data.map(a => new Date(a.created_at).toDateString())
-    ).size;
+    // Streak: consecutive calendar days (including today) going backwards
+    function computeStreak(alerts) {
+      if (!alerts.length) return 0;
+      // Build a Set of 'YYYY-M-D' keys in local time
+      const daySet = new Set(
+        alerts.map(a => {
+          const d = new Date(a.created_at);
+          return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+        })
+      );
+      const today = new Date();
+      // Walk back day by day from today until a gap is found
+      let streak = 0;
+      const cursor = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      while (daySet.has(`${cursor.getFullYear()}-${cursor.getMonth()}-${cursor.getDate()}`)) {
+        streak++;
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      return streak;
+    }
+
+    // Reach estimate: each alert is seen by ~10 nearby users on average
+    const AVG_REACH_PER_ALERT = 10;
+    const reach = total * AVG_REACH_PER_ALERT;
 
     statTotal.textContent  = total;
     statToday.textContent  = todayCount;
-    statStreak.textContent = distinctDays;
+    statStreak.textContent = computeStreak(data);
+    if (statReach) statReach.textContent = reach > 0 ? reach : '–';
 
     if (total > 0) {
       myAlertsBadge.textContent = total;

@@ -14,16 +14,22 @@
   let historyMarkers = [];
   let allAlerts = [];
   let currentView = 'list';
+  let filterHours = 24;   // active time filter: 24 | 168 (7d) | 720 (30d)
+  let verifiedIds = new Set();   // updated by loadHistory, read by setView re-render
   let watchId = null;
   let refreshTimer = null;
 
   // --- DOM REFS ---
-  const historyCount = document.getElementById('history-count');
-  const historyCountNum = document.getElementById('history-count-num');
-  const listView = document.getElementById('list-view');
+  const historyCount     = document.getElementById('history-count');
+  const historyCountNum  = document.getElementById('history-count-num');
+  const listView         = document.getElementById('list-view');
   const mapViewContainer = document.getElementById('map-view-container');
-  const btnList = document.getElementById('btn-list');
-  const btnMap = document.getElementById('btn-map');
+  const btnList          = document.getElementById('btn-list');
+  const btnMap           = document.getElementById('btn-map');
+  const filter24h        = document.getElementById('filter-24h');
+  const filter7d         = document.getElementById('filter-7d');
+  const filter30d        = document.getElementById('filter-30d');
+  const historySummary   = document.getElementById('history-summary');
 
   // ============================================================
   // VIEW TOGGLE
@@ -38,7 +44,7 @@
       listView.classList.remove('hidden');
       mapViewContainer.classList.add('hidden');
       // Re-render list in case it was stale
-      if (allAlerts.length > 0) renderList(allAlerts);
+      if (allAlerts.length > 0) renderList(allAlerts, verifiedIds);
     } else {
       btnMap.classList.add('active');
       btnList.classList.remove('active');
@@ -169,22 +175,51 @@
   // LOAD HISTORY FROM SUPABASE
   // ============================================================
 
+  /** Returns the Set of alert IDs that are verified (≥2 distinct users within cluster thresholds) */
+  function computeVerifiedSet(alerts) {
+    const verified = new Set();
+    for (const a of alerts) {
+      const aTime = new Date(a.created_at).getTime();
+      let corrobCount = 0;
+      for (const b of alerts) {
+        if (a.id === b.id) continue;
+        if (a.user_id && b.user_id && a.user_id === b.user_id) continue;
+        const timeDiff = Math.abs(aTime - new Date(b.created_at).getTime()) / 60000;
+        if (timeDiff > CLUSTER_TIME_MIN) continue;
+        if (haversineDistance(a.lat, a.lng, b.lat, b.lng) <= CLUSTER_RADIUS_M) corrobCount++;
+      }
+      if (corrobCount >= CLUSTER_MIN_USERS - 1) verified.add(a.id);
+    }
+    return verified;
+  }
+
+  /** Counts distinct geographic zones (cells of ~500m) with at least 1 alert */
+  function countActiveZones(alerts) {
+    const cells = new Set();
+    alerts.forEach(a => {
+      const cellLat = Math.round(a.lat * 200) / 200;  // ~500m grid
+      const cellLng = Math.round(a.lng * 200) / 200;
+      cells.add(`${cellLat},${cellLng}`);
+    });
+    return cells.size;
+  }
+
   async function loadHistory() {
     if (!userPosition) return;
 
     const box = getBoundingBox(userPosition.lat, userPosition.lng, HISTORY_RADIUS_M);
-    const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const cutoff = new Date(Date.now() - filterHours * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await supabase
       .from('alerts')
-      .select('id, lat, lng, created_at')
+      .select('id, lat, lng, created_at, user_id')
       .gte('lat', box.minLat)
       .lte('lat', box.maxLat)
       .gte('lng', box.minLng)
       .lte('lng', box.maxLng)
-      .gte('created_at', last24h)
+      .gte('created_at', cutoff)
       .order('created_at', { ascending: false })
-      .limit(300);
+      .limit(500);
 
     if (error) {
       console.error('[Whistle] loadHistory error:', error);
@@ -192,26 +227,44 @@
       return;
     }
 
-    // Precise Haversine filter to 5km
-    const within5km = data.filter(a =>
+    // Precise Haversine filter
+    const within = data.filter(a =>
       haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= HISTORY_RADIUS_M
     );
 
-    allAlerts = within5km;
+    allAlerts = within;
+
+    // Compute verified set using clustering constants (module-level so setView can reuse)
+    verifiedIds = computeVerifiedSet(within);
 
     // Update count badge
-    if (within5km.length > 0) {
-      historyCountNum.textContent = within5km.length;
+    if (within.length > 0) {
+      historyCountNum.textContent = within.length;
       historyCount.classList.remove('hidden');
     } else {
       historyCount.classList.add('hidden');
     }
 
-    renderList(within5km);
+    // Summary bar
+    if (historySummary) {
+      if (within.length === 0) {
+        historySummary.textContent = t('history.empty_period');
+        historySummary.classList.add('visible');
+      } else if (within.length === 1) {
+        historySummary.textContent = t('history.summary_one');
+        historySummary.classList.add('visible');
+      } else {
+        const zones = countActiveZones(within);
+        historySummary.textContent = t('history.summary_many', { n: within.length, z: zones });
+        historySummary.classList.add('visible');
+      }
+    }
+
+    renderList(within, verifiedIds);
 
     // Also update map markers if map view is active
     if (currentView === 'map' && historyMap) {
-      renderMapMarkers(within5km);
+      renderMapMarkers(within);
     }
   }
 
@@ -280,7 +333,7 @@
   // RENDER LIST
   // ============================================================
 
-  function renderList(alerts) {
+  function renderList(alerts, verifiedSet = new Set()) {
     if (alerts.length === 0) {
       listView.innerHTML = `
         <div class="empty-state">
@@ -293,6 +346,7 @@
 
     const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
     listView.innerHTML = alerts.map((alert) => {
+      const isVerified = verifiedSet.has(alert.id);
       const d = new Date(alert.created_at);
 
       // Full date: dd/mm/yyyy  HH:MM
@@ -332,6 +386,7 @@
           <div class="card-body">
             <div class="card-top-row">
               <span class="card-datetime">${fullDateStr}</span>
+              ${isVerified ? `<span class="card-verified">${t('history.verified')}</span>` : ''}
               <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? t('history.active') : t('history.expired')}</span>
             </div>
             <div class="card-mid-row">
@@ -395,6 +450,16 @@
   // ============================================================
 
   function boot() {
+    // Filter pills
+    function setActiveFilter(active) {
+      [filter24h, filter7d, filter30d].forEach(b => b && b.classList.remove('active'));
+      if (active) active.classList.add('active');
+    }
+    if (filter24h) filter24h.addEventListener('click', () => { filterHours = 24;  setActiveFilter(filter24h); loadHistory(); });
+    if (filter7d)  filter7d.addEventListener('click',  () => { filterHours = 168; setActiveFilter(filter7d);  loadHistory(); });
+    if (filter30d) filter30d.addEventListener('click', () => { filterHours = 720; setActiveFilter(filter30d); loadHistory(); });
+    setActiveFilter(filter24h); // default active
+
     // Toggle buttons
     btnList.addEventListener('click', () => setView('list'));
     btnMap.addEventListener('click', () => {
