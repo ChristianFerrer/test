@@ -85,6 +85,10 @@
   let zoneLastAlertTime  = null;    // ms-epoch of most recent historical alert in zone
   let zoneInsightsReady  = false;   // true once loadZoneInsights() has resolved
 
+  // --- OWN-ALERT COUNTDOWN STATE ---
+  let countdownInterval = null;     // setInterval handle for the 20-min countdown
+  let countdownEndTime  = null;     // ms-epoch when the sent alert expires
+
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -103,6 +107,10 @@
   const zoneChips    = document.getElementById('zone-chips');
   const zoneScoreChip = document.getElementById('zone-score-chip');
   const zonePeakChip  = document.getElementById('zone-peak-chip');
+  const panelOwnDetails   = document.getElementById('panel-own-details');
+  const panelOwnReach     = document.getElementById('panel-own-reach');
+  const panelOwnUsers     = document.getElementById('panel-own-users');
+  const panelOwnCountdown = document.getElementById('panel-own-countdown');
 
   // ============================================================
   // MAP INITIALIZATION
@@ -583,35 +591,96 @@
 
   let panelAutoHideTimer = null;
 
-  function showPanel() {
+  function showPanel(durationMs = 10000) {
     bottomPanel.classList.add('visible');
     riskLegend.classList.add('panel-open');
     clearTimeout(panelAutoHideTimer);
-    panelAutoHideTimer = setTimeout(hidePanel, 10000);
+    panelAutoHideTimer = setTimeout(hidePanel, durationMs);
   }
 
   function hidePanel() {
     bottomPanel.classList.remove('visible');
     riskLegend.classList.remove('panel-open');
+    // Restore from own-alert state if active
+    bottomPanel.classList.remove('bottom-panel--own');
+    panelSubtitle.classList.remove('hidden');
+    if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
+    stopCountdown();
   }
 
-  function showOwnAlertPanel() {
-    // Subtract 1 to exclude the user's own marker from the "nearby others" count
-    const nearby = Math.max(0, alertMarkers.size - 1);
+  // ── Countdown helpers ─────────────────────────────────────────
+  function stopCountdown() {
+    if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  }
+
+  function formatCountdown(ms) {
+    const totalSec = Math.max(0, Math.floor(ms / 1000));
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  // ── Count nearby community members (proxy for push recipients) ──
+  async function countNearbyUsers() {
+    if (!userPosition) return 0;
+    const box    = getBoundingBox(userPosition.lat, userPosition.lng, ALERT_RADIUS_M);
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await supabase
+      .from('alerts')
+      .select('user_id')
+      .gte('lat', box.minLat).lte('lat', box.maxLat)
+      .gte('lng', box.minLng).lte('lng', box.maxLng)
+      .gte('created_at', cutoff);
+    if (!data) return 0;
+    const distinct = new Set(data.map(a => a.user_id).filter(Boolean));
+    distinct.delete(USER_ID);   // exclude self
+    return distinct.size;
+  }
+
+  async function showOwnAlertPanel() {
     const panelIcon = document.getElementById('panel-icon');
+
+    // Switch panel to own-alert style
     bottomPanel.classList.add('bottom-panel--own');
     if (panelIcon) panelIcon.src = 'whistle.png';
+
+    // Title
     panelTitleText.textContent = t('map.own_panel_title');
-    panelSubtitle.textContent = nearby === 0
-      ? t('map.own_panel_no_others')
-      : nearby === 1
-      ? t('map.own_panel_one')
-      : t('map.own_panel_many', { n: nearby });
-    showPanel();
-    setTimeout(() => {
-      if (panelIcon) panelIcon.src = 'thief2.png';
-      bottomPanel.classList.remove('bottom-panel--own');
-    }, 10500);
+
+    // Hide normal subtitle, show own-alert detail lines
+    panelSubtitle.classList.add('hidden');
+    if (panelOwnDetails) panelOwnDetails.classList.remove('hidden');
+
+    // Line 1: reach
+    if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach');
+
+    // Line 2: user count (async — show placeholder first)
+    if (panelOwnUsers) panelOwnUsers.textContent = t('map.own_panel_users_wait');
+
+    // Line 3: countdown (starts at ALERT_AGE_MIN × 60 seconds)
+    stopCountdown();
+    countdownEndTime = Date.now() + ALERT_AGE_MIN * 60 * 1000;
+
+    const tick = () => {
+      const remaining = countdownEndTime - Date.now();
+      if (panelOwnCountdown) {
+        panelOwnCountdown.textContent = t('map.own_panel_duration', { t: formatCountdown(remaining) });
+      }
+      if (remaining <= 0) stopCountdown();
+    };
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+
+    // Show panel for 30 s (long enough to read all three lines)
+    showPanel(30000);
+
+    // Async: fetch real user count and update line 2
+    const userCount = await countNearbyUsers();
+    if (panelOwnUsers) {
+      panelOwnUsers.textContent = userCount > 0
+        ? t('map.own_panel_users_n', { n: userCount })
+        : t('map.own_panel_users_0');
+    }
   }
 
   const riskBanner = document.getElementById('risk-banner');
