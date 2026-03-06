@@ -8,7 +8,7 @@ const SUPABASE_URL = 'https://gboguglxgvdsvzprtigj.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdib2d1Z2x4Z3Zkc3Z6cHJ0aWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0NDk4NDksImV4cCI6MjA4NzAyNTg0OX0.f1NcwM2D29kD3x-rFxiWH1kK6ME4SD294UxNygGE8-E';
 
 // --- CONSTANTS ---
-const ALERT_RADIUS_M  = 200;  // meters - live map nearby radius
+const ALERT_RADIUS_M  = 100;  // meters - live map nearby radius
 const ALERT_AGE_MIN   = 20;   // minutes - max age for live map alerts
 const HISTORY_RADIUS_M = 5000; // meters - history screen radius (5 km)
 const COOLDOWN_MS     = 30000; // milliseconds - cooldown between alerts

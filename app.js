@@ -628,7 +628,7 @@
     const day  = new Date().getDay();          // 0 = Sun, 6 = Sat
     const isWeekend = day === 0 || day === 6;
 
-    // Base people within 200 m by time-of-day
+    // Base people within 100 m by time-of-day
     let base;
     if      (hour >= 8  && hour <= 9)  base = 85;  // morning rush
     else if (hour >= 13 && hour <= 14) base = 65;  // lunch rush
@@ -733,7 +733,7 @@
     return t('zone.calm_d', { n: Math.floor(calmMin / 1440) });
   }
 
-  /** Fetches 30-day historical data for the 200m zone and renders score + peak chips */
+  /** Fetches 30-day historical data for the 100m zone and renders score + peak chips */
   async function loadZoneInsights() {
     if (!userPosition) return;
 
