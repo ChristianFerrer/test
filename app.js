@@ -131,7 +131,7 @@
 
     map = L.map('map', {
       center: [lat, lng],
-      zoom: 18,
+      zoom: 16,
       zoomControl: false,
       attributionControl: true,
     });
@@ -158,7 +158,7 @@
     // Force Leaflet to recalculate its size after the overlay is hidden
     setTimeout(() => {
       map.invalidateSize({ animate: false });
-      map.setView([lat, lng], 18);
+      map.setView([lat, lng], 16);
       updateRadar(); // draw radar once map is fully laid out
     }, 100);
 
