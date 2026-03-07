@@ -224,6 +224,7 @@
   // ============================================================
 
   function setGpsStatus(status, accuracy) {
+    if (!gpsDot || !gpsLabel) return;
     // status: 'searching' | 'active' | 'error'
     gpsDot.className = 'gps-dot' + (status === 'active' ? ' active' : status === 'error' ? ' error' : '');
     if (status === 'searching') gpsLabel.textContent = t('map.gps_searching');

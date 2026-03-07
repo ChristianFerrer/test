@@ -3,7 +3,7 @@
 // Handles Web Push notifications even when browser is closed
 // ============================================================
 
-const CACHE_NAME = 'whistle-v1';
+const CACHE_NAME = 'whistle-v2';
 
 // ── Install & activate ──────────────────────────────────────
 self.addEventListener('install', () => self.skipWaiting());
