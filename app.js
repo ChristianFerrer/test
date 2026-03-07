@@ -223,12 +223,9 @@
   // USER LOCATION TRACKING
   // ============================================================
 
-  function setGpsStatus(status, accuracy) {
+  function setGpsStatus(status) {
     // status: 'searching' | 'active' | 'error'
     gpsDot.className = 'gps-dot' + (status === 'active' ? ' active' : status === 'error' ? ' error' : '');
-    if (status === 'searching') gpsLabel.textContent = t('map.gps_searching');
-    else if (status === 'active') gpsLabel.textContent = t('map.gps_active', { m: Math.round(accuracy || 0) });
-    else gpsLabel.textContent = t('map.gps_none');
   }
 
   const calmZone = document.getElementById('calm-zone');
