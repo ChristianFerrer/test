@@ -547,9 +547,13 @@
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.log('[Whistle] Realtime connected');
-        } else if (status === 'CHANNEL_ERROR') {
-          console.warn('[Whistle] Realtime error, will retry on focus');
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          console.warn('[Whistle] Realtime disconnected (' + status + '), reconnecting in 5s…');
+          supabase.removeChannel(realtimeChannel);
           realtimeChannel = null;
+          setTimeout(() => {
+            if (!realtimeChannel && userPosition) subscribeToAlerts();
+          }, 5000);
         }
       });
   }
