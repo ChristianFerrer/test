@@ -185,7 +185,7 @@
 
   /** Returns RGB channels string for radar colour based on nearby alert count */
   function getRadarRgb(count) {
-    if (count === 0)   return '76,175,80';   // green  – zona tranquila
+    if (count === 0)   return '52,199,89';   // green  #34C759 – zona tranquila
     if (count <= 2)    return '255,193,7';   // amber  – 1-2 alertas, precaución
     return              '244,67,54';          // red    – 3+ alertas, actividad elevada
   }
