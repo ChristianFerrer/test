@@ -251,6 +251,7 @@ html, body {
    ============================================================ */
 .user-dot-wrapper {
   position: relative; width: 22px; height: 22px;
+  overflow: visible;
 }
 
 .user-dot {
@@ -259,14 +260,23 @@ html, body {
   background: #1a73e8;
   border: 2.5px solid #fff;
   box-shadow: 0 2px 8px rgba(26,115,232,0.5);
-  animation: pulse-blue 2.4s ease-out infinite;
 }
 
-@keyframes pulse-blue {
-  0%   { box-shadow: 0 0 0 0 rgba(26,115,232,0.55); }
-  65%  { box-shadow: 0 0 0 18px rgba(26,115,232,0); }
-  100% { box-shadow: 0 0 0 0 rgba(26,115,232,0); }
+/* Expanding 100m pulse ring — keyframes injected dynamically by updatePulse() */
+.user-pulse {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: rgba(26,115,232,0.18);
+  border: 1.5px solid rgba(26,115,232,0.55);
+  pointer-events: none;
+  transform-origin: center;
+  animation: pulse-expand 2.8s ease-out infinite;
 }
+
+/* @keyframes pulse-expand is written by updatePulse() in app.js */
 
 /* ============================================================
    ALERT MARKER - Yellow diamond with pickpocket icon (like ref)

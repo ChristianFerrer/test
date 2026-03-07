@@ -150,14 +150,14 @@
     // User position marker (pulsing blue dot)
     const userIcon = L.divIcon({
       className: '',
-      html: '<div class="user-dot-wrapper"><div class="user-dot"></div></div>',
+      html: '<div class="user-dot-wrapper"><div class="user-pulse"></div><div class="user-dot"></div></div>',
       iconSize: [20, 20],
       iconAnchor: [10, 10],
     });
 
     userMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
 
-    // Radar resizes when user zooms in/out
+    // Radar + pulse resize when user zooms in/out
     map.on('zoomend', updateRadar);
 
     // Force Leaflet to recalculate its size after the overlay is hidden
@@ -222,6 +222,33 @@
         interactive: false,
       }).addTo(map);
     }
+    updatePulse();
+  }
+
+  /**
+   * updatePulse – injects a @keyframes rule so the .user-pulse ring
+   * expands exactly to ALERT_RADIUS_M (100 m) at the current zoom level.
+   * The element is 18 px wide (9 px radius); scale = 100m_radius_px / 9.
+   */
+  function updatePulse() {
+    if (!userPosition || !map) return;
+    const radiusPx  = getRadarDiamPx(userPosition.lat) / 2;  // 100 m in px
+    const dotRadius = 9;                                       // half of 18 px dot
+    const scale     = (radiusPx / dotRadius).toFixed(3);
+
+    let styleEl = document.getElementById('pulse-keyframes');
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'pulse-keyframes';
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = `
+      @keyframes pulse-expand {
+        0%   { transform: scale(1);         opacity: 0.70; }
+        75%  { transform: scale(${scale});  opacity: 0;    }
+        100% { transform: scale(${scale});  opacity: 0;    }
+      }
+    `;
   }
 
   // ============================================================
