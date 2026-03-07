@@ -71,6 +71,8 @@
     'map.own_panel_no_others': { es: 'No hay otras alertas activas a tu alrededor', en: 'No other active alerts around you' },
     'map.own_panel_one':    { es: 'Hay 1 alerta activa a tu alrededor', en: 'There is 1 active alert around you' },
     'map.own_panel_many':   { es: 'Hay {n} alertas activas a tu alrededor', en: 'There are {n} active alerts around you' },
+    'map.cancel_alert':     { es: 'Cancelar alerta',                    en: 'Cancel alert' },
+    'map.cancel_success':   { es: 'Alerta cancelada',                   en: 'Alert cancelled' },
     'map.perm_title':       { es: 'Necesitamos tu ubicación',    en: 'We need your location' },
     'map.perm_body':        { es: 'Whistle necesita acceso a tu GPS para mostrarte alertas cercanas y avisarte de carteristas en tiempo real.', en: 'Whistle needs GPS access to show you nearby alerts and notify you of pickpockets in real time.' },
     'map.perm_btn':         { es: 'Activar ubicación',           en: 'Enable location' },

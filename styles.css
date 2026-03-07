@@ -717,6 +717,29 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Cancel-alert button — pill outline, inside own-alert panel */
+.btn-cancel-alert {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 16px;
+  background: transparent;
+  border: 1.5px solid var(--alert-red);
+  color: var(--alert-red);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  -webkit-tap-highlight-color: transparent;
+  align-self: flex-start;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-cancel-alert:active {
+  background: var(--alert-red);
+  color: #fff;
+}
+
 /* ============================================================
    BOTTOM NAVIGATION - iOS tab bar style
    ============================================================ */

@@ -89,6 +89,10 @@
   let countdownInterval = null;     // setInterval handle for the 20-min countdown
   let countdownEndTime  = null;     // ms-epoch when the sent alert expires
 
+  // --- OWN-ALERT CANCEL STATE ---
+  let ownAlertTempId = null;        // temp marker ID of user's own active alert
+  let ownAlertDbId   = null;        // real Supabase UUID of user's own active alert
+
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -408,6 +412,7 @@
     const cutoff = Date.now() - ALERT_AGE_MIN * 60 * 1000;
     alertTimestamps.forEach((ts, id) => {
       if (ts < cutoff) {
+        if (id === ownAlertTempId) { ownAlertTempId = null; ownAlertDbId = null; }
         removeAlertMarker(id);
       }
     });
@@ -432,6 +437,7 @@
       .gte('lng', box.minLng)
       .lte('lng', box.maxLng)
       .gte('created_at', cutoff)
+      .neq('cancelled', true)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -461,6 +467,18 @@
 
     realtimeChannel = supabase
       .channel('alerts-live')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'alerts' },
+        (payload) => {
+          const alert = payload.new;
+          // Remove cancelled alerts from map (broadcast to all clients)
+          if (alert.cancelled) {
+            removeAlertMarker(alert.id);
+            updateBadgeAndPanel();
+          }
+        }
+      )
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'alerts' },
@@ -768,8 +786,8 @@
     tick();
     countdownInterval = setInterval(tick, 1000);
 
-    // Show panel for the same 20 s so it auto-hides when countdown ends
-    showPanel(20000);
+    // Show panel for 30s (matches cooldown) so the cancel button is reachable
+    showPanel(30000);
   }
 
   const riskBanner = document.getElementById('risk-banner');
@@ -992,6 +1010,8 @@
       created_at: new Date().toISOString(),
       user_id: USER_ID,
     };
+    ownAlertTempId = tempId;
+    ownAlertDbId   = null;
     createAlertMarker(tempAlert);
     showOwnAlertPanel();
     vibrate([100]);
@@ -999,20 +1019,26 @@
     // Start cooldown UI
     startCooldown();
 
-    // Insert into Supabase
-    const { error } = await supabase
+    // Insert into Supabase — request the real row ID back for cancel support
+    const { data: insertedData, error } = await supabase
       .from('alerts')
       .insert({
         lat: userPosition.lat,
         lng: userPosition.lng,
         user_id: USER_ID,
-      });
+      })
+      .select('id')
+      .single();
 
     if (error) {
       console.error('[Whistle] sendAlert error:', error);
+      ownAlertTempId = null;
+      ownAlertDbId   = null;
       removeAlertMarker(tempId);
       updateBadgeAndPanel();
       showToast(t('map.send_error'));
+    } else if (insertedData) {
+      ownAlertDbId = insertedData.id;
     }
   }
 
@@ -1035,6 +1061,52 @@
         btnLabel.textContent = `${remaining}s`;
       }
     }, 1000);
+  }
+
+  // ============================================================
+  // CANCEL OWN ALERT
+  // ============================================================
+
+  async function cancelOwnAlert() {
+    const tempId = ownAlertTempId;
+    const dbId   = ownAlertDbId;
+    if (!tempId && !dbId) return;
+
+    // Remove temp marker from map immediately
+    if (tempId) removeAlertMarker(tempId);
+
+    // Stop button cooldown
+    clearInterval(cooldownInterval);
+    cooldownInterval = null;
+    isOnCooldown = false;
+    alertBtn.classList.remove('cooldown');
+    btnLabel.textContent = '';
+
+    // Hide own-alert panel (also stops panel countdown via hidePanel)
+    hidePanel();
+    bottomPanel.classList.remove('bottom-panel--own');
+
+    // Clear own-alert tracking state
+    ownAlertTempId = null;
+    ownAlertDbId   = null;
+
+    updateBadgeAndPanel();
+    showToast(t('map.cancel_success'));
+
+    // Propagate cancellation to Supabase (other clients get UPDATE event)
+    if (dbId) {
+      const { error } = await supabase
+        .from('alerts')
+        .update({ cancelled: true })
+        .eq('id', dbId)
+        .eq('user_id', USER_ID);
+
+      if (error) {
+        console.error('[Whistle] cancelOwnAlert error:', error);
+      }
+    }
+    // Note: if dbId is null (INSERT hasn't returned yet), the alert will expire
+    // naturally after ALERT_AGE_MIN minutes; local marker is already removed.
   }
 
   // ============================================================
@@ -1068,11 +1140,16 @@
     // Alert button
     alertBtn.addEventListener('click', sendAlert);
 
-    // Badge click → show panel again
+    // Badge click → show panel again (own-alert panel if active, else normal)
     alertBadge.addEventListener('click', () => {
+      if (ownAlertTempId) { showOwnAlertPanel(); return; }
       if (alertMarkers.size > 0) showPanel();
       else showSafePanel();
     });
+
+    // Cancel alert button
+    const cancelAlertBtn = document.getElementById('btn-cancel-alert');
+    if (cancelAlertBtn) cancelAlertBtn.addEventListener('click', cancelOwnAlert);
 
     // Heatmap toggle
     if (heatmapBtn) heatmapBtn.addEventListener('click', toggleHeatmap);
