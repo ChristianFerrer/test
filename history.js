@@ -218,7 +218,7 @@
       .gte('lng', box.minLng)
       .lte('lng', box.maxLng)
       .gte('created_at', cutoff)
-      .neq('cancelled', true)
+      .or('cancelled.is.null,cancelled.eq.false')
       .order('created_at', { ascending: false })
       .limit(500);
 
