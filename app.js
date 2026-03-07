@@ -178,9 +178,17 @@
     return Math.round(ALERT_RADIUS_M / mpp) * 2; // diameter = 2 × radius
   }
 
-  function buildRadarIcon(lat) {
+  /** Returns RGB channels string for radar colour based on nearby alert count */
+  function getRadarRgb(count) {
+    if (count === 0)  return '76,175,80';   // green  – zona tranquila
+    if (count === 1)  return '255,193,7';   // amber  – precaución
+    return             '244,67,54';          // red    – actividad elevada
+  }
+
+  function buildRadarIcon(lat, rgb) {
     const d = getRadarDiamPx(lat);
-    const html = `<div class="radar-wrap" style="width:${d}px;height:${d}px">
+    const color = rgb || getRadarRgb(alertMarkers.size);
+    const html = `<div class="radar-wrap" style="width:${d}px;height:${d}px;--rc:${color}">
       <div class="radar-fill"></div>
       <div class="radar-sweep"></div>
       <div class="radar-ring"></div>
@@ -912,6 +920,9 @@
       clearTimeout(panelAutoHideTimer);
       hidePanel();
     }
+
+    // Radar colour syncs with zone status
+    updateRadar();
   }
 
   // ============================================================
