@@ -637,6 +637,43 @@
 
   let panelAutoHideTimer = null;
 
+  /** Converts a millisecond duration to a short human-readable string (30m, 2h, 3d) */
+  function formatAge(ms) {
+    const mins = Math.round(ms / 60000);
+    if (mins < 60) return `${mins}m`;
+    const hours = Math.round(ms / 3600000);
+    if (hours < 24) return `${hours}h`;
+    return `${Math.round(ms / 86400000)}d`;
+  }
+
+  /** Shows the safe-zone panel (0 alerts) with zone history info */
+  function showSafePanel() {
+    const safeLastEl = document.getElementById('panel-safe-last');
+    const panelOwnDetails = document.getElementById('panel-own-details');
+
+    bottomPanel.classList.remove('bottom-panel--own', 'bottom-panel--safe');
+    bottomPanel.classList.add('bottom-panel--safe');
+
+    panelTitleText.textContent = t('map.panel_safe_title');
+    panelSubtitle.textContent  = t('map.panel_safe_sub1', { m: ALERT_RADIUS_M });
+    panelSubtitle.classList.remove('hidden');
+    if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
+
+    if (safeLastEl) {
+      if (zoneLastAlertTime) {
+        safeLastEl.textContent = t('map.panel_safe_last', { t: formatAge(Date.now() - zoneLastAlertTime) });
+        safeLastEl.classList.remove('hidden');
+      } else if (zoneInsightsReady) {
+        safeLastEl.textContent = t('map.panel_safe_no_history');
+        safeLastEl.classList.remove('hidden');
+      } else {
+        safeLastEl.classList.add('hidden');
+      }
+    }
+
+    showPanel(8000);
+  }
+
   function showPanel(durationMs = 10000) {
     bottomPanel.classList.add('visible');
     riskLegend.classList.add('panel-open');
@@ -906,6 +943,9 @@
 
     // Notification panel
     if (count > 0) {
+      bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
+      document.getElementById('panel-safe-last')?.classList.add('hidden');
+      panelSubtitle.classList.remove('hidden');
       panelTitleText.textContent = count === 1
         ? t('map.panel_title_one')
         : t('map.panel_title_many', { n: count });
@@ -914,8 +954,13 @@
         : t('map.panel_sub_many', { n: count });
       showPanel();
     } else {
-      clearTimeout(panelAutoHideTimer);
-      hidePanel();
+      // Show safe zone panel once zone insights are loaded
+      if (zoneInsightsReady) {
+        showSafePanel();
+      } else {
+        clearTimeout(panelAutoHideTimer);
+        hidePanel();
+      }
     }
 
     // Radar colour syncs with zone status
@@ -1026,6 +1071,7 @@
     // Badge click → show panel again
     alertBadge.addEventListener('click', () => {
       if (alertMarkers.size > 0) showPanel();
+      else showSafePanel();
     });
 
     // Heatmap toggle

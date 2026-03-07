@@ -651,6 +651,14 @@ html, body {
 
 .bottom-panel.visible { transform: translateY(0); }
 
+/* Green variant — shown when zone is safe (0 alerts) */
+.bottom-panel--safe {
+  border-bottom-color: #34c759;
+}
+.bottom-panel--safe .panel-title-text {
+  color: #1b5e20;
+}
+
 /* Blue variant — shown when current user sends their own alert */
 .bottom-panel--own {
   border-bottom-color: #007aff;
