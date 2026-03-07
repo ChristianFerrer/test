@@ -899,13 +899,10 @@
       }
     }
 
-    // Badge
-    if (count > 0) {
-      alertBadgeCount.textContent = count;
-      alertBadge.classList.remove('hidden');
-    } else {
-      alertBadge.classList.add('hidden');
-    }
+    // Badge — always visible, colour adapts to alert count
+    alertBadgeCount.textContent = count;
+    alertBadgeCount.className = 'badge-count'
+      + (count === 0 ? '' : count === 1 ? ' badge-count--warn' : ' badge-count--danger');
 
     // Notification panel
     if (count > 0) {
