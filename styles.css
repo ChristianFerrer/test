@@ -262,15 +262,15 @@ html, body {
   box-shadow: 0 2px 8px rgba(26,115,232,0.5);
 }
 
-/* Expanding 100m pulse ring — keyframes injected dynamically by updatePulse() */
+/* Expanding 100m pulse ring — keyframes + color injected dynamically by updatePulse() */
 .user-pulse {
   position: absolute;
   top: 50%; left: 50%;
   width: 18px; height: 18px;
   margin: -9px 0 0 -9px;
   border-radius: 50%;
-  background: rgba(26,115,232,0.18);
-  border: 1.5px solid rgba(26,115,232,0.55);
+  background: rgba(var(--pc),0.18);
+  border: 1.5px solid rgba(var(--pc),0.55);
   pointer-events: none;
   transform-origin: center;
   animation: pulse-expand 2.8s ease-out infinite;

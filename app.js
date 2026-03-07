@@ -235,7 +235,13 @@
     const radiusPx  = getRadarDiamPx(userPosition.lat) / 2;  // 100 m in px
     const dotRadius = 9;                                       // half of 18 px dot
     const scale     = (radiusPx / dotRadius).toFixed(3);
+    const rgb       = getRadarRgb(alertMarkers.size);          // same colour as radar
 
+    // Apply colour variable to the pulse element
+    const pulseEl = document.querySelector('.user-pulse');
+    if (pulseEl) pulseEl.style.setProperty('--pc', rgb);
+
+    // Inject/update keyframes with the current scale
     let styleEl = document.getElementById('pulse-keyframes');
     if (!styleEl) {
       styleEl = document.createElement('style');
