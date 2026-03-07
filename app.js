@@ -115,6 +115,7 @@
   const panelOwnReach     = document.getElementById('panel-own-reach');
   const panelOwnUsers     = document.getElementById('panel-own-users');
   const panelOwnCountdown = document.getElementById('panel-own-countdown');
+  const cancelBtn         = document.getElementById('btn-cancel-alert');
 
   // ============================================================
   // MAP INITIALIZATION
@@ -676,6 +677,7 @@
     panelSubtitle.textContent  = t('map.panel_safe_sub1', { m: ALERT_RADIUS_M });
     panelSubtitle.classList.remove('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
 
     if (safeLastEl) {
       if (zoneLastAlertTime) {
@@ -706,6 +708,7 @@
     bottomPanel.classList.remove('bottom-panel--own');
     panelSubtitle.classList.remove('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
     stopCountdown();
   }
 
@@ -759,9 +762,10 @@
     // Title
     panelTitleText.textContent = t('map.own_panel_title');
 
-    // Hide normal subtitle, show own-alert detail lines
+    // Hide normal subtitle, show own-alert detail lines + cancel button
     panelSubtitle.classList.add('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.remove('hidden');
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
 
     // Line 1: reach
     if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach');
@@ -1148,8 +1152,7 @@
     });
 
     // Cancel alert button
-    const cancelAlertBtn = document.getElementById('btn-cancel-alert');
-    if (cancelAlertBtn) cancelAlertBtn.addEventListener('click', cancelOwnAlert);
+    if (cancelBtn) cancelBtn.addEventListener('click', cancelOwnAlert);
 
     // Heatmap toggle
     if (heatmapBtn) heatmapBtn.addEventListener('click', toggleHeatmap);
