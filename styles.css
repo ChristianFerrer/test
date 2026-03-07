@@ -407,6 +407,7 @@ html, body {
    STATUS CHIP - persistent zone indicator (top-center)
    ============================================================ */
 .calm-zone {
+  display: none !important;   /* desactivado */
   position: fixed;
   top: calc(var(--header-height) + 10px);
   left: 50%; transform: translateX(-50%);
