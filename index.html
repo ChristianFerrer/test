@@ -53,16 +53,6 @@
     </div>
   </header>
 
-  <!-- ==================== STATUS BANNER ==================== -->
-  <div id="status-banner" class="status-banner status-banner--loading">
-    <span class="status-banner-icon" id="status-icon">📍</span>
-    <div class="status-banner-text">
-      <span class="status-banner-title" id="status-title">Localizando…</span>
-      <span class="status-banner-sub"   id="status-sub"></span>
-    </div>
-    <span class="status-banner-arrow">›</span>
-  </div>
-
   <!-- ==================== TOP NOTIFICATION PANEL ==================== -->
   <div id="bottom-panel" class="bottom-panel">
     <div class="panel-row">
@@ -118,20 +108,13 @@
     </div>
   </div>
 
-  <!-- ==================== ZONE CARD (bottom floating card) ==================== -->
-  <div id="zone-card" class="zone-card hidden">
-    <div class="zone-card-header">
-      <span class="zc-icon" id="zc-icon">📊</span>
-      <span class="zc-title" id="zc-title">Actividad en esta zona</span>
-    </div>
-    <div class="zc-rows" id="zc-rows">
-      <div class="zc-row"><span class="zc-label">Últimas 2h</span><span class="zc-val" id="zc-2h">—</span></div>
-      <div class="zc-row"><span class="zc-label">Últimas 24h</span><span class="zc-val" id="zc-24h">—</span></div>
-      <div class="zc-row"><span class="zc-label">Hora con más actividad</span><span class="zc-val" id="zc-peak">—</span></div>
-    </div>
-  </div>
+  <!-- ==================== ALERT BUTTON ==================== -->
+  <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
+    <img class="btn-icon" src="whistle.png" alt="">
+    <span class="btn-label" id="btn-label"></span>
+  </button>
 
-  <!-- ==================== BOTTOM NAVIGATION (FAB integrated as center element) ==================== -->
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item active" aria-label="Radar">
       <img src="radar.png" class="nav-icon-img" alt="">
@@ -143,13 +126,6 @@
       </svg>
       <span class="nav-label" data-i18n="nav.history">Historial</span>
     </a>
-    <!-- ── Center FAB ── -->
-    <div class="nav-fab-slot">
-      <button class="alert-button" id="alert-btn" aria-label="Enviar alerta de carterista">
-        <img class="btn-icon" src="whistle.png" alt="">
-        <span class="btn-label" id="btn-label"></span>
-      </button>
-    </div>
     <a href="profile.html" class="nav-item" aria-label="Perfil">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>

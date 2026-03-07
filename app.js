@@ -93,11 +93,6 @@
   let ownAlertTempId = null;        // temp marker ID of user's own active alert
   let ownAlertDbId   = null;        // real Supabase UUID of user's own active alert
 
-  // --- ZONE CARD STATE ---
-  let zoneStats2h  = 0;
-  let zoneStats24h = 0;
-  let zonePeakHour = null;
-
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -121,13 +116,6 @@
   const panelOwnUsers     = document.getElementById('panel-own-users');
   const panelOwnCountdown = document.getElementById('panel-own-countdown');
   const cancelBtn         = document.getElementById('btn-cancel-alert');
-
-  // --- STATUS BANNER & ZONE CARD DOM REFS ---
-  const statusBanner = document.getElementById('status-banner');
-  const statusIcon   = document.getElementById('status-icon');
-  const statusTitle  = document.getElementById('status-title');
-  const statusSub    = document.getElementById('status-sub');
-  const zoneCard     = document.getElementById('zone-card');
 
   // ============================================================
   // MAP INITIALIZATION
@@ -892,15 +880,8 @@
     const maxCount = Math.max(...hourCounts);
     const peakHour = maxCount >= ZONE_PEAK_MIN_DATA ? hourCounts.indexOf(maxCount) : null;
 
-    // Store zone stats for zone card
-    const now2h  = Date.now() - 2  * 3600000;
-    const now24h = Date.now() - 24 * 3600000;
-    zoneStats2h  = nearby.filter(a => new Date(a.created_at).getTime() >= now2h).length;
-    zoneStats24h = nearby.filter(a => new Date(a.created_at).getTime() >= now24h).length;
-    zonePeakHour = peakHour;
-
     zoneInsightsReady = true;
-    console.log(`[Whistle] Zone insights: score=${score}, peak=${peakHour}h, 2h=${zoneStats2h}, 24h=${zoneStats24h}`);
+    console.log(`[Whistle] Zone insights: score=${score}, peak=${peakHour}h, lastAlert=${zoneLastAlertTime ? new Date(zoneLastAlertTime).toLocaleTimeString() : 'none'}`);
 
     // --- Render score chip ---
     if (zoneScoreChip) {
@@ -956,82 +937,6 @@
     }
   }
 
-  // ── Status Banner ────────────────────────────────────────────
-  function updateStatusBanner(count) {
-    if (!statusBanner) return;
-    statusBanner.classList.remove(
-      'status-banner--loading',
-      'status-banner--safe',
-      'status-banner--warn',
-      'status-banner--danger'
-    );
-    if (!userPosition) {
-      statusBanner.classList.add('status-banner--loading');
-      if (statusIcon)  statusIcon.textContent  = '📍';
-      if (statusTitle) statusTitle.textContent = 'Localizando…';
-      if (statusSub)   statusSub.textContent   = '';
-      return;
-    }
-    if (count === 0) {
-      statusBanner.classList.add('status-banner--safe');
-      if (statusIcon)  statusIcon.textContent  = '🛡️';
-      if (statusTitle) statusTitle.textContent = 'Zona tranquila';
-      if (statusSub)   statusSub.textContent   = `0 alertas activas en ${ALERT_RADIUS_M}m`;
-    } else if (count === 1) {
-      statusBanner.classList.add('status-banner--warn');
-      if (statusIcon)  statusIcon.textContent  = '⚠️';
-      if (statusTitle) statusTitle.textContent = 'Precaución';
-      if (statusSub)   statusSub.textContent   = '1 alerta cercana';
-    } else {
-      statusBanner.classList.add('status-banner--danger');
-      if (statusIcon)  statusIcon.textContent  = '🚨';
-      if (statusTitle) statusTitle.textContent = 'Actividad elevada';
-      if (statusSub)   statusSub.textContent   = `${count} alertas cercanas`;
-    }
-  }
-
-  // ── Zone Card ─────────────────────────────────────────────────
-  function updateZoneCard(count) {
-    if (!zoneCard) return;
-    const zcIconEl  = document.getElementById('zc-icon');
-    const zcTitleEl = document.getElementById('zc-title');
-    const zcRows    = document.getElementById('zc-rows');
-    if (!zcRows) return;
-
-    if (count === 1) {
-      // Single alert: show nearest alert details
-      if (zcIconEl)  zcIconEl.textContent  = '⚠️';
-      if (zcTitleEl) zcTitleEl.textContent = 'Alerta cercana';
-      let nearestAlert = null;
-      let nearestDist  = Infinity;
-      alertData.forEach(a => {
-        if (!userPosition) return;
-        const d = haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng);
-        if (d < nearestDist) { nearestDist = d; nearestAlert = a; }
-      });
-      if (nearestAlert) {
-        const ago = formatAge(Date.now() - new Date(nearestAlert.created_at).getTime());
-        zcRows.innerHTML = `
-          <div class="zc-row"><span class="zc-label">Distancia</span><span class="zc-val">${Math.round(nearestDist)} m</span></div>
-          <div class="zc-row"><span class="zc-label">Hace</span><span class="zc-val">${ago}</span></div>`;
-      }
-    } else {
-      // 0 or 2+ alerts: show zone activity stats
-      if (zcIconEl)  zcIconEl.textContent  = count === 0 ? '📊' : '🚨';
-      if (zcTitleEl) zcTitleEl.textContent = 'Actividad en esta zona';
-      const peak = zonePeakHour !== null
-        ? `${zonePeakHour}-${(zonePeakHour + 3) % 24}h`
-        : 'Sin datos';
-      const s2h  = zoneStats2h  === 0 ? '0 alertas' : `${zoneStats2h} alerta${zoneStats2h  !== 1 ? 's' : ''}`;
-      const s24h = zoneStats24h === 0 ? '0 alertas' : `${zoneStats24h} alerta${zoneStats24h !== 1 ? 's' : ''}`;
-      zcRows.innerHTML = `
-        <div class="zc-row"><span class="zc-label">Últimas 2h</span><span class="zc-val">${s2h}</span></div>
-        <div class="zc-row"><span class="zc-label">Últimas 24h</span><span class="zc-val">${s24h}</span></div>
-        <div class="zc-row"><span class="zc-label">Hora con más actividad</span><span class="zc-val">${peak}</span></div>`;
-    }
-    zoneCard.classList.remove('hidden');
-  }
-
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
     updateRiskBanner();
@@ -1053,17 +958,32 @@
       }
     }
 
-    // Status banner + zone card (new visual design)
-    updateStatusBanner(count);
-    if (zoneInsightsReady) updateZoneCard(count);
-
     // Badge — always visible, colour adapts to alert count
     alertBadgeCount.textContent = count;
     alertBadgeCount.className = 'badge-count'
       + (count === 0 ? '' : count === 1 ? ' badge-count--warn' : ' badge-count--danger');
 
-    // bottomPanel is now exclusively used by showOwnAlertPanel() for own-alert countdown.
-    // Normal alert states are communicated via the status banner + zone card above.
+    // Notification panel
+    if (count > 0) {
+      bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
+      document.getElementById('panel-safe-last')?.classList.add('hidden');
+      panelSubtitle.classList.remove('hidden');
+      panelTitleText.textContent = count === 1
+        ? t('map.panel_title_one')
+        : t('map.panel_title_many', { n: count });
+      panelSubtitle.textContent = count === 1
+        ? t('map.panel_sub_one')
+        : t('map.panel_sub_many', { n: count });
+      showPanel();
+    } else {
+      // Show safe zone panel once zone insights are loaded
+      if (zoneInsightsReady) {
+        showSafePanel();
+      } else {
+        clearTimeout(panelAutoHideTimer);
+        hidePanel();
+      }
+    }
 
     // Radar colour syncs with zone status
     updateRadar();

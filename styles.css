@@ -31,11 +31,9 @@
   --shadow-nav:    0 -0.5px 0 rgba(0,0,0,0.14);
 
   /* Layout */
-  --header-height:      56px;
-  --status-bar-height:  50px;
-  --bottom-bar-height:  82px;
-  --zone-card-height:   116px;
-  --panel-height:       120px;
+  --header-height:     56px;
+  --bottom-bar-height: 82px;
+  --panel-height:      120px;
 
   /* Radii — iOS range 12–20px */
   --radius-sm:   10px;
@@ -190,7 +188,7 @@ html, body {
    ============================================================ */
 .push-banner {
   position: fixed;
-  top: calc(var(--header-height) + var(--status-bar-height));
+  top: var(--header-height);
   left: 0; right: 0;
   background: var(--brand-black);
   color: #fff;
@@ -214,146 +212,15 @@ html, body {
 }
 
 /* ============================================================
-   STATUS BANNER — always-visible colored strip below the header
-   ============================================================ */
-.status-banner {
-  position: fixed;
-  top: var(--header-height);
-  left: 0; right: 0;
-  height: var(--status-bar-height);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  z-index: 350;
-  cursor: pointer;
-  transition: background var(--tr-med);
-  -webkit-tap-highlight-color: transparent;
-}
-
-.status-banner--loading { background: #e5e5ea; }
-.status-banner--safe    { background: #34c759; }
-.status-banner--warn    { background: #ff9500; }
-.status-banner--danger  { background: #ff3b30; }
-
-.status-banner-icon {
-  font-size: 22px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-.status-banner-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-
-.status-banner-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.2px;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.status-banner--loading .status-banner-title { color: var(--text-secondary); }
-
-.status-banner-sub {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(255,255,255,0.88);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.status-banner--loading .status-banner-sub { color: var(--text-muted); }
-
-.status-banner-arrow {
-  font-size: 22px;
-  color: rgba(255,255,255,0.65);
-  font-weight: 300;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.status-banner--loading .status-banner-arrow { color: var(--text-muted); }
-
-/* ============================================================
-   ZONE CARD — floating activity card above bottom nav
-   ============================================================ */
-.zone-card {
-  position: fixed;
-  bottom: var(--bottom-bar-height);
-  left: 0; right: 0;
-  min-height: var(--zone-card-height);
-  background: rgba(255,255,255,0.97);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  box-shadow: 0 -2px 20px rgba(0,0,0,0.09);
-  padding: 14px 20px 10px;
-  z-index: 300;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transition: opacity var(--tr-med);
-}
-
-.zone-card.hidden { opacity: 0; pointer-events: none; display: flex !important; }
-
-.zone-card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.zc-icon  { font-size: 18px; line-height: 1; }
-.zc-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.2px;
-}
-
-.zc-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.zc-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.zc-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  font-weight: 400;
-  white-space: nowrap;
-}
-
-.zc-val {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-align: right;
-}
-
-/* ============================================================
    MAP
    ============================================================ */
 #map {
   position: fixed;
-  top: calc(var(--header-height) + var(--status-bar-height));
+  top: var(--header-height);
   bottom: var(--bottom-bar-height);
   left: 0; right: 0;
   width: 100%;
-  height: calc(100% - var(--header-height) - var(--status-bar-height) - var(--bottom-bar-height));
+  height: calc(100% - var(--header-height) - var(--bottom-bar-height));
   z-index: 1;
   background: #c8d8e8;
 }
@@ -465,7 +332,7 @@ html, body {
    ============================================================ */
 .heatmap-toggle {
   position: fixed;
-  bottom: calc(var(--bottom-bar-height) + var(--zone-card-height) + 10px);
+  bottom: calc(68px + 14px);   /* above bottom nav */
   left: 12px;
   z-index: 500;
   background: rgba(255,255,255,0.92);
@@ -497,7 +364,7 @@ html, body {
    ============================================================ */
 .risk-legend {
   position: fixed;
-  top: calc(var(--header-height) + var(--status-bar-height) + 8px);
+  top: calc(var(--header-height) + 8px);
   right: 12px;
   z-index: 500;
   background: rgba(255,255,255,0.92);
@@ -511,7 +378,7 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
 }
 .risk-legend.panel-open {
-  top: calc(var(--header-height) + var(--status-bar-height) + 60px + 8px);
+  top: calc(var(--header-height) + 60px + 8px);
 }
 .risk-legend-title {
   font-size: 11px;
@@ -631,8 +498,9 @@ html, body {
 .zone-chips {
   position: fixed;
   left: 12px;
-  /* sit above zone-card and heatmap button */
-  bottom: calc(var(--bottom-bar-height) + var(--zone-card-height) + 14px + 40px);
+  /* heatmap btn is at bottom: calc(68px + 14px) = 82px, ~32px tall → top at ~114px;
+     chips start at 128px (14px gap above heatmap btn top) */
+  bottom: calc(var(--bottom-bar-height) + 14px + 46px);
   z-index: 500;
   display: flex;
   flex-direction: column;
@@ -695,60 +563,50 @@ html, body {
 }
 
 /* ============================================================
-   NAV FAB SLOT — center element of bottom-nav that hosts the FAB
-   ============================================================ */
-.nav-fab-slot {
-  flex: 1.4;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
-  /* no padding-top — FAB protrudes via negative translateY */
-}
-
-/* ============================================================
-   ALERT BUTTON — raised FAB inside nav-fab-slot
+   ALERT BUTTON - Yellow circle like reference
    ============================================================ */
 .alert-button {
-  position: relative;  /* now lives inside nav, not fixed */
-  transform: translateY(-20px);
-  width: 70px; height: 70px;
+  position: fixed;
+  bottom: calc(var(--bottom-bar-height) + 18px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  width: 84px; height: 84px;
   border-radius: 50%;
   background: var(--brand-yellow);
   border: none;
   color: var(--brand-black);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: var(--shadow-button), 0 2px 8px rgba(0,0,0,0.14);
+  box-shadow: var(--shadow-button), 0 2px 8px rgba(0,0,0,0.12);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 1px;
+  gap: 2px;
   transition: transform var(--tr-fast), box-shadow var(--tr-fast), background var(--tr-med);
   outline: none;
-  flex-shrink: 0;
 }
 
 .btn-icon {
   line-height: 1;
-  width: 42px; height: 42px;
+  width: 50px; height: 50px;
   object-fit: contain;
 }
 
 .btn-label {
-  font-size: 9px; font-weight: 700;
+  font-size: 10px; font-weight: 600;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   color: var(--brand-black);
-  line-height: 1;
 }
 
 .alert-button:active:not(.cooldown) {
-  transform: translateY(-20px) scale(0.91);
+  transform: translateX(-50%) scale(0.91);
   box-shadow: 0 3px 8px rgba(245,197,24,0.3);
 }
 
 .alert-button.sending {
   background: var(--alert-red);
+  border-color: var(--alert-red);
   color: #fff;
   animation: btn-flash 0.35s ease;
 }
@@ -757,22 +615,23 @@ html, body {
 
 .alert-button.cooldown {
   background: #e0e0e0;
+  border-color: #bdbdbd;
   box-shadow: none;
   cursor: not-allowed;
 }
 
 @keyframes btn-flash {
-  0%   { transform: translateY(-20px) scale(1); }
-  35%  { transform: translateY(-20px) scale(1.12); }
-  100% { transform: translateY(-20px) scale(1); }
+  0%   { transform: translateX(-50%) scale(1); }
+  35%  { transform: translateX(-50%) scale(1.12); }
+  100% { transform: translateX(-50%) scale(1); }
 }
 
 /* ============================================================
-   OWN-ALERT PANEL - slides down from below status banner (own-alert only)
+   TOP NOTIFICATION PANEL - slides down from below header
    ============================================================ */
 .bottom-panel {
   position: fixed;
-  top: var(--header-height);   /* intentionally overlays status-banner */
+  top: var(--header-height);
   left: 0; right: 0;
   min-height: 64px;
   background: rgba(255,255,255,0.97);
@@ -891,7 +750,6 @@ html, body {
   border-top: 0.5px solid rgba(60,60,67,0.20);
   box-shadow: var(--shadow-nav);
   display: flex; z-index: 1000;
-  overflow: visible;   /* allow FAB to protrude above nav */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
