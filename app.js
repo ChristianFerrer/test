@@ -438,7 +438,6 @@
       .gte('lng', box.minLng)
       .lte('lng', box.maxLng)
       .gte('created_at', cutoff)
-      .or('cancelled.is.null,cancelled.eq.false')
       .order('created_at', { ascending: false });
 
     if (error) {
