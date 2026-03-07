@@ -919,31 +919,10 @@
     zoneInsightsReady = true;
     console.log(`[Whistle] Zone insights: score=${score}, peak=${peakHour}h, lastAlert=${zoneLastAlertTime ? new Date(zoneLastAlertTime).toLocaleTimeString() : 'none'}`);
 
-    // --- Render score chip ---
-    if (zoneScoreChip) {
-      if (score >= 80) {
-        zoneScoreChip.className = 'zone-chip zone-chip--safe';
-        zoneScoreChip.textContent = t('zone.score_safe', { n: score });
-      } else if (score >= 50) {
-        zoneScoreChip.className = 'zone-chip zone-chip--moderate';
-        zoneScoreChip.textContent = t('zone.score_moderate', { n: score });
-      } else {
-        zoneScoreChip.className = 'zone-chip zone-chip--risk';
-        zoneScoreChip.textContent = t('zone.score_risk', { n: score });
-      }
-    }
-
-    // --- Render peak hour chip ---
-    if (zonePeakChip) {
-      if (peakHour !== null) {
-        zonePeakChip.className = 'zone-chip zone-chip--peak';
-        zonePeakChip.textContent = t('zone.peak_hours', { h1: peakHour, h2: (peakHour + 1) % 24 });
-      } else {
-        zonePeakChip.className = 'zone-chip hidden';
-      }
-    }
-
-    if (zoneChips) zoneChips.classList.remove('hidden');
+    // --- Score chip and peak chip disabled ---
+    if (zoneScoreChip) zoneScoreChip.className = 'zone-chip hidden';
+    if (zonePeakChip)  zonePeakChip.className  = 'zone-chip hidden';
+    if (zoneChips)     zoneChips.classList.add('hidden');
 
     // Refresh calm chip now that we have the last-alert timestamp
     updateBadgeAndPanel();
