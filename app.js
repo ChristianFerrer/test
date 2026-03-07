@@ -765,7 +765,7 @@
     // Hide normal subtitle, show own-alert detail lines + cancel button
     panelSubtitle.classList.add('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.remove('hidden');
-    if (cancelBtn) cancelBtn.classList.remove('hidden');
+    // if (cancelBtn) cancelBtn.classList.remove('hidden'); // disabled
 
     // Line 1: reach
     if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach');

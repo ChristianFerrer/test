@@ -94,20 +94,58 @@
       </section>
 
       <!-- ── ALERTS TABLE ── -->
-      <section class="admin-section">
-        <div class="section-row">
-          <h2 class="admin-section-title">Alertas recientes (últimas 200)</h2>
-          <input class="admin-search" type="search" id="alert-search" placeholder="Buscar por email o coordenadas…">
+      <section class="admin-section" id="alerts-section">
+        <h2 class="admin-section-title">Alertas recientes (últimas 200)</h2>
+
+        <!-- Filter bar -->
+        <div class="alerts-filter-bar" id="alerts-filter-bar">
+          <div class="filter-group">
+            <label class="filter-label" for="f-email">Usuario</label>
+            <input class="filter-input" type="text" id="f-email" placeholder="email…">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="f-date-from">Desde</label>
+            <input class="filter-input" type="date" id="f-date-from">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="f-date-to">Hasta</label>
+            <input class="filter-input" type="date" id="f-date-to">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="f-time-from">Hora desde</label>
+            <input class="filter-input" type="time" id="f-time-from">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="f-time-to">Hora hasta</label>
+            <input class="filter-input" type="time" id="f-time-to">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="f-address">Dirección</label>
+            <input class="filter-input" type="text" id="f-address" placeholder="calle, zona…">
+          </div>
+          <button class="btn-clear-filters" id="btn-clear-filters">✕ Limpiar</button>
         </div>
+
+        <!-- Action bar -->
+        <div class="alerts-action-bar" id="alerts-action-bar">
+          <label class="chk-select-all-wrap">
+            <input type="checkbox" id="chk-select-all">
+            <span id="selected-count">0 seleccionadas</span>
+          </label>
+          <button class="btn-delete-bulk" id="btn-delete-bulk" disabled>🗑 Eliminar seleccionadas</button>
+        </div>
+
         <div class="table-wrap">
           <table class="admin-table" id="alerts-table">
             <thead>
               <tr>
+                <th class="th-chk"></th>
                 <th>Reportado por</th>
                 <th>Fecha y hora</th>
-                <th>Latitud</th>
-                <th>Longitud</th>
+                <th>Coordenadas</th>
+                <th>Dirección</th>
                 <th>Mapa</th>
+                <th></th>
               </tr>
             </thead>
             <tbody id="alerts-tbody">
