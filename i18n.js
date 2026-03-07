@@ -44,7 +44,7 @@
     'error.rate_limit':          { es: 'Demasiados intentos. Espera un momento.',      en: 'Too many attempts. Please wait a moment.' },
 
     // ── INDEX / MAP ────────────────────────────────────────────
-    'map.tagline':          { es: 'Alertas de carteristas a tu alrededor y en tiempo real', en: 'Real-time pickpocket alerts around you' },
+    'map.tagline':          { es: 'Alerta de carteristas a tu alrededor', en: 'Pickpocket alerts around you' },
     'map.gps_searching':    { es: 'Buscando...',                 en: 'Searching...' },
     'map.gps_active':       { es: 'GPS activo',                   en: 'GPS active' },
     'map.gps_none':         { es: 'Sin GPS',                     en: 'No GPS' },
