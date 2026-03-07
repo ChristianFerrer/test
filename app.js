@@ -250,8 +250,8 @@
     }
     styleEl.textContent = `
       @keyframes pulse-expand {
-        0%   { transform: scale(1);         opacity: 0.70; }
-        75%  { transform: scale(${scale});  opacity: 0;    }
+        0%   { transform: scale(1);         opacity: 0.65; }
+        65%  { transform: scale(${scale});  opacity: 0.50; }
         100% { transform: scale(${scale});  opacity: 0;    }
       }
     `;
