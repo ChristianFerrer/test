@@ -117,7 +117,8 @@ html, body {
 
 /* GPS pill */
 .gps-pill {
-  display: flex; align-items: center; gap: 5px;
+  display: none !important;   /* desactivado */
+  align-items: center; gap: 5px;
   background: rgba(0,0,0,0.10);
   border-radius: var(--radius-full);
   padding: 5px 11px;
