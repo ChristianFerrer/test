@@ -437,56 +437,54 @@ html, body {
   pointer-events: none;
   position: relative;
 }
-/* Semi-transparent radial fill – visible solid tint like reference */
+/* Subtle radial fill */
 .radar-fill {
   position: absolute; inset: 0;
   border-radius: 50%;
   background: radial-gradient(circle,
-    rgba(var(--rc),0.30) 0%,
-    rgba(var(--rc),0.20) 50%,
-    rgba(var(--rc),0.08) 85%,
+    rgba(var(--rc),0.09) 0%,
+    rgba(var(--rc),0.02) 65%,
     transparent 100%);
 }
-/* Rotating sweep – bright needle + visible trail */
+/* Rotating sweep conic – trail BEHIND the needle (wake effect) */
+/* 0→195° clean transparent area ahead of needle                  */
+/* 195→360° trail that builds up to the needle at 360°=0°         */
 .radar-sweep {
   position: absolute; inset: 0;
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    transparent             0deg,    /* clean zone ahead of needle */
-    transparent             210deg,
-    rgba(var(--rc),0.10)   235deg,  /* faint trail start */
-    rgba(var(--rc),0.35)   295deg,  /* building up */
-    rgba(var(--rc),0.75)   348deg,  /* bright pre-needle glow */
-    rgba(var(--rc),1.00)   358deg,  /* bright needle */
-    rgba(var(--rc),1.00)   360deg
+    transparent              0deg,    /* clean zone ahead of needle */
+    transparent              195deg,
+    rgba(var(--rc),0.05)    225deg,  /* faint start of wake */
+    rgba(var(--rc),0.18)    290deg,  /* building up */
+    rgba(var(--rc),0.50)    346deg,  /* strong glow */
+    rgba(var(--rc),0.95)    358deg,  /* bright needle */
+    rgba(var(--rc),0.95)    360deg   /* needle tip (wraps to 0°) */
   );
   animation: radar-rotate 3s linear infinite;
 }
-/* Glowing outer ring – bold border + strong halo */
+/* Glowing outer ring */
 .radar-ring {
   position: absolute; inset: 0;
   border-radius: 50%;
-  border: 2.5px solid rgba(var(--rc),0.95);
-  box-shadow:
-    0 0 10px 3px  rgba(var(--rc),0.60),
-    0 0 30px 8px  rgba(var(--rc),0.35),
-    0 0 55px 14px rgba(var(--rc),0.18),
-    inset 0 0 22px rgba(var(--rc),0.10);
+  border: 2px solid rgba(var(--rc),0.75);
+  box-shadow: 0 0 16px rgba(var(--rc),0.30),
+              inset 0 0 16px rgba(var(--rc),0.06);
 }
 /* Crosshair lines */
 .radar-cross-h {
   position: absolute;
   top: 50%; left: 6%; right: 6%;
   height: 1px;
-  background: rgba(var(--rc),0.30);
+  background: rgba(var(--rc),0.20);
   transform: translateY(-50%);
 }
 .radar-cross-v {
   position: absolute;
   left: 50%; top: 6%; bottom: 6%;
   width: 1px;
-  background: rgba(var(--rc),0.30);
+  background: rgba(var(--rc),0.20);
   transform: translateX(-50%);
 }
 @keyframes radar-rotate {
