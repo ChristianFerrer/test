@@ -1053,6 +1053,7 @@
     ownAlertTempId = tempId;
     ownAlertDbId   = null;
     createAlertMarker(tempAlert);
+    updateBadgeAndPanel();
     showOwnAlertPanel();
     vibrate([100]);
 
