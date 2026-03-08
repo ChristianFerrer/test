@@ -654,7 +654,7 @@ html, body {
   border-bottom-color: #007aff;
 }
 .bottom-panel--own .panel-title-text {
-  color: #007aff;
+  color: #ffffff;
 }
 
 /* Hide the handle — panel is now compact */
@@ -677,12 +677,12 @@ html, body {
 
 .panel-title-text {
   font-size: 17px; font-weight: 600;
-  color: var(--alert-red); margin-bottom: 2px;
+  color: #ffffff; margin-bottom: 2px;
   letter-spacing: -0.2px;
 }
 
 .panel-subtitle {
-  font-size: 15px; color: var(--text-secondary); line-height: 1.4;
+  font-size: 15px; color: #ffffff; line-height: 1.4;
   font-weight: 400;
 }
 
@@ -698,7 +698,7 @@ html, body {
 .panel-own-line {
   font-size: 15px;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: #ffffff;
   line-height: 1.5;
 }
 
