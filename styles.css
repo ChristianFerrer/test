@@ -663,15 +663,23 @@ html, body {
 
 .bottom-panel.visible { transform: translateY(0); }
 
-/* Green variant — shown when zone is safe (0 alerts) */
+/* Green variant — 0 alerts (Zona Tranquila) */
 .bottom-panel--safe {
   border-bottom-color: #34c759;
 }
 .bottom-panel--safe .panel-title-text {
-  color: #1b5e20;
+  color: #1a7a35;
 }
 
-/* Blue variant — shown when current user sends their own alert */
+/* Amber variant — 1-2 alerts (Carterista en la zona) */
+.bottom-panel--warn {
+  border-bottom-color: #ff9500;
+}
+.bottom-panel--warn .panel-title-text {
+  color: #b96000;
+}
+
+/* Blue variant — own alert sent */
 .bottom-panel--own {
   border-bottom-color: #007aff;
 }

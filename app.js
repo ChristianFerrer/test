@@ -734,12 +734,14 @@
   function showSafePanel() {
     const safeLastEl = document.getElementById('panel-safe-last');
     const panelOwnDetails = document.getElementById('panel-own-details');
+    const panelIcon = document.getElementById('panel-icon');
 
-    bottomPanel.classList.remove('bottom-panel--own', 'bottom-panel--safe');
+    bottomPanel.classList.remove('bottom-panel--own', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--safe');
+    if (panelIcon) panelIcon.src = 'security_black.png';
 
     panelTitleText.textContent = t('map.panel_safe_title');
-    panelSubtitle.textContent  = t('map.panel_safe_sub1', { m: ALERT_RADIUS_M });
+    panelSubtitle.textContent  = t('map.panel_safe_sub1');
     panelSubtitle.classList.remove('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
     if (cancelBtn) cancelBtn.classList.add('hidden');
@@ -821,8 +823,9 @@
     const panelIcon = document.getElementById('panel-icon');
 
     // Switch panel to own-alert style
+    bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--own');
-    if (panelIcon) panelIcon.src = 'whistle.png';
+    if (panelIcon) panelIcon.src = 'whistle2_black.png';
 
     // Title
     panelTitleText.textContent = t('map.own_panel_title');
@@ -832,14 +835,12 @@
     if (panelOwnDetails) panelOwnDetails.classList.remove('hidden');
     // if (cancelBtn) cancelBtn.classList.remove('hidden'); // disabled
 
-    // Line 1: reach
-    if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach');
-
-    // Line 2: foot-traffic estimate (synchronous — no loading state needed)
+    // Line 1: reach + foot-traffic estimate
     const estimated = estimateFootTraffic();
-    if (panelOwnUsers) {
-      panelOwnUsers.textContent = t('map.own_panel_users_n', { n: estimated });
-    }
+    if (panelOwnReach) panelOwnReach.textContent = t('map.own_panel_reach', { n: estimated });
+
+    // Line 2: hidden (merged into reach line)
+    if (panelOwnUsers) panelOwnUsers.classList.add('hidden');
 
     // Line 3: countdown — 20 minutes (matches alert active lifetime)
     stopCountdown();
@@ -1001,15 +1002,27 @@
 
     // Notification panel
     if (count > 0) {
-      bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
+      const panelIcon = document.getElementById('panel-icon');
       document.getElementById('panel-safe-last')?.classList.add('hidden');
       panelSubtitle.classList.remove('hidden');
-      panelTitleText.textContent = count === 1
-        ? t('map.panel_title_one')
-        : t('map.panel_title_many', { n: count });
-      panelSubtitle.textContent = count === 1
-        ? t('map.panel_sub_one')
-        : t('map.panel_sub_many', { n: count });
+      if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
+
+      if (count <= 2) {
+        // 1-2 alerts — amber "Carterista en la zona"
+        bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
+        bottomPanel.classList.add('bottom-panel--warn');
+        if (panelIcon) panelIcon.src = 'thief2.png';
+        panelTitleText.textContent = t('map.panel_title_one');
+        panelSubtitle.textContent  = count === 1
+          ? t('map.panel_sub_one')
+          : t('map.panel_sub_many', { n: count });
+      } else {
+        // 3+ alerts — red "Actividad elevada"
+        bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own', 'bottom-panel--warn');
+        if (panelIcon) panelIcon.src = 'thief2.png';
+        panelTitleText.textContent = t('map.panel_title_many');
+        panelSubtitle.textContent  = t('map.panel_sub_many', { n: count });
+      }
       showPanel();
     } else {
       // Show safe zone panel once zone insights are loaded
