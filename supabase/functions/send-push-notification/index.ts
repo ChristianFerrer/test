@@ -249,10 +249,17 @@ Deno.serve(async (req: Request) => {
       // Skip the alerter's own subscription
       if (sub.user_id === alertUserId) continue;
 
-      // Distance filter (only if subscriber has location stored)
-      if (sub.lat != null && sub.lng != null) {
-        const dist = haversineDistance(alertLat, alertLng, parseFloat(sub.lat), parseFloat(sub.lng));
-        if (dist > 50) continue;
+      // Skip subscribers whose location is unknown — we can't verify they're in range
+      if (sub.lat == null || sub.lng == null) {
+        console.log(`[push] Skip (no location stored): ${sub.endpoint.slice(0, 40)}...`);
+        continue;
+      }
+
+      // Only send to subscribers within 100 m of the alert (matches ALERT_RADIUS_M)
+      const dist = haversineDistance(alertLat, alertLng, parseFloat(sub.lat), parseFloat(sub.lng));
+      if (dist > 100) {
+        console.log(`[push] Skip (${Math.round(dist)}m > 100m): ${sub.endpoint.slice(0, 40)}...`);
+        continue;
       }
 
       const status = await sendPush(sub.endpoint, sub.p256dh, sub.auth, payload);

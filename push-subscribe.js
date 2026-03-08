@@ -19,33 +19,39 @@
     return Uint8Array.from([...rawData].map((c) => c.charCodeAt(0)));
   }
 
-  // Save subscription endpoint + keys to Supabase push_subscriptions table
-  async function saveSubscription(subscription, userId) {
+  // Save subscription endpoint + keys + current position to Supabase
+  // lat/lng are stored so the Edge Function can apply the 100m distance filter
+  async function saveSubscription(subscription, userId, lat, lng) {
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const sub = subscription.toJSON();
 
+    const record = {
+      user_id:    userId,
+      endpoint:   sub.endpoint,
+      p256dh:     sub.keys.p256dh,
+      auth:       sub.keys.auth,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Include location if available — required for distance filtering
+    if (lat != null && lng != null) {
+      record.lat = lat;
+      record.lng = lng;
+    }
+
     const { error } = await supabase
       .from('push_subscriptions')
-      .upsert(
-        {
-          user_id:  userId,
-          endpoint: sub.endpoint,
-          p256dh:   sub.keys.p256dh,
-          auth:     sub.keys.auth,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: 'endpoint' }
-      );
+      .upsert(record, { onConflict: 'endpoint' });
 
     if (error) {
       console.warn('[Whistle Push] Could not save subscription:', error.message);
     } else {
-      console.log('[Whistle Push] Subscription saved.');
+      console.log('[Whistle Push] Subscription saved with location:', lat, lng);
     }
   }
 
   // Actually subscribe and save
-  async function doSubscribe(registration, userId) {
+  async function doSubscribe(registration, userId, lat, lng) {
     try {
       let subscription = await registration.pushManager.getSubscription();
       if (!subscription) {
@@ -54,7 +60,7 @@
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
         });
       }
-      await saveSubscription(subscription, userId);
+      await saveSubscription(subscription, userId, lat, lng);
       // Hide banner on success
       const banner = document.getElementById('push-banner');
       if (banner) banner.classList.add('hidden');
@@ -64,7 +70,10 @@
   }
 
   // Main: register SW + handle permission flow
-  async function initPush(userId) {
+  // position = { lat, lng } — pass current GPS position for distance filtering
+  async function initPush(userId, position) {
+    const lat = (position && position.lat != null) ? position.lat : null;
+    const lng = (position && position.lng != null) ? position.lng : null;
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       console.log('[Whistle Push] Push not supported in this browser.');
       return;
@@ -78,7 +87,7 @@
 
       if (currentPermission === 'granted') {
         // Already granted — subscribe silently
-        await doSubscribe(registration, userId);
+        await doSubscribe(registration, userId, lat, lng);
         return;
       }
 
@@ -98,7 +107,7 @@
         bannerBtn.addEventListener('click', async () => {
           const permission = await Notification.requestPermission();
           if (permission === 'granted') {
-            await doSubscribe(registration, userId);
+            await doSubscribe(registration, userId, lat, lng);
           } else {
             banner.classList.add('hidden');
           }

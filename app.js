@@ -94,6 +94,9 @@
   let ownAlertTempId = null;        // temp marker ID of user's own active alert
   let ownAlertDbId   = null;        // real Supabase UUID of user's own active alert
 
+  // --- PUSH LOCATION UPDATE STATE ---
+  let pushLocationUpdateTimeout = null; // debounce handle for position-change updates
+
 
   // --- DOM REFS ---
   const permissionOverlay = document.getElementById('permission-overlay');
@@ -317,11 +320,14 @@
         loadSurgeBaseline();
         loadZoneInsights();
         subscribeToAlerts();
-        // Init push notifications once on first GPS fix
+        // Init push notifications once on first GPS fix — pass position so
+        // lat/lng is saved to push_subscriptions immediately for distance filtering
         if (!pushInitialized && window.initPush) {
           pushInitialized = true;
-          window.initPush(USER_ID);
+          window.initPush(USER_ID, userPosition);
         }
+        // Also update any existing subscription with the current location
+        updatePushLocation();
       }, 50);
     } else {
       if (userMarker) userMarker.setLatLng([lat, lng]);
@@ -334,6 +340,10 @@
           map.panTo([lat, lng], { animate: true, duration: 0.5 });
         }
       }
+      // Debounced push location update — keeps stored lat/lng fresh as user moves
+      // (30 s debounce avoids hammering Supabase on every GPS tick)
+      clearTimeout(pushLocationUpdateTimeout);
+      pushLocationUpdateTimeout = setTimeout(updatePushLocation, 30000);
     }
   }
 
@@ -1093,6 +1103,28 @@
       showToast(t('map.send_error'));
     } else if (insertedData) {
       ownAlertDbId = insertedData.id;
+    }
+  }
+
+  /**
+   * updatePushLocation — writes the user's current lat/lng into push_subscriptions
+   * so the Edge Function can apply the correct 100 m distance filter.
+   * Called on first GPS fix and debounced on subsequent position changes.
+   */
+  async function updatePushLocation() {
+    if (!userPosition || !USER_ID) return;
+    try {
+      await supabase
+        .from('push_subscriptions')
+        .update({
+          lat: userPosition.lat,
+          lng: userPosition.lng,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', USER_ID);
+      console.log('[Whistle] Push location updated:', userPosition.lat, userPosition.lng);
+    } catch (e) {
+      console.warn('[Whistle] updatePushLocation failed:', e);
     }
   }
 
