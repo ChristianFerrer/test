@@ -647,7 +647,7 @@ html, body {
   left: 0; right: 0;
   min-height: 58px;
   /* Default: red gradient — 3+ alerts (Actividad elevada) */
-  background: linear-gradient(180deg, #CC2A21 0%, #FFABA8 100%);
+  background: #FF483E;
   border: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: 0 4px 24px rgba(0,0,0,0.14);
@@ -660,15 +660,15 @@ html, body {
 
 .bottom-panel.visible { transform: translateY(0); }
 
-/* Green gradient — 0 alerts (Zona Tranquila) */
+/* Green solid — 0 alerts (Zona Tranquila) */
 .bottom-panel--safe {
-  background: linear-gradient(180deg, #27974A 0%, #9AE4B0 100%);
+  background: #35CA5B;
 }
 
-/* Amber gradient — 1-2 alerts (Carterista) + own alert sent */
+/* Amber solid — 1-2 alerts (Carterista) + own alert sent */
 .bottom-panel--warn,
 .bottom-panel--own {
-  background: linear-gradient(180deg, #B47A0A 0%, #F8D48A 100%);
+  background: #F0A20D;
 }
 
 /* Hide the handle — panel is now compact */
@@ -689,13 +689,14 @@ html, body {
 
 .panel-title-text {
   font-size: 17px; font-weight: 700;
-  color: #fff;
-  margin-bottom: 2px;
+  color: #1c1c1e;
+  margin-bottom: 1px;
   letter-spacing: -0.2px;
+  line-height: 1.18;
 }
 
 .panel-subtitle {
-  font-size: 14px; color: rgba(255,255,255,0.88); line-height: 1.4;
+  font-size: 14px; color: #1c1c1e; line-height: 1.37;
   font-weight: 400;
 }
 
