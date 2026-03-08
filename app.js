@@ -63,6 +63,7 @@
   let map = null;
   let userMarker = null;
   let radarMarker    = null;
+  let radarVisible   = true;            // toggled by "Modo Radar" chip
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
   let alertData    = new Map();     // alert.id -> raw alert object (for clustering)
@@ -209,7 +210,7 @@
   }
 
   function updateRadar() {
-    if (!userPosition || !map) return;
+    if (!userPosition || !map || !radarVisible) return;
     const { lat, lng } = userPosition;
     const icon = buildRadarIcon(lat);
     if (radarMarker) {
@@ -256,6 +257,38 @@
       }
     `;
   }
+
+  // ============================================================
+  // MODO RADAR TOGGLE
+  // ============================================================
+
+  function toggleRadar() {
+    radarVisible = !radarVisible;
+
+    if (!radarVisible) {
+      // Remove radar marker from map
+      if (radarMarker) {
+        map.removeLayer(radarMarker);
+        radarMarker = null;
+      }
+      // Hide pulse ring
+      const pulseEl = document.querySelector('.user-pulse');
+      if (pulseEl) pulseEl.style.display = 'none';
+    } else {
+      // Restore radar + pulse
+      updateRadar();
+      const pulseEl = document.querySelector('.user-pulse');
+      if (pulseEl) pulseEl.style.display = '';
+    }
+
+    // Update chip appearance
+    if (calmZone) {
+      calmZone.className = 'calm-zone ' + (radarVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
+    }
+  }
+
+  // Wire click listener once DOM is ready
+  if (calmZone) calmZone.addEventListener('click', toggleRadar);
 
   // ============================================================
   // USER LOCATION TRACKING
@@ -955,21 +988,13 @@
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
     updateRiskBanner();
-    // Status chip: always visible once GPS is ready, colour adapts to alert count
+    // Modo Radar chip — visible once GPS is ready
     if (calmZone) {
       if (!userPosition) {
         calmZone.className = 'calm-zone hidden';
-      } else if (count === 0) {
-        calmZone.className = 'calm-zone calm-zone--safe';
-        calmZone.textContent = t('zone.status_safe');
-      } else if (count < 3) {
-        calmZone.className = 'calm-zone calm-zone--warn';
-        calmZone.textContent = count === 1
-          ? t('zone.status_warn_1')
-          : t('zone.status_warn_n', { n: count });
       } else {
-        calmZone.className = 'calm-zone calm-zone--danger';
-        calmZone.textContent = t('zone.status_danger', { n: count });
+        calmZone.className = 'calm-zone ' + (radarVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
+        calmZone.textContent = 'Modo Radar';
       }
     }
 
