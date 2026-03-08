@@ -287,9 +287,6 @@
     }
   }
 
-  // Wire click listener once DOM is ready
-  if (calmZone) calmZone.addEventListener('click', toggleRadar);
-
   // ============================================================
   // USER LOCATION TRACKING
   // ============================================================
@@ -303,6 +300,7 @@
   }
 
   const calmZone = document.getElementById('calm-zone');
+  if (calmZone) calmZone.addEventListener('click', toggleRadar);
 
   function onPositionSuccess(pos) {
     const lat = pos.coords.latitude;
