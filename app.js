@@ -758,7 +758,7 @@
       }
     }
 
-    showPanel(8000);
+    showPanel(10000);
   }
 
   function showPanel(durationMs = 10000) {
@@ -856,8 +856,8 @@
     tick();
     countdownInterval = setInterval(tick, 1000);
 
-    // Show panel for 30s (matches cooldown) so the cancel button is reachable
-    showPanel(30000);
+    // Show panel for 10s — own-alert panel is one-time only, not re-openable via badge
+    showPanel(10000);
   }
 
   const riskBanner = document.getElementById('risk-banner');
@@ -1194,11 +1194,14 @@
     // Alert button
     alertBtn.addEventListener('click', sendAlert);
 
-    // Badge click → show panel again (own-alert panel if active, else normal)
+    // Badge click → toggle panel visibility
+    // Own-alert panel is one-time only (shown on send, never re-opened via badge)
     alertBadge.addEventListener('click', () => {
-      if (ownAlertTempId) { showOwnAlertPanel(); return; }
-      if (alertMarkers.size > 0) showPanel();
-      else showSafePanel();
+      if (bottomPanel.classList.contains('visible')) {
+        hidePanel();
+      } else {
+        updateBadgeAndPanel();
+      }
     });
 
     // Cancel alert button
