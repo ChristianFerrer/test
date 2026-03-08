@@ -210,6 +210,8 @@
   }
 
   function updateRadar() {
+    // Pulse always updates regardless of radarVisible
+    updatePulse();
     if (!userPosition || !map || !radarVisible) return;
     const { lat, lng } = userPosition;
     const icon = buildRadarIcon(lat);
@@ -223,7 +225,6 @@
         interactive: false,
       }).addTo(map);
     }
-    updatePulse();
   }
 
   /**
