@@ -712,7 +712,7 @@ html, body {
 .panel-own-line {
   font-size: 15px;
   font-weight: 400;
-  color: var(--text-secondary);
+  color: #1c1c1e;
   line-height: 1.5;
 }
 
