@@ -63,7 +63,7 @@
   let map = null;
   let userMarker = null;
   let radarMarker    = null;
-  let radarVisible   = true;            // toggled by "Modo Radar" chip
+  let radarVisible   = false;           // toggled by "Modo Radar" chip — OFF by default
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
   let alertData    = new Map();     // alert.id -> raw alert object (for clustering)
