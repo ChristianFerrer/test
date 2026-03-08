@@ -168,8 +168,8 @@
       updateRadar(); // draw radar once map is fully laid out
     }, 100);
 
-    // Show heatmap toggle button now that the map is ready
-    if (heatmapBtn) heatmapBtn.style.display = 'flex';
+    // heatmap button hidden — functionality unified in "Modo Radar" chip
+    if (heatmapBtn) heatmapBtn.style.display = 'none';
   }
 
   // ============================================================
@@ -265,21 +265,18 @@
   function toggleRadar() {
     radarVisible = !radarVisible;
 
+    // Toggle radar animation (pulse aura is NOT affected — always visible)
     if (!radarVisible) {
-      // Remove radar marker from map
       if (radarMarker) {
         map.removeLayer(radarMarker);
         radarMarker = null;
       }
-      // Hide pulse ring
-      const pulseEl = document.querySelector('.user-pulse');
-      if (pulseEl) pulseEl.style.display = 'none';
     } else {
-      // Restore radar + pulse
       updateRadar();
-      const pulseEl = document.querySelector('.user-pulse');
-      if (pulseEl) pulseEl.style.display = '';
     }
+
+    // Also toggle heatmap zones (unified in one button)
+    toggleHeatmap();
 
     // Update chip appearance
     if (calmZone) {
