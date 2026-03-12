@@ -928,15 +928,15 @@ html, body {
 }
 
 .toggle-btn {
-  padding: 7px 20px;
+  padding: 8px;
   border-radius: var(--radius-full);
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 15px; font-weight: 500;
   cursor: pointer;
   transition: all var(--tr-fast); outline: none;
-  letter-spacing: -0.2px;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
 }
 
 .toggle-btn.active {
