@@ -648,7 +648,7 @@ html, body {
   height: 80px;          /* fixed — same for all notification states */
   overflow: hidden;
   /* Default: red — 3+ alerts (Actividad elevada) */
-  background: #FF483E;
+  background: linear-gradient(135deg, #FF483E 0%, #D32F2F 50%, #B71C1C 100%);
   border: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: 0 4px 24px rgba(0,0,0,0.14);
@@ -661,15 +661,15 @@ html, body {
 
 .bottom-panel.visible { transform: translateY(0); }
 
-/* Green solid — 0 alerts (Zona Tranquila) */
+/* Green gradient — 0 alerts (Zona Tranquila) */
 .bottom-panel--safe {
-  background: #35CA5B;
+  background: linear-gradient(135deg, #43E06A 0%, #35CA5B 50%, #2E7D32 100%);
 }
 
-/* Amber solid — 1-2 alerts (Carterista) + own alert sent */
+/* Amber gradient — 1-2 alerts (Carterista) + own alert sent */
 .bottom-panel--warn,
 .bottom-panel--own {
-  background: #F0A20D;
+  background: linear-gradient(135deg, #FFC107 0%, #F0A20D 50%, #E65100 100%);
 }
 
 /* Hide the handle — panel is now compact */
