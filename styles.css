@@ -649,8 +649,7 @@ html, body {
   overflow: hidden;
   /* Default: red — 3+ alerts (Actividad elevada) */
   background: #FF483E;
-  border: 5px solid #ffffff;
-  border-top: none;
+  border: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: 0 4px 24px rgba(0,0,0,0.14);
   padding: 6px 16px;
