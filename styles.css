@@ -292,7 +292,7 @@ html, body {
   width: 46px; height: 46px;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
-  background: var(--brand-yellow);
+  background: radial-gradient(circle at 50% 40%, #fdd835 0%, #f5a623 60%, #e8820c 100%);
   border: 2.5px solid #fff;
   box-shadow: 0 4px 16px rgba(0,0,0,0.28);
   display: flex; align-items: center; justify-content: center;
