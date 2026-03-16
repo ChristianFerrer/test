@@ -503,7 +503,8 @@
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .top-email { min-width: 100px; max-width: 130px; }
   .admin-search { width: 160px; }
-  .td-date { display: none; }
+  .th-coord, .td-coord { display: none; }
+  .th-addr, .td-addr { display: none; }
+  .th-map, .td-map { display: none; }
   .filter-input { min-width: 100px; }
-  .td-addr { display: none; }
 }

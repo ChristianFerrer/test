@@ -220,7 +220,7 @@
           <td class="td-center td-date">${fecha} ${hora}</td>
           <td class="td-center td-coord">${lat}, ${lng}</td>
           <td class="td-addr" id="addr-${a.id}">${addr}</td>
-          <td class="td-center"><a class="map-link" href="${mapUrl}" target="_blank" rel="noopener">📍 Ver</a></td>
+          <td class="td-center td-map"><a class="map-link" href="${mapUrl}" target="_blank" rel="noopener">📍 Ver</a></td>
           <td class="td-center"><button class="btn-del-row" data-id="${a.id}" title="Eliminar alerta">🗑</button></td>
         </tr>`;
     }).join('');
