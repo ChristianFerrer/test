@@ -835,7 +835,7 @@
     // Switch panel to own-alert style
     bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--own');
-    if (panelIcon) panelIcon.src = 'whistle2_white.png';
+    if (panelIcon) panelIcon.src = 'whistl2_white.png';
 
     // Title
     panelTitleText.textContent = t('map.own_panel_title');
