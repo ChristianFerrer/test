@@ -64,6 +64,7 @@
   let userMarker = null;
   let radarMarker    = null;
   let radarVisible   = false;           // toggled by "Modo Radar" chip — OFF by default
+  let lastRadarKey   = '';              // tracks radar size+color to avoid unnecessary DOM rebuilds
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
   let alertData    = new Map();     // alert.id -> raw alert object (for clustering)
@@ -217,11 +218,19 @@
     updatePulse();
     if (!userPosition || !map || !radarVisible) return;
     const { lat, lng } = userPosition;
-    const icon = buildRadarIcon(lat);
+    const rgb = getRadarRgb(alertMarkers.size);
+    const d   = getRadarDiamPx(lat);
+    const key = `${d}|${rgb}`;
     if (radarMarker) {
       radarMarker.setLatLng([lat, lng]);
-      radarMarker.setIcon(icon);
+      // Only rebuild icon when size or colour changed to avoid restarting the CSS animation
+      if (key !== lastRadarKey) {
+        radarMarker.setIcon(buildRadarIcon(lat, rgb));
+        lastRadarKey = key;
+      }
     } else {
+      const icon = buildRadarIcon(lat, rgb);
+      lastRadarKey = key;
       radarMarker = L.marker([lat, lng], {
         icon,
         zIndexOffset: -200,   // render below alert markers
@@ -274,6 +283,7 @@
       if (radarMarker) {
         map.removeLayer(radarMarker);
         radarMarker = null;
+        lastRadarKey = '';
       }
     } else {
       updateRadar();
