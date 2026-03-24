@@ -248,8 +248,9 @@
     if (!userPosition || !map) return;
     const radiusPx  = getRadarDiamPx(userPosition.lat) / 2;  // 100 m in px
     const dotRadius = 9;                                       // half of 18 px dot
-    // Shrink scale so the outline (1.5px box-shadow) stays within the radar ring
-    const scale     = ((radiusPx - 1.5) / dotRadius).toFixed(3);
+    // box-shadow (1.5px) also scales, so total visual radius = scale*(dotRadius+1.5)
+    // Solve for scale so total visual radius = radiusPx
+    const scale     = (radiusPx / (dotRadius + 1.5)).toFixed(3);
     const rgb       = getRadarRgb(alertMarkers.size);          // same colour as radar
 
     // Apply colour variable to the pulse element
@@ -999,7 +1000,7 @@
         calmZone.className = 'calm-zone hidden';
       } else {
         calmZone.className = 'calm-zone ' + (heatmapVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
-        calmZone.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        calmZone.innerHTML = '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
       }
     }
 
