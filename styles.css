@@ -200,6 +200,7 @@ html, body {
   gap: 10px;
   z-index: 600;
 }
+.push-banner-icon { flex-shrink: 0; opacity: 0.7; }
 .push-banner span { flex: 1; line-height: 1.4; }
 .push-banner button {
   background: var(--brand-yellow);
@@ -862,7 +863,12 @@ html, body {
 
 .permission-overlay.hidden { display: none !important; }
 
-.permission-overlay .perm-icon { font-size: 64px; margin-bottom: 8px; }
+.permission-overlay .perm-icon {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: center;
+}
 
 .permission-overlay h2 {
   font-size: 22px; font-weight: 600; color: var(--brand-black);
@@ -1104,7 +1110,12 @@ html, body {
   font-size: 14px; text-align: center; padding: 64px 32px;
 }
 
-.empty-state .empty-icon { font-size: 52px; opacity: 0.4; }
+.empty-state .empty-icon {
+  opacity: 0.35;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: center;
+}
 
 /* ============================================================
    AUTH SCREEN (login.html)

@@ -104,7 +104,17 @@
 
 .kpi-card--yellow { border-top-color: var(--brand-yellow); }
 
-.kpi-icon { font-size: 28px; }
+.kpi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg-page);
+  color: var(--text-secondary);
+}
+.kpi-icon svg { flex-shrink: 0; }
 
 .kpi-value {
   font-size: 36px;
@@ -188,7 +198,19 @@
   gap: 12px;
 }
 
-.top-medal { font-size: 20px; flex-shrink: 0; }
+.top-medal { flex-shrink: 0; }
+.top-medal-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand-black);
+  color: var(--brand-yellow);
+  font-size: 12px;
+  font-weight: 800;
+}
 
 .top-email {
   font-size: 13px;
@@ -308,8 +330,8 @@
   font-size: 12px;
 }
 
-.push-yes { color: #2e7d32; font-weight: 700; }
-.push-no  { color: var(--text-muted); }
+.push-yes { color: #2e7d32; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+.push-no  { color: var(--text-muted); display: inline-flex; align-items: center; gap: 3px; }
 
 .td-coord {
   font-family: monospace;
@@ -318,7 +340,9 @@
 }
 
 .map-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   background: var(--brand-yellow);
   color: var(--brand-black);
   font-weight: 700;
@@ -453,6 +477,9 @@
   color: #b91c1c;
   cursor: pointer;
   transition: background var(--tr-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 .btn-delete-bulk:hover:not(:disabled) { background: #fecaca; }
 .btn-delete-bulk:disabled { opacity: 0.45; cursor: not-allowed; }

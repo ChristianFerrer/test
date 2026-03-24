@@ -337,7 +337,7 @@
     if (alerts.length === 0) {
       listView.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon">🔍</div>
+          <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <p>${t('history.empty')}</p>
           <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.empty_sub')}</p>
         </div>`;
@@ -404,7 +404,7 @@
   function renderListError() {
     listView.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">❌</div>
+        <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
         <p>${t('history.error')}</p>
         <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.error_sub')}</p>
         <button class="btn-primary" style="margin-top:16px;font-size:14px;padding:10px 24px" onclick="loadHistory()">${t('history.retry')}</button>
@@ -417,7 +417,7 @@
 
   function startGeolocation() {
     if (!('geolocation' in navigator)) {
-      listView.innerHTML = `<div class="empty-state"><div class="empty-icon">📍</div><p>${t('history.no_gps')}</p></div>`;
+      listView.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><p>${t('history.no_gps')}</p></div>`;
       return;
     }
 
@@ -432,7 +432,7 @@
         console.warn('[Whistle] Geolocation error on history:', err);
         listView.innerHTML = `
           <div class="empty-state">
-            <div class="empty-icon">📍</div>
+            <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
             <p>${t('history.need_gps')}</p>
             <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('history.need_gps_sub')}</p>
           </div>`;

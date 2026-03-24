@@ -84,7 +84,7 @@
       const data = await res.json();
       renderDashboard(data);
     } catch (err) {
-      loading.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>Error al cargar: ${err.message}</p></div>`;
+      loading.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><p>Error al cargar: ${err.message}</p></div>`;
     }
   }
 
@@ -146,7 +146,8 @@
     const maxCount = top5[0].count;
     list.innerHTML = top5.map((r, i) => {
       const pct   = Math.round((r.count / maxCount) * 100);
-      const medal = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'][i];
+      const medalNum = i + 1;
+      const medal = `<span class="top-medal-num">${medalNum}</span>`;
       return `
         <div class="top-row">
           <span class="top-medal">${medal}</span>
@@ -220,8 +221,8 @@
           <td class="td-center td-date">${fecha} ${hora}</td>
           <td class="td-center td-coord">${lat}, ${lng}</td>
           <td class="td-addr" id="addr-${a.id}">${addr}</td>
-          <td class="td-center td-map"><a class="map-link" href="${mapUrl}" target="_blank" rel="noopener">📍 Ver</a></td>
-          <td class="td-center"><button class="btn-del-row" data-id="${a.id}" title="Eliminar alerta">🗑</button></td>
+          <td class="td-center td-map"><a class="map-link" href="${mapUrl}" target="_blank" rel="noopener"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Ver</a></td>
+          <td class="td-center"><button class="btn-del-row" data-id="${a.id}" title="Eliminar alerta"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></td>
         </tr>`;
     }).join('');
 
@@ -389,8 +390,8 @@
         ? formatTimeAgo(u.last_alert)
         : '<span style="color:var(--text-muted)">Nunca</span>';
       const pushBadge = u.push_active
-        ? '<span class="push-yes">✅ Sí</span>'
-        : '<span class="push-no">❌ No</span>';
+        ? '<span class="push-yes"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Si</span>'
+        : '<span class="push-no"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> No</span>';
       return `
         <tr>
           <td class="td-email">${escHtml(u.email)}</td>

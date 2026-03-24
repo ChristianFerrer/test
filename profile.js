@@ -65,7 +65,7 @@
       .limit(50);
 
     if (error) {
-      myAlertsList.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><p>${t('profile.error')}</p></div>`;
+      myAlertsList.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><p>${t('profile.error')}</p></div>`;
       return;
     }
 
@@ -113,7 +113,7 @@
     if (total === 0) {
       myAlertsList.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon">🔍</div>
+          <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <p>${t('profile.no_alerts')}</p>
           <p style="font-size:12px;color:var(--text-muted);margin-top:4px">${t('profile.no_alerts_sub')}</p>
         </div>`;

@@ -27,7 +27,7 @@
 
   <!-- ==================== LOCATION PERMISSION OVERLAY ==================== -->
   <div id="permission-overlay" class="permission-overlay hidden">
-    <div class="perm-icon">📍</div>
+    <div class="perm-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
     <h2 data-i18n="map.perm_title">Necesitamos tu ubicación</h2>
     <p data-i18n="map.perm_body">Whistle necesita acceso a tu GPS para mostrarte alertas cercanas y avisarte de carteristas en tiempo real.</p>
     <button class="btn-primary" id="request-location-btn" data-i18n="map.perm_btn">Activar ubicación</button>
@@ -75,7 +75,8 @@
 
   <!-- ==================== PUSH PERMISSION BANNER ==================== -->
   <div id="push-banner" class="push-banner hidden">
-    <span data-i18n="map.push_banner">🔔 Activa las notificaciones para recibir alertas cuando el app esté cerrada</span>
+    <svg class="push-banner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    <span data-i18n="map.push_banner">Activa las notificaciones para recibir alertas cuando el app este cerrada</span>
     <button id="push-banner-btn" data-i18n="map.push_btn">Activar</button>
   </div>
 
