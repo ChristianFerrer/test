@@ -996,31 +996,30 @@ html, body {
   bottom: var(--bottom-bar-height);
   left: 0; right: 0;
   overflow-y: auto;
-  padding: 16px;
-  display: flex; flex-direction: column; gap: 12px;
-  background: var(--bg-page);
+  padding: 0;
+  display: flex; flex-direction: column; gap: 0;
+  background: var(--bg-card);
   -webkit-overflow-scrolling: touch;
 }
 
 .alert-list-container::-webkit-scrollbar { display: none; }
 
-/* Alert card */
+/* Alert card — flat style */
 .alert-card {
   background: var(--bg-card);
   border: none;
-  border-left: 4px solid var(--brand-yellow);
-  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
   padding: 14px 16px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 14px;
-  box-shadow: var(--shadow-card);
-  transition: border-color var(--tr-fast);
+  box-shadow: none;
 }
 
 .alert-card--recent {
-  border-left-color: var(--alert-red);
+  background: #fff8f7;
 }
 
 /* Left: thief icon */
