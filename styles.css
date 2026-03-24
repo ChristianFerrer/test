@@ -649,10 +649,10 @@ html, body {
   height: 80px;          /* fixed — same for all notification states */
   overflow: hidden;
   /* Default: red — 3+ alerts (Actividad elevada) */
-  background: linear-gradient(to top, #FF483E 0%, #D32F2F 50%, #B71C1C 100%);
+  background: linear-gradient(to bottom, #ff453a 0%, #d70015 100%);
   border: none;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+  box-shadow: 0 2px 16px rgba(215,0,21,0.18), 0 0.5px 0 rgba(255,255,255,0.08) inset;
   padding: 6px 16px;
   z-index: 400;
   transform: translateY(-100%);
@@ -664,13 +664,15 @@ html, body {
 
 /* Green gradient — 0 alerts (Zona Tranquila) */
 .bottom-panel--safe {
-  background: linear-gradient(to top, #43E06A 0%, #35CA5B 50%, #2E7D32 100%);
+  background: linear-gradient(to bottom, #34c759 0%, #248a3d 100%);
+  box-shadow: 0 2px 16px rgba(36,138,61,0.18), 0 0.5px 0 rgba(255,255,255,0.10) inset;
 }
 
 /* Amber gradient — 1-2 alerts (Carterista) + own alert sent */
 .bottom-panel--warn,
 .bottom-panel--own {
-  background: linear-gradient(to top, #FFC107 0%, #F0A20D 50%, #E65100 100%);
+  background: linear-gradient(to bottom, #ff9f0a 0%, #c93400 100%);
+  box-shadow: 0 2px 16px rgba(201,52,0,0.18), 0 0.5px 0 rgba(255,255,255,0.10) inset;
 }
 
 /* Hide the handle — panel is now compact */
