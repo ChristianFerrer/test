@@ -99,7 +99,7 @@
     'nav.admin':            { es: 'Admin',                       en: 'Admin' },
 
     // ── HISTORY ────────────────────────────────────────────────
-    'history.tagline':      { es: 'Alertas de carteristas en las últimas 24h en 5km a la redonda', en: 'Pickpocket alerts in the last 24h within 5km' },
+    'history.tagline':      { es: 'Historial de alerta de carteristas', en: 'Pickpocket alert history' },
     'history.list':         { es: 'Lista',                       en: 'List' },
     'history.map':          { es: 'Mapa',                        en: 'Map' },
     'history.loading':      { es: 'Cargando alertas...',         en: 'Loading alerts...' },
