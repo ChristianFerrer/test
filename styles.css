@@ -271,9 +271,10 @@ html, body {
   margin: -9px 0 0 -9px;
   border-radius: 50%;
   background: rgba(var(--pc),0.18);
-  border: 1.5px solid rgba(var(--pc),0.55);
+  box-shadow: 0 0 0 1.5px rgba(var(--pc),0.55);
   pointer-events: none;
   transform-origin: center;
+  will-change: transform, opacity;
   animation: pulse-expand 2.8s ease-out infinite;
 }
 
@@ -425,8 +426,8 @@ html, body {
   z-index: 500;
   font-size: 13px; font-weight: 600;
   letter-spacing: -0.1px;
-  padding: 11px; border-radius: 50%;
-  width: 44px; height: 44px;
+  padding: 13px; border-radius: 50%;
+  width: 48px; height: 48px;
   display: flex; align-items: center; justify-content: center;
   border: none;
   pointer-events: auto;
