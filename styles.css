@@ -586,12 +586,12 @@ html, body {
   z-index: 500;
   width: 84px; height: 84px;
   border-radius: 50%;
-  background: var(--brand-yellow);
+  background: linear-gradient(145deg, #FFD60A 0%, #F5C518 40%, #E8A800 100%);
   border: none;
   color: var(--brand-black);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: var(--shadow-button), 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: var(--shadow-button), 0 2px 8px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.04);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 2px;
@@ -618,7 +618,7 @@ html, body {
 }
 
 .alert-button.sending {
-  background: var(--alert-red);
+  background: linear-gradient(145deg, #FF6259 0%, var(--alert-red) 50%, #C62828 100%);
   border-color: var(--alert-red);
   color: #fff;
   animation: btn-flash 0.35s ease;
