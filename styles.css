@@ -425,8 +425,8 @@ html, body {
   z-index: 500;
   font-size: 13px; font-weight: 600;
   letter-spacing: -0.1px;
-  padding: 10px; border-radius: 50%;
-  width: 40px; height: 40px;
+  padding: 11px; border-radius: 50%;
+  width: 44px; height: 44px;
   display: flex; align-items: center; justify-content: center;
   border: none;
   pointer-events: auto;
@@ -438,9 +438,9 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
 }
 .calm-zone.hidden { opacity: 0; pointer-events: none; }
-/* Modo Radar — encendido */
-.calm-zone--radar-on  { background: rgba(232,245,233,0.97); color: #1b5e20; box-shadow: 0 2px 10px rgba(46,125,50,0.18); }
-/* Modo Radar — apagado */
+/* Heatmap — encendido */
+.calm-zone--radar-on  { background: #00a8ff; color: #fff; box-shadow: 0 2px 10px rgba(0,168,255,0.35); }
+/* Heatmap — apagado */
 .calm-zone--radar-off { background: rgba(242,242,247,0.97); color: #636366; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
 /* ============================================================
