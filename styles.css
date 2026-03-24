@@ -390,7 +390,7 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
 }
 .risk-legend.panel-open {
-  top: calc(var(--header-height) + 60px + 8px);
+  top: calc(var(--header-height) + 80px + 8px);
 }
 .risk-legend-title {
   font-size: 11px;
