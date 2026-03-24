@@ -63,7 +63,7 @@
   let map = null;
   let userMarker = null;
   let radarMarker    = null;
-  let radarVisible   = false;           // toggled by "Modo Radar" chip — OFF by default
+  // Radar animation is always active — no toggle needed
   let lastRadarKey   = '';              // tracks radar size+color to avoid unnecessary DOM rebuilds
   let userPosition = null;          // { lat, lng }
   let alertMarkers = new Map();     // alert.id -> L.Marker
@@ -214,9 +214,9 @@
   }
 
   function updateRadar() {
-    // Pulse always updates regardless of radarVisible
+    // Pulse always updates
     updatePulse();
-    if (!userPosition || !map || !radarVisible) return;
+    if (!userPosition || !map) return;
     const { lat, lng } = userPosition;
     const rgb = getRadarRgb(alertMarkers.size);
     const d   = getRadarDiamPx(lat);
@@ -276,25 +276,12 @@
   // ============================================================
 
   function toggleRadar() {
-    radarVisible = !radarVisible;
-
-    // Toggle radar animation (pulse aura is NOT affected — always visible)
-    if (!radarVisible) {
-      if (radarMarker) {
-        map.removeLayer(radarMarker);
-        radarMarker = null;
-        lastRadarKey = '';
-      }
-    } else {
-      updateRadar();
-    }
-
-    // Also toggle heatmap zones (unified in one button)
+    // Button now only toggles heatmap layer
     toggleHeatmap();
 
-    // Update chip appearance
+    // Update chip appearance based on heatmap state
     if (calmZone) {
-      calmZone.className = 'calm-zone ' + (radarVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
+      calmZone.className = 'calm-zone ' + (heatmapVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
     }
   }
 
@@ -1005,13 +992,13 @@
   function updateBadgeAndPanel() {
     const count = alertMarkers.size;
     updateRiskBanner();
-    // Modo Radar chip — visible once GPS is ready
+    // Heatmap chip — visible once GPS is ready
     if (calmZone) {
       if (!userPosition) {
         calmZone.className = 'calm-zone hidden';
       } else {
-        calmZone.className = 'calm-zone ' + (radarVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
-        calmZone.textContent = 'Modo Radar';
+        calmZone.className = 'calm-zone ' + (heatmapVisible ? 'calm-zone--radar-on' : 'calm-zone--radar-off');
+        calmZone.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 4-4 6-4 10a4 4 0 0 0 8 0c0-4-4-6-4-10z"/><path d="M12 22v-2"/></svg>';
       }
     }
 

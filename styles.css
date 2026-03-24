@@ -425,7 +425,9 @@ html, body {
   z-index: 500;
   font-size: 13px; font-weight: 600;
   letter-spacing: -0.1px;
-  padding: 8px 16px; border-radius: 20px;
+  padding: 10px; border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
   border: none;
   pointer-events: auto;
   cursor: pointer;
