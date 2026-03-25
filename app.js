@@ -389,9 +389,9 @@
     return L.divIcon({
       className: '',
       html: `<div class="alert-marker-wrap">${badge}<div class="${pinCls}"><img src="thief2.png" class="alert-marker-icon"></div></div>`,
-      iconSize: [46, 46],
-      iconAnchor: [23, 23],
-      popupAnchor: [0, -26],
+      iconSize: [46, 56],
+      iconAnchor: [23, 56],
+      popupAnchor: [0, -58],
     });
   }
 
