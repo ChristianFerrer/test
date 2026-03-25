@@ -226,6 +226,11 @@ html, body {
   background: #c8d8e8;
 }
 
+/* Boost Voyager tile colors to match Google Maps vibrancy */
+.leaflet-tile-pane {
+  filter: saturate(1.3) contrast(1.05) brightness(1.02);
+}
+
 .leaflet-control-attribution {
   background: rgba(255,255,255,0.55) !important;
   color: rgba(0,0,0,0.35) !important;
