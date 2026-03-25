@@ -419,7 +419,10 @@
       const toggleBar = document.querySelector('.view-toggle-bar');
       const toggleH = toggleBar ? toggleBar.offsetHeight : 50;
       const base = document.querySelector('.app-header').offsetHeight + toggleH;
-      listView.style.top = (base + chartH) + 'px';
+      const titleTop = base + chartH;
+      if (alertsSectionTitle) alertsSectionTitle.style.top = titleTop + 'px';
+      const titleH = alertsSectionTitle ? alertsSectionTitle.offsetHeight : 0;
+      listView.style.top = (titleTop + titleH) + 'px';
     });
   }
 
@@ -432,7 +435,6 @@
     renderHourlyChart(alerts);
 
     if (alerts.length === 0) {
-      if (alertsSectionTitle) alertsSectionTitle.style.display = 'none';
       alertsListContent.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
@@ -442,7 +444,6 @@
       return;
     }
 
-    if (alertsSectionTitle) alertsSectionTitle.style.display = '';
 
     const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
     alertsListContent.innerHTML = alerts.map((alert) => {
