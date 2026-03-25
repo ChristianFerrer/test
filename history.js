@@ -42,6 +42,15 @@
   // VIEW TOGGLE
   // ============================================================
 
+  /** Position a fixed element right below the toggle bar */
+  function positionBelowBar(el) {
+    const toggleBar = document.querySelector('.view-toggle-bar');
+    const top = toggleBar
+      ? toggleBar.offsetTop + toggleBar.offsetHeight
+      : 0;
+    el.style.top = top + 'px';
+  }
+
   function setView(view) {
     currentView = view;
 
@@ -57,6 +66,7 @@
       btnList.classList.remove('active');
       listView.classList.add('hidden');
       mapViewContainer.classList.remove('hidden');
+      positionBelowBar(mapViewContainer);
 
       // Initialize history map on first switch
       if (!historyMap) {
@@ -170,11 +180,16 @@
 
     // Fit bounds to all markers if there are any
     if (historyMarkers.length > 0 && userPosition) {
-      const bounds = L.latLngBounds([
+      const points = [
         [userPosition.lat, userPosition.lng],
         ...alerts.map(a => [a.lat, a.lng]),
-      ]);
-      historyMap.fitBounds(bounds, { padding: [32, 32], maxZoom: 16 });
+      ];
+      const bounds = L.latLngBounds(points);
+      // In "all zones" mode, let the map zoom out to show the farthest alert
+      const opts = filterZone === 'all'
+        ? { padding: [40, 40] }
+        : { padding: [32, 32], maxZoom: 16 };
+      historyMap.fitBounds(bounds, opts);
     }
   }
 
@@ -386,10 +401,9 @@
       labelsEl.className = 'hourly-chart-labels';
       hourlyChart.insertAdjacentElement('afterend', labelsEl);
     }
-    labelsEl.innerHTML = CHART_LABELS.map(h => {
-      const pct = ((h / 23) * 100).toFixed(1);
-      return `<span class="hourly-chart-label" style="left:${pct}%">${String(h).padStart(2, '0')}</span>`;
-    }).join('');
+    labelsEl.innerHTML = CHART_LABELS.map(h =>
+      `<span class="hourly-chart-label">${String(h).padStart(2, '0')}</span>`
+    ).join('');
 
     hourlyChartSection.classList.remove('hidden');
     repositionList();
@@ -400,7 +414,9 @@
     requestAnimationFrame(() => {
       const chartH = hourlyChartSection && !hourlyChartSection.classList.contains('hidden')
         ? hourlyChartSection.offsetHeight : 0;
-      const base = document.querySelector('.app-header').offsetHeight + 50; // header + toggle bar
+      const toggleBar = document.querySelector('.view-toggle-bar');
+      const toggleH = toggleBar ? toggleBar.offsetHeight : 50;
+      const base = document.querySelector('.app-header').offsetHeight + toggleH;
       listView.style.top = (base + chartH) + 'px';
     });
   }
