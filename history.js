@@ -337,10 +337,14 @@
   // HOURLY CHART
   // ============================================================
 
+  // Axis labels to display (like Google Maps reference)
+  const CHART_LABELS = [9, 12, 15, 18, 21];
+
   function renderHourlyChart(alerts) {
     if (!hourlyChart || !hourlyChartSection) return;
     if (alerts.length === 0) {
       hourlyChartSection.classList.add('hidden');
+      repositionList();
       return;
     }
 
@@ -352,21 +356,42 @@
     });
 
     const max = Math.max(...counts, 1);
-    // Find peak hour(s)
     const peakVal = Math.max(...counts);
 
+    // Build bars
     hourlyChart.innerHTML = counts.map((c, h) => {
-      const pct = Math.max((c / max) * 100, 3); // min 3% so empty hours still show a sliver
+      const pct = Math.max((c / max) * 100, 5);
       const isPeak = c === peakVal && c > 0;
-      const label = h % 3 === 0 ? `${String(h).padStart(2, '0')}` : '';
       return `<div class="hourly-bar-col">
         <div class="hourly-bar${isPeak ? ' hourly-bar--peak' : ''}" style="height:${pct}%"
              title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
-        <span class="hourly-bar-label">${label}</span>
       </div>`;
     }).join('');
 
+    // Build axis labels row
+    let labelsEl = hourlyChartSection.querySelector('.hourly-chart-labels');
+    if (!labelsEl) {
+      labelsEl = document.createElement('div');
+      labelsEl.className = 'hourly-chart-labels';
+      hourlyChart.insertAdjacentElement('afterend', labelsEl);
+    }
+    labelsEl.innerHTML = CHART_LABELS.map(h => {
+      const pct = ((h / 23) * 100).toFixed(1);
+      return `<span class="hourly-chart-label" style="left:${pct}%">${String(h).padStart(2, '0')}</span>`;
+    }).join('');
+
     hourlyChartSection.classList.remove('hidden');
+    repositionList();
+  }
+
+  /** Adjust alert list top to sit right below the fixed chart section */
+  function repositionList() {
+    requestAnimationFrame(() => {
+      const chartH = hourlyChartSection && !hourlyChartSection.classList.contains('hidden')
+        ? hourlyChartSection.offsetHeight : 0;
+      const base = document.querySelector('.app-header').offsetHeight + 50; // header + toggle bar
+      listView.style.top = (base + chartH) + 'px';
+    });
   }
 
   // ============================================================
