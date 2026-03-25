@@ -57,7 +57,20 @@
   <!-- ==================== LIST VIEW ==================== -->
   <div id="list-view" class="alert-list-container" style="top: calc(var(--header-height) + 50px);">
     <div id="history-summary" class="history-summary"></div>
-    <div class="spinner" data-i18n="history.loading">Cargando alertas...</div>
+
+    <!-- Hourly activity chart -->
+    <div id="hourly-chart-section" class="history-section hidden">
+      <h2 class="history-section-title">Actividad por horas</h2>
+      <div class="hourly-chart" id="hourly-chart"></div>
+    </div>
+
+    <!-- Alert list -->
+    <div id="alerts-list-section">
+      <h2 class="history-section-title" id="alerts-section-title" style="display:none;">Historial de alertas</h2>
+      <div id="alerts-list-content">
+        <div class="spinner" data-i18n="history.loading">Cargando alertas...</div>
+      </div>
+    </div>
   </div>
 
   <!-- ==================== MAP VIEW ==================== -->

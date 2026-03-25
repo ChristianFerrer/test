@@ -982,6 +982,51 @@ html, body {
 }
 .history-summary.visible { display: block; }
 
+/* History section titles */
+.history-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 16px 16px 8px;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+/* Hourly activity chart */
+.history-section.hidden { display: none; }
+
+.hourly-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+  padding: 0 16px 12px;
+}
+.hourly-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.hourly-bar {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+  background: var(--brand-yellow);
+  transition: height 0.3s ease;
+}
+.hourly-bar--peak {
+  background: var(--alert-orange);
+}
+.hourly-bar-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
 /* Verified badge on history cards */
 .card-verified {
   font-size: 10px; font-weight: 800;

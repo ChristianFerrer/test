@@ -24,6 +24,10 @@
   const historyCountNum  = document.getElementById('history-count-num');
   const listView         = document.getElementById('list-view');
   const mapViewContainer = document.getElementById('map-view-container');
+  const hourlyChartSection = document.getElementById('hourly-chart-section');
+  const hourlyChart      = document.getElementById('hourly-chart');
+  const alertsListContent = document.getElementById('alerts-list-content');
+  const alertsSectionTitle = document.getElementById('alerts-section-title');
   const btnList          = document.getElementById('btn-list');
   const btnMap           = document.getElementById('btn-map');
   const filter24h        = document.getElementById('filter-24h');
@@ -330,12 +334,52 @@
   }
 
   // ============================================================
+  // HOURLY CHART
+  // ============================================================
+
+  function renderHourlyChart(alerts) {
+    if (!hourlyChart || !hourlyChartSection) return;
+    if (alerts.length === 0) {
+      hourlyChartSection.classList.add('hidden');
+      return;
+    }
+
+    // Count alerts per hour (0-23)
+    const counts = new Array(24).fill(0);
+    alerts.forEach(a => {
+      const h = new Date(a.created_at).getHours();
+      counts[h]++;
+    });
+
+    const max = Math.max(...counts, 1);
+    // Find peak hour(s)
+    const peakVal = Math.max(...counts);
+
+    hourlyChart.innerHTML = counts.map((c, h) => {
+      const pct = Math.max((c / max) * 100, 3); // min 3% so empty hours still show a sliver
+      const isPeak = c === peakVal && c > 0;
+      const label = h % 3 === 0 ? `${String(h).padStart(2, '0')}` : '';
+      return `<div class="hourly-bar-col">
+        <div class="hourly-bar${isPeak ? ' hourly-bar--peak' : ''}" style="height:${pct}%"
+             title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
+        <span class="hourly-bar-label">${label}</span>
+      </div>`;
+    }).join('');
+
+    hourlyChartSection.classList.remove('hidden');
+  }
+
+  // ============================================================
   // RENDER LIST
   // ============================================================
 
   function renderList(alerts, verifiedSet = new Set()) {
+    // Always render the chart
+    renderHourlyChart(alerts);
+
     if (alerts.length === 0) {
-      listView.innerHTML = `
+      if (alertsSectionTitle) alertsSectionTitle.style.display = 'none';
+      alertsListContent.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <p>${t('history.empty')}</p>
@@ -344,8 +388,10 @@
       return;
     }
 
+    if (alertsSectionTitle) alertsSectionTitle.style.display = '';
+
     const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
-    listView.innerHTML = alerts.map((alert) => {
+    alertsListContent.innerHTML = alerts.map((alert) => {
       const isVerified = verifiedSet.has(alert.id);
       const d = new Date(alert.created_at);
 
@@ -402,7 +448,7 @@
   }
 
   function renderListError() {
-    listView.innerHTML = `
+    alertsListContent.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
         <p>${t('history.error')}</p>
