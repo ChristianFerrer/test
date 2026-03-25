@@ -226,26 +226,51 @@ html, body {
   background: #c8d8e8;
 }
 
-/* Slightly boost saturation like Google Maps */
-.leaflet-tile-pane {
-  filter: saturate(1.15) brightness(1.02);
-}
-
 .leaflet-control-attribution {
-  background: rgba(255,255,255,0.8) !important;
-  color: var(--text-muted) !important;
-  font-size: 10px !important;
+  background: rgba(255,255,255,0.55) !important;
+  color: rgba(0,0,0,0.35) !important;
+  font-size: 9px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px 0 0 0 !important;
 }
 
 .leaflet-popup-content-wrapper {
   background: #fff !important;
   border: none !important;
-  border-radius: var(--radius-md) !important;
-  box-shadow: var(--shadow-card) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04) !important;
+  padding: 0 !important;
+}
+.leaflet-popup-content {
+  margin: 0 !important;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.leaflet-popup-tip { background: #fff !important; }
+.leaflet-popup-close-button {
+  width: 28px !important; height: 28px !important;
+  font-size: 18px !important;
+  color: #999 !important;
+  top: 4px !important; right: 4px !important;
 }
 
-.leaflet-popup-content { margin: 10px 14px !important; }
-.leaflet-popup-tip { background: #fff !important; }
+/* Google Maps-style popup card */
+.popup-card { padding: 12px 14px; }
+.popup-card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+.popup-card-meta {
+  font-size: 12px; color: var(--text-muted);
+  margin: 0 0 8px;
+}
+.popup-card-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none;
+  color: #1a73e8; font-size: 12px; font-weight: 600;
+  padding: 0; cursor: pointer;
+}
 
 /* ============================================================
    USER LOCATION DOT - blue GPS dot
@@ -298,7 +323,7 @@ html, body {
   border: 2.5px solid #fff;
   box-shadow: 0 4px 16px rgba(0,0,0,0.28);
   display: flex; align-items: center; justify-content: center;
-  animation: marker-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: marker-drop 0.5s cubic-bezier(0.12, 0.72, 0.32, 1.12);
 }
 
 .alert-marker-icon {
@@ -308,9 +333,11 @@ html, body {
   object-fit: contain;
 }
 
-@keyframes marker-pop {
-  0%   { transform: rotate(-45deg) scale(0.4); opacity: 0; }
-  100% { transform: rotate(-45deg) scale(1); opacity: 1; }
+@keyframes marker-drop {
+  0%   { transform: rotate(-45deg) translateY(-40px) scale(0.6); opacity: 0; }
+  50%  { transform: rotate(-45deg) translateY(4px) scale(1.05); opacity: 1; }
+  70%  { transform: rotate(-45deg) translateY(-2px) scale(0.98); }
+  100% { transform: rotate(-45deg) translateY(0) scale(1); }
 }
 
 /* Verified alert marker — green ring around the diamond */
@@ -337,6 +364,30 @@ html, body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.25);
   z-index: 2;
   pointer-events: none;
+}
+
+/* ============================================================
+   MY LOCATION BUTTON - Google Maps style
+   ============================================================ */
+.my-location-btn {
+  position: fixed;
+  bottom: calc(var(--bottom-bar-height) + 80px);
+  right: 12px;
+  z-index: 500;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.15), 0 3px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #666;
+  transition: color 0.2s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.my-location-btn:active {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  color: #1a73e8;
 }
 
 /* ============================================================
@@ -1690,4 +1741,64 @@ html, body {
   /* Allow text selection on iOS */
   -webkit-user-select: all;
   user-select: all;
+}
+
+/* ============================================================
+   DARK MODE - map + UI overlays
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-page:        #1c1c1e;
+    --bg-card:        #2c2c2e;
+    --bg-nav:         rgba(44,44,46,0.94);
+    --text-primary:   #f2f2f7;
+    --text-secondary: #aeaeb2;
+    --text-muted:     #636366;
+    --border:         rgba(255,255,255,0.12);
+    --border-card:    rgba(255,255,255,0.08);
+    --shadow-header:  0 0.5px 0 rgba(0,0,0,0.5);
+    --shadow-card:    0 1px 4px rgba(0,0,0,0.2), 0 8px 28px rgba(0,0,0,0.15);
+    --shadow-nav:     0 -0.5px 0 rgba(255,255,255,0.08);
+  }
+
+  /* Invert + hue-rotate map tiles for dark appearance */
+  .leaflet-tile-pane {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+  }
+
+  /* Keep markers/overlays normal (counter-invert) */
+  .leaflet-marker-pane,
+  .leaflet-popup-pane,
+  .leaflet-overlay-pane canvas {
+    filter: none;
+  }
+
+  /* UI elements */
+  .app-header { background: #2c2c2e; }
+  .bottom-nav { background: rgba(44,44,46,0.94); }
+  .leaflet-popup-content-wrapper { background: #2c2c2e !important; }
+  .leaflet-popup-tip { background: #2c2c2e !important; }
+  .popup-card-title { color: #f2f2f7; }
+  .popup-card-meta { color: #aeaeb2; }
+
+  .my-location-btn { background: #3a3a3c; color: #aeaeb2; }
+  .my-location-btn:active { color: #5ac8fa; }
+
+  .heatmap-toggle { background: rgba(44,44,46,0.92); color: #f2f2f7; }
+
+  .risk-legend { background: rgba(44,44,46,0.92); }
+  .risk-legend-title { color: #aeaeb2; }
+
+  .leaflet-control-attribution {
+    background: rgba(44,44,46,0.6) !important;
+    color: rgba(255,255,255,0.3) !important;
+  }
+
+  .filter-dropdown-menu { background: #3a3a3c; }
+  .filter-dropdown-group-title { color: #8e8e93; }
+  .filter-dropdown-item { color: #f2f2f7; }
+  .filter-dropdown-divider { background: rgba(255,255,255,0.1); }
+  .filter-dropdown-btn { background: #3a3a3c; border-color: rgba(255,255,255,0.12); color: #f2f2f7; }
+
+  #map { background: #1a1a2e; }
 }

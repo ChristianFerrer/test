@@ -146,10 +146,11 @@
       attributionControl: true,
     });
 
-    // Bright tile layer - Waze uses vivid clear maps (OSM standard)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    // CartoDB Voyager - clean Google Maps-like style
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
       maxZoom: 20,
+      subdomains: 'abcd',
     }).addTo(map);
 
     // User position marker (pulsing blue dot)
@@ -416,11 +417,9 @@
     const verifiedHtml = verified
       ? `<div style="color:#2e7d32;font-weight:700;font-size:11px;margin-top:5px">${t('map.verified', { n: corroborators + 1 })}</div>`
       : '';
-    return `<div style="text-align:center;font-family:-apple-system,sans-serif;padding:2px 0">
-      <img src="thief2.png" style="width:28px;height:28px;object-fit:contain;display:block;margin:0 auto 6px">
-      <strong style="color:#1a1a1a;font-size:14px">${t('map.popup_title')}</strong><br>
-      <span style="font-size:12px;color:#555">${ageStr}</span>
-      ${verifiedHtml}
+    return `<div class="popup-card">
+      <p class="popup-card-title">${t('map.popup_title')}</p>
+      <p class="popup-card-meta">${ageStr}${verifiedHtml ? ' · ' : ''}${verified ? '<span style="color:#2e7d32;font-weight:700">' + t('map.verified', { n: corroborators + 1 }) + '</span>' : ''}</p>
     </div>`;
   }
 
@@ -463,7 +462,7 @@
     alertData.set(alert.id, alert); // store raw data for clustering
 
     const marker = L.marker([alert.lat, alert.lng], { icon: buildMarkerIcon(false) })
-      .bindPopup(buildPopupHtml(alert, false), { maxWidth: 180 })
+      .bindPopup(buildPopupHtml(alert, false), { maxWidth: 220, minWidth: 140, closeButton: false })
       .addTo(map);
 
     alertMarkers.set(alert.id, marker);
@@ -1237,6 +1236,16 @@
 
     // Cancel alert button
     if (cancelBtn) cancelBtn.addEventListener('click', cancelOwnAlert);
+
+    // My location button
+    const myLocBtn = document.getElementById('my-location-btn');
+    if (myLocBtn) myLocBtn.addEventListener('click', () => {
+      if (map && userMarker) {
+        map.flyTo(userMarker.getLatLng(), 18, { duration: 0.6 });
+        myLocBtn.style.color = '#1a73e8';
+        setTimeout(() => { myLocBtn.style.color = ''; }, 1000);
+      }
+    });
 
     // Heatmap toggle
     if (heatmapBtn) heatmapBtn.addEventListener('click', toggleHeatmap);
