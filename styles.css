@@ -958,9 +958,38 @@ html, body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.10);
 }
 
+/* Zone toggle (Cerca / Todas) */
+.zone-toggle {
+  display: flex;
+  gap: 0;
+  margin-left: auto;
+  background: rgba(60,60,67,0.08);
+  border-radius: 10px;
+  padding: 2px;
+}
+.zone-btn {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.zone-btn.active {
+  background: #fff;
+  color: var(--brand-black);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.zone-btn svg { flex-shrink: 0; }
+
 /* History filter pills */
 .filter-bar {
-  display: flex; gap: 6px; margin-left: auto;
+  display: flex; gap: 6px; margin-left: 8px;
 }
 .filter-pill {
   padding: 5px 13px; border-radius: 20px;

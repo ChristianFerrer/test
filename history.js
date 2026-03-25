@@ -15,6 +15,7 @@
   let allAlerts = [];
   let currentView = 'list';
   let filterHours = 24;   // active time filter: 24 | 168 (7d) | 720 (30d)
+  let filterZone = 'nearby'; // 'nearby' = within radius, 'all' = no geo filter
   let verifiedIds = new Set();   // updated by loadHistory, read by setView re-render
   let watchId = null;
   let refreshTimer = null;
@@ -34,6 +35,8 @@
   const filter7d         = document.getElementById('filter-7d');
   const filter30d        = document.getElementById('filter-30d');
   const historySummary   = document.getElementById('history-summary');
+  const zoneNearby       = document.getElementById('zone-nearby');
+  const zoneAll          = document.getElementById('zone-all');
 
   // ============================================================
   // VIEW TOGGLE
@@ -211,19 +214,25 @@
   async function loadHistory() {
     if (!userPosition) return;
 
-    const box = getBoundingBox(userPosition.lat, userPosition.lng, HISTORY_RADIUS_M);
     const cutoff = new Date(Date.now() - filterHours * 60 * 60 * 1000).toISOString();
-
-    const { data, error } = await supabase
+    let query = supabase
       .from('alerts')
       .select('id, lat, lng, created_at, user_id')
-      .gte('lat', box.minLat)
-      .lte('lat', box.maxLat)
-      .gte('lng', box.minLng)
-      .lte('lng', box.maxLng)
       .gte('created_at', cutoff)
       .order('created_at', { ascending: false })
       .limit(500);
+
+    // Apply geo filter only in "nearby" mode
+    if (filterZone === 'nearby') {
+      const box = getBoundingBox(userPosition.lat, userPosition.lng, HISTORY_RADIUS_M);
+      query = query
+        .gte('lat', box.minLat)
+        .lte('lat', box.maxLat)
+        .gte('lng', box.minLng)
+        .lte('lng', box.maxLng);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('[Whistle] loadHistory error:', error);
@@ -231,10 +240,12 @@
       return;
     }
 
-    // Precise Haversine filter
-    const within = data.filter(a =>
-      haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= HISTORY_RADIUS_M
-    );
+    // Precise Haversine filter only in "nearby" mode
+    const within = filterZone === 'nearby'
+      ? data.filter(a =>
+          haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= HISTORY_RADIUS_M
+        )
+      : data;
 
     allAlerts = within;
 
@@ -337,8 +348,8 @@
   // HOURLY CHART
   // ============================================================
 
-  // Axis labels to display (like Google Maps reference)
-  const CHART_LABELS = [9, 12, 15, 18, 21];
+  // Axis labels to display (every 3 hours)
+  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
 
   function renderHourlyChart(alerts) {
     if (!hourlyChart || !hourlyChartSection) return;
@@ -530,6 +541,14 @@
     if (filter7d)  filter7d.addEventListener('click',  () => { filterHours = 168; setActiveFilter(filter7d);  loadHistory(); });
     if (filter30d) filter30d.addEventListener('click', () => { filterHours = 720; setActiveFilter(filter30d); loadHistory(); });
     setActiveFilter(filter24h); // default active
+
+    // Zone toggle (Cerca / Todas)
+    function setActiveZone(active) {
+      [zoneNearby, zoneAll].forEach(b => b && b.classList.remove('active'));
+      if (active) active.classList.add('active');
+    }
+    if (zoneNearby) zoneNearby.addEventListener('click', () => { filterZone = 'nearby'; setActiveZone(zoneNearby); loadHistory(); });
+    if (zoneAll)    zoneAll.addEventListener('click',    () => { filterZone = 'all';    setActiveZone(zoneAll);    loadHistory(); });
 
     // Toggle buttons
     btnList.addEventListener('click', () => setView('list'));
