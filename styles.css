@@ -685,6 +685,19 @@ html, body {
   display: flex; align-items: center; gap: 14px;
 }
 
+.panel-icon-circle {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.panel-icon-img {
+  width: 30px; height: 30px;
+  object-fit: contain;
+}
+
 .panel-icon-wrap {
   width: 48px; height: 48px;
   border-radius: 50%;
