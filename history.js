@@ -366,7 +366,7 @@
   // ============================================================
 
   // Axis labels to display (every 3 hours)
-  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21, 23];
+  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
 
   function renderHourlyChart(alerts) {
     if (!hourlyChart || !hourlyChartSection) return;
