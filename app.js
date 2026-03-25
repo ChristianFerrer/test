@@ -744,7 +744,7 @@
 
     bottomPanel.classList.remove('bottom-panel--own', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--safe');
-    if (panelIcon) panelIcon.src = 'security_black.png';
+    if (panelIcon) panelIcon.src = 'security_white.png';
 
     panelTitleText.textContent = t('map.panel_safe_title');
     panelSubtitle.textContent  = t('map.panel_safe_sub1');
@@ -831,7 +831,7 @@
     // Switch panel to own-alert style
     bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--own');
-    if (panelIcon) panelIcon.src = 'whistle2_black.png';
+    if (panelIcon) panelIcon.src = 'whistle_white.png';
 
     // Title
     panelTitleText.textContent = t('map.own_panel_title');
@@ -1017,7 +1017,7 @@
         // 1-2 alerts — amber "Carterista en la zona"
         bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
         bottomPanel.classList.add('bottom-panel--warn');
-        if (panelIcon) panelIcon.src = 'thief2.png';
+        if (panelIcon) panelIcon.src = 'thief_white.png';
         panelTitleText.textContent = t('map.panel_title_one');
         panelSubtitle.textContent  = count === 1
           ? t('map.panel_sub_one')
@@ -1025,7 +1025,7 @@
       } else {
         // 3+ alerts — red "Actividad elevada"
         bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own', 'bottom-panel--warn');
-        if (panelIcon) panelIcon.src = 'thief2.png';
+        if (panelIcon) panelIcon.src = 'thief_white.png';
         panelTitleText.textContent = t('map.panel_title_many');
         panelSubtitle.textContent  = t('map.panel_sub_many', { n: count });
       }
