@@ -366,7 +366,7 @@
   // ============================================================
 
   // Axis labels to display (every 3 hours)
-  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
+  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21, 23];
 
   function renderHourlyChart(alerts) {
     if (!hourlyChart || !hourlyChartSection) return;
@@ -403,9 +403,10 @@
       labelsEl.className = 'hourly-chart-labels';
       hourlyChart.insertAdjacentElement('afterend', labelsEl);
     }
-    labelsEl.innerHTML = CHART_LABELS.map(h =>
-      `<span class="hourly-chart-label">${String(h).padStart(2, '0')}</span>`
-    ).join('');
+    labelsEl.innerHTML = Array.from({length: 24}, (_, h) => {
+      const show = CHART_LABELS.includes(h);
+      return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
+    }).join('');
 
     hourlyChartSection.classList.remove('hidden');
     repositionList();
