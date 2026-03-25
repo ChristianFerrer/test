@@ -42,13 +42,14 @@
   // VIEW TOGGLE
   // ============================================================
 
-  /** Position a fixed element right below the toggle bar */
-  function positionBelowBar(el) {
+  /** Compute the bottom edge of the toggle bar + chart section (if visible) */
+  function getContentTop() {
     const toggleBar = document.querySelector('.view-toggle-bar');
-    const top = toggleBar
-      ? toggleBar.offsetTop + toggleBar.offsetHeight
-      : 0;
-    el.style.top = top + 'px';
+    const barBottom = toggleBar ? toggleBar.offsetTop + toggleBar.offsetHeight : 0;
+    if (hourlyChartSection && !hourlyChartSection.classList.contains('hidden')) {
+      return barBottom + hourlyChartSection.offsetHeight;
+    }
+    return barBottom;
   }
 
   function setView(view) {
@@ -66,7 +67,10 @@
       btnList.classList.remove('active');
       listView.classList.add('hidden');
       mapViewContainer.classList.remove('hidden');
-      positionBelowBar(mapViewContainer);
+      // Position map below toggle bar + chart
+      requestAnimationFrame(() => {
+        mapViewContainer.style.top = getContentTop() + 'px';
+      });
 
       // Initialize history map on first switch
       if (!historyMap) {
@@ -411,15 +415,16 @@
     repositionList();
   }
 
-  /** Adjust alert list top to sit right below the fixed chart section */
+  /** Adjust list / map top to sit right below the fixed chart section */
   function repositionList() {
     requestAnimationFrame(() => {
-      const chartH = hourlyChartSection && !hourlyChartSection.classList.contains('hidden')
-        ? hourlyChartSection.offsetHeight : 0;
-      const toggleBar = document.querySelector('.view-toggle-bar');
-      const toggleH = toggleBar ? toggleBar.offsetHeight : 50;
-      const base = document.querySelector('.app-header').offsetHeight + toggleH;
-      listView.style.top = (base + chartH) + 'px';
+      const top = getContentTop();
+      listView.style.top = top + 'px';
+      // Also reposition map if it's visible
+      if (currentView === 'map' && mapViewContainer) {
+        mapViewContainer.style.top = top + 'px';
+        if (historyMap) historyMap.invalidateSize();
+      }
     });
   }
 
