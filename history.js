@@ -31,12 +31,11 @@
   const alertsSectionTitle = document.getElementById('alerts-section-title');
   const btnList          = document.getElementById('btn-list');
   const btnMap           = document.getElementById('btn-map');
-  const filter24h        = document.getElementById('filter-24h');
-  const filter7d         = document.getElementById('filter-7d');
-  const filter30d        = document.getElementById('filter-30d');
-  const historySummary   = document.getElementById('history-summary');
-  const zoneNearby       = document.getElementById('zone-nearby');
-  const zoneAll          = document.getElementById('zone-all');
+  const historySummary        = document.getElementById('history-summary');
+  const filterDropdownWrap   = document.getElementById('filter-dropdown-wrap');
+  const filterDropdownBtn    = document.getElementById('filter-dropdown-btn');
+  const filterDropdownMenu   = document.getElementById('filter-dropdown-menu');
+  const filterDropdownLabel  = document.getElementById('filter-dropdown-label');
 
   // ============================================================
   // VIEW TOGGLE
@@ -551,23 +550,46 @@
   // ============================================================
 
   function boot() {
-    // Filter pills
-    function setActiveFilter(active) {
-      [filter24h, filter7d, filter30d].forEach(b => b && b.classList.remove('active'));
-      if (active) active.classList.add('active');
-    }
-    if (filter24h) filter24h.addEventListener('click', () => { filterHours = 24;  setActiveFilter(filter24h); loadHistory(); });
-    if (filter7d)  filter7d.addEventListener('click',  () => { filterHours = 168; setActiveFilter(filter7d);  loadHistory(); });
-    if (filter30d) filter30d.addEventListener('click', () => { filterHours = 720; setActiveFilter(filter30d); loadHistory(); });
-    setActiveFilter(filter24h); // default active
+    // Filter dropdown
+    const periodLabels = { '24': '24h', '168': '7d', '720': '30d' };
+    const zoneLabels   = { 'nearby': 'Cerca', 'all': 'Todas' };
 
-    // Zone toggle (Cerca / Todas)
-    function setActiveZone(active) {
-      [zoneNearby, zoneAll].forEach(b => b && b.classList.remove('active'));
-      if (active) active.classList.add('active');
+    function updateFilterLabel() {
+      const pLabel = periodLabels[String(filterHours)] || '24h';
+      const zLabel = zoneLabels[filterZone] || 'Cerca';
+      if (filterDropdownLabel) filterDropdownLabel.textContent = zLabel + ' · ' + pLabel;
     }
-    if (zoneNearby) zoneNearby.addEventListener('click', () => { filterZone = 'nearby'; setActiveZone(zoneNearby); loadHistory(); });
-    if (zoneAll)    zoneAll.addEventListener('click',    () => { filterZone = 'all';    setActiveZone(zoneAll);    loadHistory(); });
+
+    if (filterDropdownBtn) {
+      filterDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = !filterDropdownMenu.classList.contains('hidden');
+        filterDropdownMenu.classList.toggle('hidden', open);
+        filterDropdownWrap.classList.toggle('open', !open);
+      });
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', () => {
+      if (filterDropdownMenu && !filterDropdownMenu.classList.contains('hidden')) {
+        filterDropdownMenu.classList.add('hidden');
+        filterDropdownWrap.classList.remove('open');
+      }
+    });
+    if (filterDropdownMenu) {
+      filterDropdownMenu.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    // Radio change handlers
+    if (filterDropdownMenu) {
+      filterDropdownMenu.querySelectorAll('input[name="zone"]').forEach(r => {
+        r.addEventListener('change', () => { filterZone = r.value; updateFilterLabel(); loadHistory(); });
+      });
+      filterDropdownMenu.querySelectorAll('input[name="period"]').forEach(r => {
+        r.addEventListener('change', () => { filterHours = Number(r.value); updateFilterLabel(); loadHistory(); });
+      });
+    }
+    updateFilterLabel();
 
     // Toggle buttons
     btnList.addEventListener('click', () => setView('list'));
