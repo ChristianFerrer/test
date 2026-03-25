@@ -414,11 +414,14 @@
   /** Adjust alert list top to sit right below the fixed chart section */
   function repositionList() {
     requestAnimationFrame(() => {
+      const toggleBar = document.querySelector('.view-toggle-bar');
+      const base = toggleBar
+        ? toggleBar.offsetTop + toggleBar.offsetHeight
+        : document.querySelector('.app-header').offsetHeight + 50;
+      // Position chart section flush below toggle bar
+      if (hourlyChartSection) hourlyChartSection.style.top = base + 'px';
       const chartH = hourlyChartSection && !hourlyChartSection.classList.contains('hidden')
         ? hourlyChartSection.offsetHeight : 0;
-      const toggleBar = document.querySelector('.view-toggle-bar');
-      const toggleH = toggleBar ? toggleBar.offsetHeight : 50;
-      const base = document.querySelector('.app-header').offsetHeight + toggleH;
       const titleTop = base + chartH;
       if (alertsSectionTitle) alertsSectionTitle.style.top = titleTop + 'px';
       const titleH = alertsSectionTitle ? alertsSectionTitle.offsetHeight : 0;

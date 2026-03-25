@@ -1073,7 +1073,6 @@ html, body {
 /* ── Hourly chart section (fixed above the scrollable list) ── */
 .hourly-chart-section {
   position: fixed;
-  top: calc(var(--header-height) + 50px);
   left: 0; right: 0;
   z-index: 10;
   background: var(--bg-card);
