@@ -237,9 +237,10 @@
       .order('created_at', { ascending: false })
       .limit(500);
 
-    // Apply geo filter only in "nearby" mode
+    // Apply geo filter only in "nearby" mode (100m radius)
     if (filterZone === 'nearby') {
-      const box = getBoundingBox(userPosition.lat, userPosition.lng, HISTORY_RADIUS_M);
+      const NEARBY_RADIUS_M = 100;
+      const box = getBoundingBox(userPosition.lat, userPosition.lng, NEARBY_RADIUS_M);
       query = query
         .gte('lat', box.minLat)
         .lte('lat', box.maxLat)
@@ -255,10 +256,11 @@
       return;
     }
 
-    // Precise Haversine filter only in "nearby" mode
+    // Precise Haversine filter only in "nearby" mode (100m)
+    const NEARBY_RADIUS_M = 100;
     const within = filterZone === 'nearby'
       ? data.filter(a =>
-          haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= HISTORY_RADIUS_M
+          haversineDistance(userPosition.lat, userPosition.lng, a.lat, a.lng) <= NEARBY_RADIUS_M
         )
       : data;
 
