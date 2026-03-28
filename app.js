@@ -604,6 +604,25 @@
   // HEATMAP - Risk zones (historical data)
   // ============================================================
 
+  function buildHeatLayer(points) {
+    return L.heatLayer(points, {
+      radius: 35,
+      blur: 25,
+      maxZoom: 17,
+      gradient: { 0.4: '#2196F3', 0.65: '#FF9800', 1: '#F44336' },
+    });
+  }
+
+  function applyHeatLayer(points) {
+    if (heatLayer) map.removeLayer(heatLayer);
+    heatLayer = buildHeatLayer(points);
+    heatmapLoaded = true;
+    if (heatmapVisible) {
+      heatLayer.addTo(map);
+      riskLegend.classList.remove('hidden');
+    }
+  }
+
   async function loadHeatmapData() {
     if (!userPosition || !map) return;
     const toast = showToast(t('map.heatmap_loading'), 0);
@@ -611,60 +630,53 @@
     const box    = getBoundingBox(userPosition.lat, userPosition.lng, HEATMAP_RADIUS_M);
     const cutoff = new Date(Date.now() - HEATMAP_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-    // Run Supabase + Overpass in parallel — heatmap works even if Overpass fails
-    const [alertResult, osmResult] = await Promise.allSettled([
-      supabase
-        .from('alerts')
-        .select('lat, lng, created_at')
-        .gte('lat', box.minLat).lte('lat', box.maxLat)
-        .gte('lng', box.minLng).lte('lng', box.maxLng)
-        .gte('created_at', cutoff)
-        .limit(2000),
-      fetchOsmHeatPoints(box),
-    ]);
+    // 1. Fetch Supabase alerts first (fast) — show heatmap immediately
+    const alertResult = await supabase
+      .from('alerts')
+      .select('lat, lng, created_at')
+      .gte('lat', box.minLat).lte('lat', box.maxLat)
+      .gte('lng', box.minLng).lte('lng', box.maxLng)
+      .gte('created_at', cutoff)
+      .limit(2000);
 
     const now         = Date.now();
     const currentHour = new Date().getHours();
 
-    // Real Whistle alerts: combined recency × time-of-day weight
-    //   recency:  1.0 (today) → 0.1 (30 days old), linear decay
-    //   time-of-day: 1.0 (same hour) → 0.3 (≥6h different), linear decay
-    //   → alerts that happened at THIS time of day are emphasised
-    const alertPoints = (alertResult.status === 'fulfilled' && alertResult.value.data)
-      ? alertResult.value.data.map(a => {
-          const ageDays      = (now - new Date(a.created_at).getTime()) / 86400000;
-          const recencyW     = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
-          const alertHour    = new Date(a.created_at).getHours();
-          const hourDiff     = Math.min(Math.abs(alertHour - currentHour), 24 - Math.abs(alertHour - currentHour));
-          const timeW        = Math.max(0.3, 1 - hourDiff / 6);
-          return [a.lat, a.lng, recencyW * timeW];
-        })
-      : [];
-
-    // OSM POI baseline: fixed weight OSM_POI_WEIGHT (0.2)
-    // Real alerts dominate when present; POIs provide signal in cold-start areas
-    const osmPoints = osmResult.status === 'fulfilled' ? osmResult.value : [];
-
-    const allPoints = [...alertPoints, ...osmPoints];
-    if (allPoints.length === 0) { hideToast(toast); return; }
-
-    if (heatLayer) map.removeLayer(heatLayer);
-    heatLayer = L.heatLayer(allPoints, {
-      radius: 35,
-      blur: 25,
-      maxZoom: 17,
-      gradient: { 0.4: '#2196F3', 0.65: '#FF9800', 1: '#F44336' },
+    const alertPoints = (alertResult.data || []).map(a => {
+      const ageDays  = (now - new Date(a.created_at).getTime()) / 86400000;
+      const recencyW = Math.max(0.1, 1 - ageDays / HEATMAP_DAYS);
+      const alertHour = new Date(a.created_at).getHours();
+      const hourDiff  = Math.min(Math.abs(alertHour - currentHour), 24 - Math.abs(alertHour - currentHour));
+      const timeW     = Math.max(0.3, 1 - hourDiff / 6);
+      return [a.lat, a.lng, recencyW * timeW];
     });
 
-    heatmapLoaded = true;
-    if (heatmapVisible) heatLayer.addTo(map);
-    hideToast(toast);
+    // Show heatmap immediately with alert data
+    if (alertPoints.length > 0) {
+      applyHeatLayer(alertPoints);
+      hideToast(toast);
+    }
+
+    // 2. Fetch OSM POIs in background (slow) — merge when ready
+    fetchOsmHeatPoints(box).then(osmPoints => {
+      if (osmPoints.length > 0) {
+        applyHeatLayer([...alertPoints, ...osmPoints]);
+      }
+      if (alertPoints.length === 0 && osmPoints.length === 0) {
+        hideToast(toast);
+      }
+    });
+
+    if (alertPoints.length === 0) {
+      // No alert data yet, wait for OSM to finish before hiding toast
+      // Toast will be hidden by the OSM .then() above
+    }
   }
 
   /** Fetches OSM POIs and returns them as low-weight heatmap points [lat, lng, weight] */
   async function fetchOsmHeatPoints(box) {
     const { minLat: s, maxLat: n, minLng: w, maxLng: e } = box;
-    const q = `[out:json][timeout:25];(
+    const q = `[out:json][timeout:10];(
       node["public_transport"="station"]["name"](${s},${w},${n},${e});
       node["railway"="station"]["name"](${s},${w},${n},${e});
       node["railway"="subway_entrance"]["name"](${s},${w},${n},${e});
@@ -681,11 +693,15 @@
 
     for (const endpoint of endpoints) {
       try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
         const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: 'data=' + encodeURIComponent(q),
+          signal: ctrl.signal,
         });
+        clearTimeout(timer);
         if (!res.ok) continue;
         const json = await res.json();
         if (json.remark && json.remark.includes('timed out')) continue;
@@ -707,11 +723,11 @@
     if (heatmapVisible) {
       heatmapBtn.classList.add('active');
       heatmapBtn.querySelector('#heatmap-btn-label').textContent = t('map.heatmap_off');
-      riskLegend.classList.remove('hidden');
       if (!heatmapLoaded) {
         loadHeatmapData();
       } else if (heatLayer) {
         heatLayer.addTo(map);
+        riskLegend.classList.remove('hidden');
       }
     } else {
       heatmapBtn.classList.remove('active');

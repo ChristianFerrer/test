@@ -750,6 +750,7 @@ html, body {
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
+.bottom-panel--safe .panel-icon-circle { background: #34c759; }
 .panel-icon-img {
   width: 28px; height: 28px;
   object-fit: contain;
