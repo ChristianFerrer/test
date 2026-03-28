@@ -16,7 +16,6 @@
   const statStreak     = document.getElementById('stat-streak');
   const statReach      = document.getElementById('stat-reach');
   const myAlertsList   = document.getElementById('my-alerts-list');
-  const myAlertsBadge  = document.getElementById('my-alerts-badge');
   const btnLogout      = document.getElementById('btn-logout');
 
   // ============================================================
@@ -104,10 +103,6 @@
     statStreak.textContent = computeStreak(data);
     if (statReach) statReach.textContent = reach > 0 ? reach : '–';
 
-    if (total > 0) {
-      myAlertsBadge.textContent = total;
-      myAlertsBadge.style.display = 'inline-block';
-    }
 
     // --- List ---
     if (total === 0) {
