@@ -1752,20 +1752,6 @@ html, body {
    DARK MODE - map + UI overlays
    ============================================================ */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg-page:        #1c1c1e;
-    --bg-card:        #2c2c2e;
-    --bg-nav:         rgba(44,44,46,0.94);
-    --text-primary:   #f2f2f7;
-    --text-secondary: #aeaeb2;
-    --text-muted:     #636366;
-    --border:         rgba(255,255,255,0.12);
-    --border-card:    rgba(255,255,255,0.08);
-    --shadow-header:  0 0.5px 0 rgba(0,0,0,0.5);
-    --shadow-card:    0 1px 4px rgba(0,0,0,0.2), 0 8px 28px rgba(0,0,0,0.15);
-    --shadow-nav:     0 -0.5px 0 rgba(255,255,255,0.08);
-  }
-
   /* Invert + hue-rotate map tiles for dark appearance */
   .leaflet-tile-pane {
     filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
@@ -1777,33 +1763,6 @@ html, body {
   .leaflet-overlay-pane canvas {
     filter: none;
   }
-
-  /* UI elements */
-  .app-header { background: #2c2c2e; }
-  .bottom-nav { background: rgba(44,44,46,0.94); }
-  .leaflet-popup-content-wrapper { background: #2c2c2e !important; }
-  .leaflet-popup-tip { background: #2c2c2e !important; }
-  .popup-card-title { color: #f2f2f7; }
-  .popup-card-meta { color: #aeaeb2; }
-
-  .my-location-btn { background: #3a3a3c; color: #aeaeb2; }
-  .my-location-btn:active { color: #5ac8fa; }
-
-  .heatmap-toggle { background: rgba(44,44,46,0.92); color: #f2f2f7; }
-
-  .risk-legend { background: rgba(44,44,46,0.92); }
-  .risk-legend-title { color: #aeaeb2; }
-
-  .leaflet-control-attribution {
-    background: rgba(44,44,46,0.6) !important;
-    color: rgba(255,255,255,0.3) !important;
-  }
-
-  .filter-dropdown-menu { background: #3a3a3c; }
-  .filter-dropdown-group-title { color: #8e8e93; }
-  .filter-dropdown-item { color: #f2f2f7; }
-  .filter-dropdown-divider { background: rgba(255,255,255,0.1); }
-  .filter-dropdown-btn { background: #3a3a3c; border-color: rgba(255,255,255,0.12); color: #f2f2f7; }
 
   #map { background: #1a1a2e; }
 }
