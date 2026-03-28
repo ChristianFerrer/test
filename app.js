@@ -190,8 +190,8 @@
   /** Returns RGB channels string for radar colour based on nearby alert count */
   function getRadarRgb(count) {
     if (count === 0)   return '52,199,89';   // green  #34C759 – zona tranquila
-    if (count <= 2)    return '255,193,7';   // amber  – 1-2 alertas, precaución
-    return              '244,67,54';          // red    – 3+ alertas, actividad elevada
+    if (count === 1)   return '255,193,7';   // amber  – 1 alerta, precaución
+    return              '244,67,54';          // red    – 2+ alertas, actividad elevada
   }
 
   function buildRadarIcon(lat, rgb) {
@@ -745,7 +745,7 @@
 
     bottomPanel.classList.remove('bottom-panel--own', 'bottom-panel--warn');
     bottomPanel.classList.add('bottom-panel--safe');
-    if (panelIcon) panelIcon.src = 'security_black.png';
+    if (panelIcon) panelIcon.src = 'security_white.png';
 
     panelTitleText.textContent = t('map.panel_safe_title');
     panelSubtitle.textContent  = t('map.panel_safe_sub1');
@@ -1014,17 +1014,15 @@
       panelSubtitle.classList.remove('hidden');
       if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
 
-      if (count <= 2) {
-        // 1-2 alerts — amber "Carterista en la zona"
+      if (count === 1) {
+        // 1 alert — amber "Carterista en la zona"
         bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own');
         bottomPanel.classList.add('bottom-panel--warn');
         if (panelIcon) panelIcon.src = 'thief2.png';
         panelTitleText.textContent = t('map.panel_title_one');
-        panelSubtitle.textContent  = count === 1
-          ? t('map.panel_sub_one')
-          : t('map.panel_sub_many', { n: count });
+        panelSubtitle.textContent  = t('map.panel_sub_one');
       } else {
-        // 3+ alerts — red "Actividad elevada"
+        // 2+ alerts — red "Actividad elevada"
         bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--own', 'bottom-panel--warn');
         if (panelIcon) panelIcon.src = 'thief2.png';
         panelTitleText.textContent = t('map.panel_title_many');

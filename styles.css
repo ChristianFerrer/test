@@ -744,15 +744,12 @@ html, body {
 .panel-icon-circle {
   width: 48px; height: 48px;
   border-radius: 50%;
-  background: var(--alert-red);
+  background: var(--brand-yellow);
   border: 2.5px solid #fff;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
-.bottom-panel--safe .panel-icon-circle { background: #34c759; }
-.bottom-panel--warn .panel-icon-circle,
-.bottom-panel--own .panel-icon-circle { background: var(--brand-yellow); }
 .panel-icon-img {
   width: 28px; height: 28px;
   object-fit: contain;
