@@ -606,7 +606,7 @@
 
   async function loadHeatmapData() {
     if (!userPosition || !map) return;
-    showToast(t('map.heatmap_loading'), 2000);
+    const toast = showToast(t('map.heatmap_loading'), 0);
 
     const box    = getBoundingBox(userPosition.lat, userPosition.lng, HEATMAP_RADIUS_M);
     const cutoff = new Date(Date.now() - HEATMAP_DAYS * 24 * 60 * 60 * 1000).toISOString();
@@ -646,7 +646,7 @@
     const osmPoints = osmResult.status === 'fulfilled' ? osmResult.value : [];
 
     const allPoints = [...alertPoints, ...osmPoints];
-    if (allPoints.length === 0) return;
+    if (allPoints.length === 0) { hideToast(toast); return; }
 
     if (heatLayer) map.removeLayer(heatLayer);
     heatLayer = L.heatLayer(allPoints, {
@@ -658,6 +658,7 @@
 
     heatmapLoaded = true;
     if (heatmapVisible) heatLayer.addTo(map);
+    hideToast(toast);
   }
 
   /** Fetches OSM POIs and returns them as low-weight heatmap points [lat, lng, weight] */

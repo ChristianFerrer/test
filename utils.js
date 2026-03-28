@@ -113,10 +113,20 @@ function showToast(message, durationMs = 3000) {
     requestAnimationFrame(() => toast.classList.add('visible'));
   });
 
-  setTimeout(() => {
-    toast.classList.remove('visible');
-    setTimeout(() => toast.remove(), 300);
-  }, durationMs);
+  if (durationMs > 0) {
+    setTimeout(() => {
+      toast.classList.remove('visible');
+      setTimeout(() => toast.remove(), 300);
+    }, durationMs);
+  }
+
+  return toast;
+}
+
+function hideToast(toast) {
+  if (!toast || !toast.parentNode) return;
+  toast.classList.remove('visible');
+  setTimeout(() => toast.remove(), 300);
 }
 
 // --- HAPTIC FEEDBACK ---
