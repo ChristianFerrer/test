@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#f5c518">
+  <title>Instalar Whistle</title>
+  <link rel="icon" type="image/png" href="whistle-icon.png">
+  <link rel="apple-touch-icon" href="whistle-icon.png">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background: #f5c518;
+      color: #1c1c1e;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 60px 24px 32px;
+    }
+    .hero-icon { width: 80px; height: 80px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .hero h1 { font-size: 28px; font-weight: 800; margin: 16px 0 6px; letter-spacing: -0.5px; }
+    .hero p { font-size: 15px; color: rgba(28,28,30,0.7); max-width: 300px; margin: 0 auto; line-height: 1.4; }
+
+    /* Steps card */
+    .card {
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 32px 24px 40px;
+      min-height: 60vh;
+    }
+    .card-title {
+      font-size: 18px; font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .platform-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f2f2f7; border-radius: 20px;
+      padding: 6px 14px; font-size: 13px; font-weight: 600;
+      color: #636366; margin: 0 auto 20px; text-align: center;
+    }
+    .platform-badge svg { width: 16px; height: 16px; }
+
+    /* Steps */
+    .steps { display: flex; flex-direction: column; gap: 20px; }
+    .step {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: #f5c518; color: #1c1c1e;
+      font-size: 14px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; padding-top: 4px; }
+    .step-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .step-desc { font-size: 13px; color: #636366; line-height: 1.4; }
+    .step-icon-inline {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 5px;
+      background: #007aff; color: #fff; vertical-align: middle;
+      margin: 0 2px;
+    }
+    .step-icon-inline--gray { background: #8e8e93; }
+    .step-visual {
+      margin-top: 8px;
+      background: #f2f2f7; border-radius: 10px;
+      padding: 10px 14px; font-size: 13px; color: #1c1c1e;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* Safari warning */
+    .safari-warning {
+      background: #fff3cd; border: 1.5px solid #ffcc02;
+      border-radius: 12px; padding: 14px 16px;
+      margin-bottom: 24px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .safari-warning svg { flex-shrink: 0; margin-top: 2px; }
+    .safari-warning p { font-size: 13px; line-height: 1.4; }
+    .safari-warning strong { font-weight: 700; }
+    .safari-url {
+      display: block; margin-top: 6px;
+      background: #fff; border: 1px solid #ddd; border-radius: 8px;
+      padding: 8px 12px; font-size: 13px; font-weight: 600;
+      color: #007aff; word-break: break-all;
+      text-decoration: none;
+    }
+
+    /* Install button (Android) */
+    .install-btn {
+      display: none;
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      background: #1c1c1e;
+      color: #f5c518;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: transform 0.1s;
+    }
+    .install-btn:active { transform: scale(0.97); }
+
+    /* Skip link */
+    .skip-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #636366;
+      text-decoration: none;
+    }
+    .skip-link:hover { text-decoration: underline; }
+
+    /* Already installed */
+    .installed-msg {
+      text-align: center; padding: 20px;
+      font-size: 14px; color: #34c759; font-weight: 600;
+      display: none;
+    }
+    .installed-msg svg { display: block; margin: 0 auto 8px; }
+
+    /* Feature list */
+    .features {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e5ea;
+    }
+    .features-title { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+    .feature {
+      display: flex; gap: 12px; align-items: center;
+      padding: 10px 0;
+    }
+    .feature-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 18px;
+    }
+    .feature-icon--yellow { background: #fff8d6; }
+    .feature-icon--red { background: #ffe5e5; }
+    .feature-icon--green { background: #e8f5e9; }
+    .feature-icon--blue { background: #e3f2fd; }
+    .feature-text { font-size: 14px; font-weight: 500; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <img class="hero-icon" src="whistle-icon.png" alt="Whistle">
+    <h1>Whistle</h1>
+    <p>Protege tu zona. Alertas de carteristas en tiempo real.</p>
+  </div>
+
+  <div class="card">
+    <!-- Already installed message -->
+    <div class="installed-msg" id="installed-msg">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 9 10.5 15 8 12.5"/></svg>
+      Whistle ya esta instalada en tu dispositivo
+    </div>
+
+    <!-- iOS: not in Safari warning -->
+    <div class="safari-warning hidden" id="safari-warning">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>
+        <p><strong>Abre Whistle en Safari</strong> para poder instalarlo en tu iPhone.</p>
+        <p>Copia este enlace y abrelo en Safari:</p>
+        <a class="safari-url" id="safari-url" href="#"></a>
+      </div>
+    </div>
+
+    <!-- iOS steps -->
+    <div id="ios-steps" class="hidden">
+      <div class="platform-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        iPhone / iPad
+      </div>
+      <div class="card-title">Instalar en iOS</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Toca el boton Compartir</div>
+            <div class="step-desc">En la barra inferior de Safari, toca el icono <span class="step-icon-inline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></span> de compartir.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Selecciona "Agregar a pantalla de inicio"</div>
+            <div class="step-desc">Desliza hacia abajo en el menu y toca <span class="step-icon-inline--gray step-icon-inline"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span> "Agregar a inicio".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Confirma "Agregar"</div>
+            <div class="step-desc">Toca "Agregar" en la esquina superior derecha. Whistle aparecera como app en tu pantalla de inicio.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Android steps -->
+    <div id="android-steps" class="hidden">
+      <div class="platform-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24a11.463 11.463 0 00-8.94 0L5.65 5.67c-.19-.29-.58-.38-.87-.2-.28.18-.37.54-.22.83L6.4 9.48A10.78 10.78 0 002 18h20a10.78 10.78 0 00-4.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
+        Android
+      </div>
+      <div class="card-title">Instalar en Android</div>
+
+      <!-- Native install button -->
+      <button class="install-btn" id="install-btn">Instalar Whistle</button>
+
+      <div class="steps" id="android-manual-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Toca el menu del navegador</div>
+            <div class="step-desc">En Chrome, toca los tres puntos <strong>&#8942;</strong> en la esquina superior derecha.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Selecciona "Instalar app" o "Agregar a inicio"</div>
+            <div class="step-desc">Si ves "Instalar app", tocalo. Si no, busca "Agregar a pantalla de inicio".</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Confirma la instalacion</div>
+            <div class="step-desc">Toca "Instalar". Whistle se agregara como app a tu pantalla de inicio.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop steps -->
+    <div id="desktop-steps" class="hidden">
+      <div class="platform-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Escritorio
+      </div>
+      <div class="card-title">Usar en el navegador</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Abre Whistle en tu movil</div>
+            <div class="step-desc">Para la mejor experiencia, abre esta pagina en el navegador de tu telefono movil.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="features-title">Que incluye Whistle</div>
+      <div class="feature">
+        <div class="feature-icon feature-icon--yellow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e0b000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+        <span class="feature-text">Alertas en tiempo real en 100m</span>
+      </div>
+      <div class="feature">
+        <div class="feature-icon feature-icon--red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <span class="feature-text">Mapa de zonas de riesgo</span>
+      </div>
+      <div class="feature">
+        <div class="feature-icon feature-icon--green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="feature-text">Radar de seguridad activo</span>
+      </div>
+      <div class="feature">
+        <div class="feature-icon feature-icon--blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+        <span class="feature-text">Notificaciones push instantaneas</span>
+      </div>
+    </div>
+
+    <a class="skip-link" href="index.html">Continuar sin instalar</a>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/i.test(ua);
+    const isSafari = /Safari/i.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/i.test(ua);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    const iosSteps = document.getElementById('ios-steps');
+    const androidSteps = document.getElementById('android-steps');
+    const desktopSteps = document.getElementById('desktop-steps');
+    const safariWarning = document.getElementById('safari-warning');
+    const installedMsg = document.getElementById('installed-msg');
+
+    // Already installed as PWA
+    if (isStandalone) {
+      installedMsg.style.display = 'block';
+      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      return;
+    }
+
+    if (isIOS) {
+      if (isSafari) {
+        // In Safari — show install steps
+        iosSteps.classList.remove('hidden');
+      } else {
+        // In Chrome/Firefox on iOS — show Safari warning
+        safariWarning.classList.remove('hidden');
+        iosSteps.classList.remove('hidden');
+        const safariUrl = document.getElementById('safari-url');
+        safariUrl.href = window.location.href;
+        safariUrl.textContent = window.location.href.replace(/^https?:\/\//, '');
+      }
+    } else if (isAndroid) {
+      androidSteps.classList.remove('hidden');
+    } else {
+      desktopSteps.classList.remove('hidden');
+    }
+
+    // Android: capture beforeinstallprompt for native install button
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('install-btn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (installBtn) {
+        installBtn.style.display = 'block';
+        // Hide manual steps when native prompt is available
+        const manualSteps = document.getElementById('android-manual-steps');
+        if (manualSteps) manualSteps.style.display = 'none';
+      }
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === 'accepted') {
+          installBtn.textContent = 'Instalando...';
+          installBtn.disabled = true;
+          setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        }
+        deferredPrompt = null;
+      });
+    }
+
+    // If app gets installed while on this page
+    window.addEventListener('appinstalled', () => {
+      if (installBtn) installBtn.style.display = 'none';
+      installedMsg.style.display = 'block';
+      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+    });
+  })();
+  </script>
+</body>
+</html>

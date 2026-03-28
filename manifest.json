@@ -1,24 +1,48 @@
 {
-  "name": "Whistle",
+  "name": "Whistle - Alerta de Carteristas",
   "short_name": "Whistle",
-  "description": "Identifica carteristas a tu alrededor",
+  "description": "Protégete de carteristas en tiempo real. Alertas, radar y zonas de riesgo.",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#f5c518",
   "theme_color": "#f5c518",
   "orientation": "portrait",
+  "categories": ["safety", "navigation", "travel"],
+  "lang": "es",
   "icons": [
     {
       "src": "whistle-icon.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "whistle-icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "whistle-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Enviar Alerta",
+      "short_name": "Alerta",
+      "url": "/index.html",
+      "icons": [{ "src": "whistle-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Historial",
+      "short_name": "Historial",
+      "url": "/history.html",
+      "icons": [{ "src": "whistle-icon.png", "sizes": "192x192" }]
     }
   ]
 }

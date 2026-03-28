@@ -1,14 +1,89 @@
 // ============================================================
 // sw.js - Whistle Service Worker
-// Handles Web Push notifications even when browser is closed
+// Handles Web Push notifications + offline caching
 // ============================================================
 
-const CACHE_NAME = 'whistle-v1';
+const CACHE_NAME = 'whistle-v2';
+const PRECACHE = [
+  '/',
+  '/index.html',
+  '/history.html',
+  '/profile.html',
+  '/login.html',
+  '/styles.css',
+  '/app.js',
+  '/history.js',
+  '/profile.js',
+  '/utils.js',
+  '/i18n.js',
+  '/auth-guard.js',
+  '/whistle.png',
+  '/whistle-icon.png',
+  '/thief2.png',
+  '/thief2-icon.png',
+  '/thief_white.png',
+  '/security_white.png',
+  '/security_black.png',
+  '/whistle2_black.png',
+  '/radar.png',
+  '/lib/leaflet.js',
+  '/lib/leaflet.css',
+  '/manifest.json',
+];
 
-// ── Install & activate ──────────────────────────────────────
-self.addEventListener('install', () => self.skipWaiting());
+// ── Install — precache shell ───────────────────────────────
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// ── Activate — clean old caches ────────────────────────────
 self.addEventListener('activate', (e) => {
-  e.waitUntil(self.clients.claim());
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+// ── Fetch — network first, fallback to cache ───────────────
+self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
+
+  // Skip non-GET and external API calls
+  if (e.request.method !== 'GET') return;
+  if (url.origin !== self.location.origin && !url.href.includes('basemaps.cartocdn.com') && !url.href.includes('tile.openstreetmap.org')) return;
+
+  // Map tiles — cache first (they rarely change)
+  if (url.href.includes('tile.openstreetmap.org') || url.href.includes('basemaps.cartocdn.com')) {
+    e.respondWith(
+      caches.match(e.request).then(cached => {
+        if (cached) return cached;
+        return fetch(e.request).then(res => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+          }
+          return res;
+        }).catch(() => cached);
+      })
+    );
+    return;
+  }
+
+  // App shell — network first, fallback cache
+  e.respondWith(
+    fetch(e.request).then(res => {
+      if (res.ok) {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
+  );
 });
 
 // ── Push received ───────────────────────────────────────────
@@ -37,7 +112,6 @@ self.addEventListener('push', (e) => {
     ],
   };
 
-  // Show notification, then try to play whistle sound in any open app windows
   e.waitUntil(
     self.registration.showNotification(title, options).then(() => {
       return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
@@ -57,13 +131,11 @@ self.addEventListener('notificationclick', (e) => {
 
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-      // If the app is already open, focus it
       for (const client of clients) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
           return client.focus();
         }
       }
-      // Otherwise open a new window
       if (self.clients.openWindow) {
         return self.clients.openWindow(targetUrl);
       }
