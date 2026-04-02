@@ -65,14 +65,14 @@
       btnList.classList.remove('active');
       listView.classList.add('hidden');
       mapViewContainer.classList.remove('hidden');
-      positionBelowBar(mapViewContainer);
+      repositionList();
 
       // Initialize history map on first switch
       if (!historyMap) {
-        initHistoryMap();
+        setTimeout(() => initHistoryMap(), 50);
       } else {
         // Refresh size in case layout changed
-        setTimeout(() => historyMap.invalidateSize(), 50);
+        setTimeout(() => historyMap.invalidateSize(), 100);
       }
       renderMapMarkers(allAlerts);
     }
@@ -425,7 +425,9 @@
       const titleTop = base + chartH;
       if (alertsSectionTitle) alertsSectionTitle.style.top = titleTop + 'px';
       const titleH = alertsSectionTitle ? alertsSectionTitle.offsetHeight : 0;
-      listView.style.top = (titleTop + titleH) + 'px';
+      const contentTop = (titleTop + titleH) + 'px';
+      listView.style.top = contentTop;
+      mapViewContainer.style.top = contentTop;
     });
   }
 
