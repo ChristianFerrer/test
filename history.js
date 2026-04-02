@@ -69,12 +69,17 @@
 
       // Initialize history map on first switch
       if (!historyMap) {
-        setTimeout(() => initHistoryMap(), 50);
+        setTimeout(() => {
+          initHistoryMap();
+          renderMapMarkers(allAlerts);
+        }, 50);
       } else {
         // Refresh size in case layout changed
-        setTimeout(() => historyMap.invalidateSize(), 100);
+        setTimeout(() => {
+          historyMap.invalidateSize();
+          renderMapMarkers(allAlerts);
+        }, 100);
       }
-      renderMapMarkers(allAlerts);
     }
   }
 
