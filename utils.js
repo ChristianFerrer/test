@@ -135,3 +135,51 @@ function vibrate(pattern) {
     navigator.vibrate(pattern);
   }
 }
+
+// --- SHARE ---
+/**
+ * Share Whistle via native share sheet (WhatsApp, Telegram, Messages, etc).
+ * Falls back to copying the link to clipboard if Web Share API is unavailable.
+ * @param {string} text - Pre-filled share text (without URL)
+ * @param {string} title - Share title (shown in some apps)
+ */
+async function shareWhistle(text, title = 'Whistle') {
+  const url = (typeof location !== 'undefined' && location.origin)
+    ? location.origin + '/landing.html'
+    : 'https://whistle.app';
+  const fullText = text + ' ' + url;
+  const _t = window.t || (k => k);
+
+  // Native share sheet (iOS, Android, modern desktop)
+  if (navigator.share) {
+    try {
+      await navigator.share({ title, text, url });
+      vibrate(10);
+      return true;
+    } catch (err) {
+      // User cancelled — not an error, do nothing
+      if (err && err.name === 'AbortError') return false;
+      // Fall through to clipboard fallback
+    }
+  }
+
+  // Fallback: copy to clipboard
+  try {
+    await navigator.clipboard.writeText(fullText);
+    showToast(_t('share.copied'));
+    vibrate(10);
+    return true;
+  } catch {
+    // Last resort: execCommand
+    const ta = document.createElement('textarea');
+    ta.value = fullText;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta);
+    showToast(_t('share.copied'));
+    return true;
+  }
+}

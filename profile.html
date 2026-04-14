@@ -69,6 +69,21 @@
       </div>
     </div>
 
+    <!-- Impact share card — shown only if user has sent at least 1 alert -->
+    <div id="impact-card" class="impact-card hidden">
+      <div class="impact-card-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="impact-card-text">
+        <div class="impact-card-title" id="impact-card-title">Has protegido a ~0 personas</div>
+        <div class="impact-card-sub"   id="impact-card-sub">con tus 0 alertas</div>
+      </div>
+      <button id="btn-share-impact" class="btn-share-impact" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        <span data-i18n="profile.impact_share">Compartir mi impacto</span>
+      </button>
+    </div>
+
     <!-- My recent alerts -->
     <div class="section-header">
       <span class="section-title" data-i18n="profile.my_alerts">Mis últimas alertas</span>
