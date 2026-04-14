@@ -556,22 +556,18 @@
         Para instalar Whistle en tu iPhone necesitas abrir esta pagina en <strong>Safari</strong>.
       </p>
 
-      <div class="modal-steps" id="modal-steps-inapp" style="display:none">
-        <div class="modal-steps-title">Como abrir en Safari</div>
-        <ol>
-          <li>Toca los <strong>3 puntos</strong> (arriba a la derecha)</li>
-          <li>Pulsa <strong>"Abrir en navegador externo"</strong> o <strong>"Abrir en Safari"</strong></li>
+      <div class="modal-steps" id="modal-steps">
+        <div class="modal-steps-title" id="modal-steps-title">Como abrir en Safari</div>
+        <ol id="modal-steps-list">
+          <li>Toca el menu del navegador</li>
+          <li>Pulsa <strong>"Abrir en Safari"</strong></li>
         </ol>
       </div>
 
       <div class="modal-actions">
-        <button class="modal-btn modal-btn--primary" id="btn-share" style="display:none">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-          Abrir en Safari
-        </button>
-        <button class="modal-btn modal-btn--secondary" id="btn-copy">
+        <button class="modal-btn modal-btn--primary" id="btn-copy">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          <span>Copiar enlace</span>
+          <span>Copiar enlace y abrir Safari</span>
         </button>
       </div>
 
@@ -586,33 +582,145 @@
     // ─── Detection ─────────────────────────────────────────
     const ua = navigator.userAgent || '';
     const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|DuckDuckGo/i.test(ua);
+    const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|DuckDuckGo|YaBrowser|Brave/i.test(ua);
 
-    // In-app browsers (Instagram, Facebook, TikTok, etc.) — share sheet is unreliable here
-    const isInAppBrowser = /(Instagram|FBAN|FBAV|FB_IAB|Twitter|Line|MicroMessenger|TikTok|Pinterest|LinkedInApp|Snapchat)/i.test(ua);
+    // Detect specific iOS browser / in-app WebView
+    function detectBrowser() {
+      if (/CriOS/i.test(ua))          return 'chrome';
+      if (/FxiOS/i.test(ua))          return 'firefox';
+      if (/EdgiOS/i.test(ua))         return 'edge';
+      if (/OPiOS|OPT/i.test(ua))      return 'opera';
+      if (/DuckDuckGo/i.test(ua))     return 'duckduckgo';
+      if (/GSA/i.test(ua))            return 'google-app';
+      if (/Instagram/i.test(ua))      return 'instagram';
+      if (/FBAN|FBAV|FB_IAB/i.test(ua)) return 'facebook';
+      if (/Twitter/i.test(ua))        return 'twitter';
+      if (/TikTok/i.test(ua))         return 'tiktok';
+      if (/LinkedInApp/i.test(ua))    return 'linkedin';
+      if (/Line/i.test(ua))           return 'line';
+      if (/Snapchat/i.test(ua))       return 'snapchat';
+      if (/Pinterest/i.test(ua))      return 'pinterest';
+      if (/MicroMessenger/i.test(ua)) return 'wechat';
+      return 'other';
+    }
 
     // Only intercept if iOS AND not already in Safari
     const needsRedirect = isIOS && !isSafari;
-
     if (!needsRedirect) return;
+
+    const browser = detectBrowser();
+
+    // ─── Per-browser instructions ─────────────────────────
+    // Each entry: { title, steps: [html...] }
+    const INSTRUCTIONS = {
+      'chrome': {
+        title: 'Como abrir en Safari desde Chrome',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong> (arriba a la derecha)',
+          'Pulsa <strong>"Abrir en Safari"</strong>',
+        ],
+      },
+      'firefox': {
+        title: 'Como abrir en Safari desde Firefox',
+        steps: [
+          'Toca el menu <strong>≡</strong> (abajo a la derecha)',
+          'Pulsa <strong>"Compartir"</strong> → <strong>"Abrir en Safari"</strong>',
+        ],
+      },
+      'edge': {
+        title: 'Como abrir en Safari desde Edge',
+        steps: [
+          'Toca el menu <strong>⋯</strong> (abajo centro)',
+          'Pulsa <strong>"Compartir"</strong> → <strong>"Abrir en Safari"</strong>',
+        ],
+      },
+      'opera': {
+        title: 'Como abrir en Safari desde Opera',
+        steps: [
+          'Copia el enlace con el boton de abajo',
+          'Abre Safari y pega el enlace',
+        ],
+      },
+      'duckduckgo': {
+        title: 'Como abrir en Safari desde DuckDuckGo',
+        steps: [
+          'Toca el menu <strong>⋯</strong>',
+          'Pulsa <strong>"Compartir"</strong> → busca <strong>"Abrir con Safari"</strong>',
+          'Si no aparece, copia el enlace y pegalo en Safari',
+        ],
+      },
+      'google-app': {
+        title: 'Como abrir en Safari desde Google',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong>',
+          'Pulsa <strong>"Abrir en Safari"</strong>',
+        ],
+      },
+      'instagram': {
+        title: 'Estas dentro de Instagram',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong> (arriba a la derecha)',
+          'Pulsa <strong>"Abrir en navegador externo"</strong>',
+          'Luego, en Chrome/Safari, repite los pasos si hace falta',
+        ],
+      },
+      'facebook': {
+        title: 'Estas dentro de Facebook',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong> (arriba a la derecha)',
+          'Pulsa <strong>"Abrir en navegador externo"</strong>',
+        ],
+      },
+      'twitter': {
+        title: 'Estas dentro de Twitter/X',
+        steps: [
+          'Toca el icono <strong>Compartir</strong> (abajo a la derecha)',
+          'Pulsa <strong>"Abrir en navegador"</strong>',
+        ],
+      },
+      'tiktok': {
+        title: 'Estas dentro de TikTok',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong> (arriba a la derecha)',
+          'Pulsa <strong>"Abrir en navegador"</strong>',
+        ],
+      },
+      'linkedin': {
+        title: 'Estas dentro de LinkedIn',
+        steps: [
+          'Toca los <strong>3 puntos ⋯</strong>',
+          'Pulsa <strong>"Abrir en navegador"</strong>',
+        ],
+      },
+      'line':      { title: 'Estas dentro de Line', steps: ['Toca el menu y elige <strong>"Abrir en navegador externo"</strong>'] },
+      'snapchat':  { title: 'Estas dentro de Snapchat', steps: ['Toca el menu y elige <strong>"Abrir en navegador"</strong>'] },
+      'pinterest': { title: 'Estas dentro de Pinterest', steps: ['Toca el menu y elige <strong>"Abrir en navegador externo"</strong>'] },
+      'wechat':    { title: 'Estas dentro de WeChat', steps: ['Toca los 3 puntos y elige <strong>"Abrir en Safari"</strong>'] },
+      'other': {
+        title: 'Como abrir en Safari',
+        steps: [
+          'Copia el enlace con el boton de abajo',
+          'Abre <strong>Safari</strong> y pega el enlace en la barra de direcciones',
+        ],
+      },
+    };
 
     // ─── Elements ──────────────────────────────────────────
     const modal       = document.getElementById('safari-modal');
-    const btnShare    = document.getElementById('btn-share');
     const btnCopy     = document.getElementById('btn-copy');
     const btnClose    = document.getElementById('btn-close');
-    const stepsInApp  = document.getElementById('modal-steps-inapp');
+    const stepsTitle  = document.getElementById('modal-steps-title');
+    const stepsList   = document.getElementById('modal-steps-list');
     const modalDesc   = document.getElementById('safari-modal-desc');
 
-    // Show manual steps if in in-app browser (share sheet often blocked)
-    if (isInAppBrowser) {
-      stepsInApp.style.display = 'block';
-      modalDesc.innerHTML = 'Estas viendo esta pagina dentro de una app. Para instalar Whistle, abrela en <strong>Safari</strong>.';
-    }
+    // Populate modal with browser-specific instructions
+    const info = INSTRUCTIONS[browser] || INSTRUCTIONS['other'];
+    stepsTitle.textContent = info.title;
+    stepsList.innerHTML = info.steps.map(s => `<li>${s}</li>`).join('');
 
-    // Enable share button only if Web Share API is available (and not in-app browser — unreliable there)
-    if (navigator.share && !isInAppBrowser) {
-      btnShare.style.display = 'flex';
+    const isInAppBrowser = ['instagram','facebook','twitter','tiktok','linkedin','line','snapchat','pinterest','wechat'].includes(browser);
+    if (isInAppBrowser) {
+      modalDesc.innerHTML = 'Estas viendo esta pagina dentro de una app. Para instalar Whistle necesitas abrirla en <strong>Safari</strong>.';
     }
 
     // ─── Intercept all CTAs ────────────────────────────────
@@ -632,19 +740,6 @@
       modal.classList.remove('open');
       document.body.style.overflow = '';
     }
-
-    // ─── Share sheet (iOS: user can pick "Open in Safari") ─
-    btnShare.addEventListener('click', async () => {
-      try {
-        await navigator.share({
-          title: 'Whistle — Alerta de carteristas',
-          text: 'Protegete de carteristas en tiempo real',
-          url: window.location.href,
-        });
-      } catch (err) {
-        // User cancelled or share failed — stay on modal
-      }
-    });
 
     // ─── Copy link ─────────────────────────────────────────
     btnCopy.addEventListener('click', async () => {
@@ -667,8 +762,8 @@
       if (label) label.textContent = 'Enlace copiado · Pegalo en Safari';
       setTimeout(() => {
         btnCopy.classList.remove('copied');
-        if (label) label.textContent = 'Copiar enlace';
-      }, 3000);
+        if (label) label.textContent = 'Copiar enlace y abrir Safari';
+      }, 3500);
     });
 
     // ─── Close ─────────────────────────────────────────────
