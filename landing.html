@@ -284,6 +284,136 @@
       .final-cta h2 { font-size: 26px; }
       .trust-stats { grid-template-columns: 1fr; gap: 20px; }
     }
+
+    /* ─── iOS SAFARI MODAL ─── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 9999;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      animation: fadeIn 0.2s ease;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .modal {
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 28px 24px 32px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
+      animation: slideUp 0.25s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    @media (min-width: 520px) {
+      .modal-overlay { align-items: center; }
+      .modal { border-radius: 24px; margin: 20px; }
+    }
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: #e5e5ea;
+      border-radius: 2px;
+      margin: -8px auto 16px;
+    }
+    .modal-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: #fff3c4;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: -0.3px;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 15px;
+      color: #636366;
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.45;
+    }
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .modal-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 14px;
+      border: none;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    .modal-btn:active { transform: scale(0.98); }
+    .modal-btn--primary {
+      background: #1c1c1e;
+      color: #f5c518;
+    }
+    .modal-btn--primary:hover { background: #333; }
+    .modal-btn--secondary {
+      background: #f2f2f7;
+      color: #1c1c1e;
+    }
+    .modal-btn--secondary:hover { background: #e5e5ea; }
+    .modal-btn.copied {
+      background: #34c759;
+      color: #fff;
+    }
+    .modal-steps {
+      background: #f9f9fb;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .modal-steps-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #8e8e93;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .modal-steps ol {
+      padding-left: 20px;
+      font-size: 14px;
+      color: #1c1c1e;
+      line-height: 1.55;
+    }
+    .modal-steps ol li { margin-bottom: 4px; }
+    .modal-steps ol li:last-child { margin-bottom: 0; }
+    .modal-steps strong { font-weight: 700; }
+    .modal-close {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-top: 14px;
+      padding: 10px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #8e8e93;
+      cursor: pointer;
+      font-family: inherit;
+    }
   </style>
 </head>
 <body>
@@ -295,7 +425,7 @@
       <h1>Whistle</h1>
       <p class="tagline">Alerta de carteristas en tiempo real</p>
       <p class="subtitle">La app colaborativa que te avisa al instante cuando alguien reporta un carterista cerca de ti.</p>
-      <a class="cta-primary" href="onboarding.html">
+      <a class="cta-primary js-cta" href="onboarding.html">
         Usar Whistle ahora
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
@@ -400,7 +530,7 @@
   <section class="final-cta">
     <h2>Empieza a protegerte hoy</h2>
     <p>Unete a la red ciudadana que hace mas seguras las calles.</p>
-    <a class="cta-primary" href="onboarding.html">
+    <a class="cta-primary js-cta" href="onboarding.html">
       Abrir Whistle
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </a>
@@ -413,6 +543,144 @@
     <a href="onboarding.html">Instalar</a> ·
     <a href="index.html">Abrir app</a>
   </footer>
+
+  <!-- ═══ iOS SAFARI MODAL ═══ -->
+  <div class="modal-overlay" id="safari-modal" role="dialog" aria-modal="true" aria-labelledby="safari-modal-title">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e0b000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3 id="safari-modal-title">Abre Whistle en Safari</h3>
+      <p class="modal-desc" id="safari-modal-desc">
+        Para instalar Whistle en tu iPhone necesitas abrir esta pagina en <strong>Safari</strong>.
+      </p>
+
+      <div class="modal-steps" id="modal-steps-inapp" style="display:none">
+        <div class="modal-steps-title">Como abrir en Safari</div>
+        <ol>
+          <li>Toca los <strong>3 puntos</strong> (arriba a la derecha)</li>
+          <li>Pulsa <strong>"Abrir en navegador externo"</strong> o <strong>"Abrir en Safari"</strong></li>
+        </ol>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn--primary" id="btn-share" style="display:none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Abrir en Safari
+        </button>
+        <button class="modal-btn modal-btn--secondary" id="btn-copy">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span>Copiar enlace</span>
+        </button>
+      </div>
+
+      <button class="modal-close" id="btn-close">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ─── Detection ─────────────────────────────────────────
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|DuckDuckGo/i.test(ua);
+
+    // In-app browsers (Instagram, Facebook, TikTok, etc.) — share sheet is unreliable here
+    const isInAppBrowser = /(Instagram|FBAN|FBAV|FB_IAB|Twitter|Line|MicroMessenger|TikTok|Pinterest|LinkedInApp|Snapchat)/i.test(ua);
+
+    // Only intercept if iOS AND not already in Safari
+    const needsRedirect = isIOS && !isSafari;
+
+    if (!needsRedirect) return;
+
+    // ─── Elements ──────────────────────────────────────────
+    const modal       = document.getElementById('safari-modal');
+    const btnShare    = document.getElementById('btn-share');
+    const btnCopy     = document.getElementById('btn-copy');
+    const btnClose    = document.getElementById('btn-close');
+    const stepsInApp  = document.getElementById('modal-steps-inapp');
+    const modalDesc   = document.getElementById('safari-modal-desc');
+
+    // Show manual steps if in in-app browser (share sheet often blocked)
+    if (isInAppBrowser) {
+      stepsInApp.style.display = 'block';
+      modalDesc.innerHTML = 'Estas viendo esta pagina dentro de una app. Para instalar Whistle, abrela en <strong>Safari</strong>.';
+    }
+
+    // Enable share button only if Web Share API is available (and not in-app browser — unreliable there)
+    if (navigator.share && !isInAppBrowser) {
+      btnShare.style.display = 'flex';
+    }
+
+    // ─── Intercept all CTAs ────────────────────────────────
+    const ctas = document.querySelectorAll('.js-cta');
+    ctas.forEach(cta => {
+      cta.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+      });
+    });
+
+    function openModal() {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ─── Share sheet (iOS: user can pick "Open in Safari") ─
+    btnShare.addEventListener('click', async () => {
+      try {
+        await navigator.share({
+          title: 'Whistle — Alerta de carteristas',
+          text: 'Protegete de carteristas en tiempo real',
+          url: window.location.href,
+        });
+      } catch (err) {
+        // User cancelled or share failed — stay on modal
+      }
+    });
+
+    // ─── Copy link ─────────────────────────────────────────
+    btnCopy.addEventListener('click', async () => {
+      const url = window.location.href;
+      const label = btnCopy.querySelector('span');
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        // Fallback for older iOS
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+      }
+      btnCopy.classList.add('copied');
+      if (label) label.textContent = 'Enlace copiado · Pegalo en Safari';
+      setTimeout(() => {
+        btnCopy.classList.remove('copied');
+        if (label) label.textContent = 'Copiar enlace';
+      }, 3000);
+    });
+
+    // ─── Close ─────────────────────────────────────────────
+    btnClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+  })();
+  </script>
 
 </body>
 </html>
