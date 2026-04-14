@@ -10,6 +10,7 @@ const PRECACHE = [
   '/history.html',
   '/profile.html',
   '/login.html',
+  '/landing.html',
   '/styles.css',
   '/app.js',
   '/history.js',
