@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5c518">
+  <title>Whistle — Tarjeta QR para imprimir</title>
+  <link rel="icon" type="image/png" href="whistle-icon.png">
+  <link rel="apple-touch-icon" href="whistle-icon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background: #f2f2f7;
+      color: #1c1c1e;
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HEADER ─── */
+    .page-header {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .page-header p {
+      font-size: 14px;
+      color: #636366;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ─── CONTROLS ─── */
+    .controls {
+      max-width: 680px;
+      margin: 0 auto 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .ctrl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #1c1c1e;
+      color: #f5c518;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.1s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ctrl-btn:hover { background: #333; }
+    .ctrl-btn:active { transform: scale(0.97); }
+    .ctrl-btn--secondary {
+      background: #fff;
+      color: #1c1c1e;
+      border: 1.5px solid #d1d1d6;
+    }
+    .ctrl-btn--secondary:hover { background: #f9f9fb; }
+
+    /* ─── SIZE TOGGLE ─── */
+    .size-toggle {
+      display: inline-flex;
+      background: #fff;
+      border: 1.5px solid #d1d1d6;
+      border-radius: 12px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .size-toggle button {
+      padding: 9px 16px;
+      background: transparent;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #636366;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 9px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .size-toggle button.active {
+      background: #f5c518;
+      color: #1c1c1e;
+    }
+
+    /* ─── CARD PREVIEW ─── */
+    .card-stage {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* ─── THE CARD ─── */
+    .card {
+      width: 340px;          /* ~85mm business card width at 4x zoom for screen */
+      height: 540px;         /* vertical card — more room for QR */
+      background: linear-gradient(180deg, #f5c518 0%, #f3b800 100%);
+      border-radius: 18px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #1c1c1e;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(245,197,24,0.35);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .card-logo {
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .card-brand {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      margin: 14px 0 2px;
+      position: relative;
+      z-index: 1;
+    }
+    .card-tagline {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(28,28,30,0.75);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+      max-width: 240px;
+      line-height: 1.3;
+    }
+    .card-qr-wrap {
+      background: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: 1;
+    }
+    .card-qr-wrap canvas,
+    .card-qr-wrap img {
+      display: block;
+      width: 200px !important;
+      height: 200px !important;
+    }
+    .card-cta {
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      position: relative;
+      z-index: 1;
+    }
+    .card-url {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(28,28,30,0.65);
+      word-break: break-all;
+      position: relative;
+      z-index: 1;
+    }
+    .card-footer {
+      margin-top: auto;
+      padding-top: 14px;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(28,28,30,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── BUSINESS CARD (horizontal, smaller) ─── */
+    .card--business {
+      width: 510px;  /* 85mm x 55mm at ~6x zoom */
+      height: 330px;
+      padding: 22px 28px;
+      flex-direction: row;
+      gap: 22px;
+      text-align: left;
+      align-items: center;
+    }
+    .card--business .card-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      z-index: 1;
+    }
+    .card--business .card-logo {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+    }
+    .card--business .card-brand {
+      font-size: 32px;
+      margin: 12px 0 2px;
+    }
+    .card--business .card-tagline {
+      text-align: left;
+      margin-bottom: 14px;
+      max-width: none;
+    }
+    .card--business .card-cta {
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .card--business .card-url {
+      text-align: left;
+      font-size: 10px;
+    }
+    .card--business .card-qr-wrap canvas,
+    .card--business .card-qr-wrap img {
+      width: 180px !important;
+      height: 180px !important;
+    }
+
+    /* ─── PRINT SHEET — grid of cards for efficient printing ─── */
+    .print-sheet {
+      display: none;
+      background: #fff;
+    }
+
+    /* ─── PRINT STYLES ─── */
+    @media print {
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+      body {
+        background: #fff;
+        padding: 0;
+      }
+      .page-header,
+      .controls,
+      .card-stage {
+        display: none !important;
+      }
+      .print-sheet {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8mm;
+        justify-items: center;
+      }
+      .print-sheet .card {
+        box-shadow: none;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid;
+      }
+      .print-sheet.print-sheet--vertical {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .print-sheet.print-sheet--vertical .card {
+        width: 85mm;
+        height: 135mm;
+        padding: 8mm 6mm;
+      }
+      .print-sheet.print-sheet--vertical .card-logo { width: 16mm; height: 16mm; }
+      .print-sheet.print-sheet--vertical .card-brand { font-size: 22pt; }
+      .print-sheet.print-sheet--vertical .card-tagline { font-size: 9pt; }
+      .print-sheet.print-sheet--vertical .card-qr-wrap canvas,
+      .print-sheet.print-sheet--vertical .card-qr-wrap img {
+        width: 45mm !important;
+        height: 45mm !important;
+      }
+      .print-sheet.print-sheet--vertical .card-cta { font-size: 10pt; }
+      .print-sheet.print-sheet--vertical .card-url { font-size: 7pt; }
+      .print-sheet.print-sheet--vertical .card-footer { font-size: 6pt; }
+
+      .print-sheet.print-sheet--business {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: min-content;
+      }
+      .print-sheet.print-sheet--business .card {
+        width: 85mm;
+        height: 55mm;
+        padding: 5mm 6mm;
+        flex-direction: row;
+        gap: 5mm;
+        text-align: left;
+        align-items: center;
+      }
+      .print-sheet.print-sheet--business .card-logo { width: 12mm; height: 12mm; }
+      .print-sheet.print-sheet--business .card-brand { font-size: 16pt; margin: 3mm 0 1mm; }
+      .print-sheet.print-sheet--business .card-tagline { font-size: 7pt; margin-bottom: 2mm; text-align: left; }
+      .print-sheet.print-sheet--business .card-qr-wrap { padding: 2mm; }
+      .print-sheet.print-sheet--business .card-qr-wrap canvas,
+      .print-sheet.print-sheet--business .card-qr-wrap img {
+        width: 38mm !important;
+        height: 38mm !important;
+      }
+      .print-sheet.print-sheet--business .card-cta { font-size: 7pt; margin-top: 2mm; }
+      .print-sheet.print-sheet--business .card-url { font-size: 5.5pt; text-align: left; }
+      .print-sheet.print-sheet--business .card-footer { display: none; }
+      .print-sheet.print-sheet--business .card-left {
+        flex: 1; display: flex; flex-direction: column; align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .card { width: 300px; height: 480px; }
+      .card--business { width: 100%; max-width: 420px; height: auto; min-height: 260px; flex-direction: column; text-align: center; }
+      .card--business .card-left { align-items: center; }
+      .card--business .card-tagline { text-align: center; }
+      .card--business .card-url { text-align: center; }
+      .card-qr-wrap canvas, .card-qr-wrap img { width: 160px !important; height: 160px !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Tarjeta QR de Whistle</h1>
+    <p>Imprimela y compartela en la calle. Quien escanee el codigo ira directo a la pagina de instalacion.</p>
+  </div>
+
+  <div class="controls">
+    <div class="size-toggle" id="size-toggle">
+      <button data-format="vertical" class="active">Flyer vertical</button>
+      <button data-format="business">Tarjeta</button>
+    </div>
+    <button class="ctrl-btn" id="btn-print">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Imprimir
+    </button>
+    <button class="ctrl-btn ctrl-btn--secondary" id="btn-download">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Descargar QR
+    </button>
+  </div>
+
+  <!-- Screen preview -->
+  <div class="card-stage" id="card-stage">
+    <div class="card" id="card-preview">
+      <img class="card-logo" src="whistle-icon.png" alt="Whistle">
+      <div class="card-brand">Whistle</div>
+      <div class="card-tagline">Alerta de carteristas en tiempo real</div>
+      <div class="card-qr-wrap" id="qr-preview"></div>
+      <div class="card-cta">Escanea para instalar</div>
+      <div class="card-url" id="card-url"></div>
+      <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
+    </div>
+  </div>
+
+  <!-- Hidden print sheet — filled dynamically -->
+  <div class="print-sheet print-sheet--vertical" id="print-sheet"></div>
+
+  <!-- QR library -->
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    const SHARE_URL = (location.origin && !location.origin.startsWith('file'))
+      ? location.origin + '/landing.html'
+      : 'https://whistle.app/landing.html';
+
+    // Show URL in card
+    document.getElementById('card-url').textContent = SHARE_URL.replace(/^https?:\/\//, '');
+
+    // Generate QR code in preview
+    const qrPreview = document.getElementById('qr-preview');
+    let qrInstance = null;
+
+    function generateQR(target, size) {
+      target.innerHTML = '';
+      return new QRCode(target, {
+        text: SHARE_URL,
+        width: size,
+        height: size,
+        colorDark: '#1c1c1e',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+    }
+
+    qrInstance = generateQR(qrPreview, 200);
+
+    // ─── Size toggle ──────────────────────────────────────
+    const sizeToggle = document.getElementById('size-toggle');
+    const cardPreview = document.getElementById('card-preview');
+    const printSheet = document.getElementById('print-sheet');
+    let currentFormat = 'vertical';
+
+    sizeToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const format = btn.dataset.format;
+      if (format === currentFormat) return;
+
+      currentFormat = format;
+      sizeToggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+
+      if (format === 'business') {
+        cardPreview.classList.add('card--business');
+        cardPreview.innerHTML = `
+          <div class="card-left">
+            <img class="card-logo" src="whistle-icon.png" alt="Whistle">
+            <div class="card-brand">Whistle</div>
+            <div class="card-tagline">Alerta de carteristas<br>en tiempo real</div>
+            <div class="card-cta">Escanea para instalar</div>
+            <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          </div>
+          <div class="card-qr-wrap"></div>
+        `;
+        generateQR(cardPreview.querySelector('.card-qr-wrap'), 180);
+      } else {
+        cardPreview.classList.remove('card--business');
+        cardPreview.innerHTML = `
+          <img class="card-logo" src="whistle-icon.png" alt="Whistle">
+          <div class="card-brand">Whistle</div>
+          <div class="card-tagline">Alerta de carteristas en tiempo real</div>
+          <div class="card-qr-wrap"></div>
+          <div class="card-cta">Escanea para instalar</div>
+          <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
+        `;
+        generateQR(cardPreview.querySelector('.card-qr-wrap'), 200);
+      }
+    });
+
+    // ─── Print ────────────────────────────────────────────
+    function buildPrintSheet() {
+      // A4 @ 10mm margin fits: 2 columns x 2 vertical flyers, or 2 x 5 business cards
+      const count = currentFormat === 'business' ? 10 : 4;
+      const isBusiness = currentFormat === 'business';
+
+      printSheet.className = 'print-sheet ' + (isBusiness ? 'print-sheet--business' : 'print-sheet--vertical');
+      printSheet.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        const card = document.createElement('div');
+        card.className = 'card' + (isBusiness ? ' card--business' : '');
+        card.innerHTML = isBusiness ? `
+          <div class="card-left">
+            <img class="card-logo" src="whistle-icon.png" alt="">
+            <div class="card-brand">Whistle</div>
+            <div class="card-tagline">Alerta de carteristas<br>en tiempo real</div>
+            <div class="card-cta">Escanea para instalar</div>
+            <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          </div>
+          <div class="card-qr-wrap"></div>
+        ` : `
+          <img class="card-logo" src="whistle-icon.png" alt="">
+          <div class="card-brand">Whistle</div>
+          <div class="card-tagline">Alerta de carteristas en tiempo real</div>
+          <div class="card-qr-wrap"></div>
+          <div class="card-cta">Escanea para instalar</div>
+          <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
+        `;
+        printSheet.appendChild(card);
+        generateQR(card.querySelector('.card-qr-wrap'), 200);
+      }
+    }
+
+    document.getElementById('btn-print').addEventListener('click', () => {
+      buildPrintSheet();
+      // Small delay so QR codes render before print dialog
+      setTimeout(() => window.print(), 150);
+    });
+
+    // ─── Download QR as PNG ────────────────────────────────
+    document.getElementById('btn-download').addEventListener('click', () => {
+      const img = cardPreview.querySelector('.card-qr-wrap img, .card-qr-wrap canvas');
+      if (!img) return;
+
+      // qrcodejs creates both an <img> (data URL) and a <canvas>
+      const canvas = cardPreview.querySelector('.card-qr-wrap canvas');
+      const dataUrl = canvas
+        ? canvas.toDataURL('image/png')
+        : (img.src || '');
+
+      if (!dataUrl) return;
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'whistle-qr.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+  })();
+  </script>
+
+</body>
+</html>
