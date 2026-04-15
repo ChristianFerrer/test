@@ -139,17 +139,6 @@
     'profile.no_alerts_sub':{ es: 'Usa el botón REPORTAR en el mapa para avisar a otros usuarios', en: 'Use the REPORT button on the map to warn other users' },
     'profile.error':        { es: 'Error al cargar tus alertas', en: 'Error loading your alerts' },
     'profile.anonymous':    { es: 'Usuario anónimo',             en: 'Anonymous user' },
-    'profile.impact_title': { es: 'Has protegido a ~{n} personas', en: "You've protected ~{n} people" },
-    'profile.impact_sub':   { es: 'con tus {n} alertas',          en: 'with your {n} alerts' },
-    'profile.impact_share': { es: 'Compartir mi impacto',         en: 'Share my impact' },
-
-    // ── SHARE ──────────────────────────────────────────────────
-    'share.copied':         { es: 'Enlace copiado',               en: 'Link copied' },
-    'share.warn_contacts':  { es: 'Avisar a contactos',           en: 'Warn contacts' },
-    'share.after_send':     { es: 'Compartir',                    en: 'Share' },
-    'share.msg_nearby':     { es: '⚠️ Acaban de reportar un carterista cerca de mí en Whistle. Instálala para recibir alertas como esta:', en: '⚠️ A pickpocket was just reported near me on Whistle. Install it to get alerts like this:' },
-    'share.msg_sent':       { es: 'Acabo de reportar un carterista en Whistle 🚨 Instálala para que la red sea más fuerte:', en: 'I just reported a pickpocket on Whistle 🚨 Install it to make the network stronger:' },
-    'share.msg_impact':     { es: 'He enviado {n} alertas de carteristas y protegido a ~{r} personas con Whistle 🛡️ Únete a la red ciudadana:', en: "I've sent {n} pickpocket alerts and protected ~{r} people with Whistle 🛡️ Join the citizen network:" },
 
     // ── TIME ───────────────────────────────────────────────────
     'time.now':             { es: 'ahora',                       en: 'now' },

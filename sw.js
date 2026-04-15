@@ -3,7 +3,7 @@
 // Handles Web Push notifications + offline caching
 // ============================================================
 
-const CACHE_NAME = 'whistle-v3';
+const CACHE_NAME = 'whistle-v2';
 const PRECACHE = [
   '/',
   '/index.html',

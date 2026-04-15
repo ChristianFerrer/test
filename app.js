@@ -753,18 +753,6 @@
     return `${Math.round(ms / 86400000)}d`;
   }
 
-  /** Shared helper: share message after receiving a nearby alert */
-  function sharePanelNearbyAlert() {
-    const msg = t('share.msg_nearby');
-    shareWhistle(msg, 'Whistle');
-  }
-
-  /** Shared helper: share message after user sends their own alert */
-  function sharePanelOwnAlert() {
-    const msg = t('share.msg_sent');
-    shareWhistle(msg, 'Whistle');
-  }
-
   /** Shows the safe-zone panel (0 alerts) with zone history info */
   function showSafePanel() {
     const safeLastEl = document.getElementById('panel-safe-last');
@@ -811,11 +799,6 @@
     panelSubtitle.classList.remove('hidden');
     if (panelOwnDetails) panelOwnDetails.classList.add('hidden');
     if (cancelBtn) cancelBtn.classList.add('hidden');
-    // Hide both share buttons on panel hide
-    const panelShareBtn = document.getElementById('btn-panel-share');
-    const ownShareBtn   = document.getElementById('btn-own-share');
-    if (panelShareBtn) panelShareBtn.classList.add('hidden');
-    if (ownShareBtn)   ownShareBtn.classList.add('hidden');
     stopCountdown();
   }
 
@@ -861,13 +844,6 @@
 
   function showOwnAlertPanel() {
     const panelIcon = document.getElementById('panel-icon');
-    const panelShareBtn = document.getElementById('btn-panel-share');
-    const ownShareBtn   = document.getElementById('btn-own-share');
-
-    // Hide the "Warn contacts" share button (this panel has its own after-send flow)
-    if (panelShareBtn) panelShareBtn.classList.add('hidden');
-    // Show the "Share" button (user just sent an alert — peak moment to share)
-    if (ownShareBtn) ownShareBtn.classList.remove('hidden');
 
     // Switch panel to own-alert style
     bottomPanel.classList.remove('bottom-panel--safe', 'bottom-panel--warn');
@@ -903,9 +879,8 @@
     tick();
     countdownInterval = setInterval(tick, 1000);
 
-    // Show panel for 20s — own-alert panel is one-time only, not re-openable via badge.
-    // Longer window gives the user time to use the share button during the peak moment.
-    showPanel(20000);
+    // Show panel for 10s — own-alert panel is one-time only, not re-openable via badge
+    showPanel(10000);
   }
 
   const riskBanner = document.getElementById('risk-banner');
@@ -1049,7 +1024,6 @@
       + (count === 0 ? '' : count === 1 ? ' badge-count--warn' : ' badge-count--danger');
 
     // Notification panel
-    const panelShareBtn = document.getElementById('btn-panel-share');
     if (count > 0) {
       const panelIcon = document.getElementById('panel-icon');
       document.getElementById('panel-safe-last')?.classList.add('hidden');
@@ -1070,12 +1044,8 @@
         panelTitleText.textContent = t('map.panel_title_many');
         panelSubtitle.textContent  = t('map.panel_sub_many', { n: count });
       }
-      // Show "Avisar a contactos" share button on warn/danger
-      if (panelShareBtn) panelShareBtn.classList.remove('hidden');
       showPanel();
     } else {
-      // Hide share button when no nearby alerts
-      if (panelShareBtn) panelShareBtn.classList.add('hidden');
       // Show safe zone panel once zone insights are loaded
       if (zoneInsightsReady) {
         showSafePanel();
@@ -1279,20 +1249,6 @@
 
     // Cancel alert button
     if (cancelBtn) cancelBtn.addEventListener('click', cancelOwnAlert);
-
-    // Share button in notification panel (warn/danger state)
-    const panelShareBtnEl = document.getElementById('btn-panel-share');
-    if (panelShareBtnEl) panelShareBtnEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      sharePanelNearbyAlert();
-    });
-
-    // Share button in own-alert panel (after user sends their own alert)
-    const ownShareBtnEl = document.getElementById('btn-own-share');
-    if (ownShareBtnEl) ownShareBtnEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      sharePanelOwnAlert();
-    });
 
     // My location button
     const myLocBtn = document.getElementById('my-location-btn');

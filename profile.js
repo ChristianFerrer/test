@@ -103,27 +103,6 @@
     statStreak.textContent = computeStreak(data);
     if (statReach) statReach.textContent = reach > 0 ? reach : '–';
 
-    // --- Impact share card: only when user has sent at least 1 alert ---
-    const impactCard  = document.getElementById('impact-card');
-    const impactTitle = document.getElementById('impact-card-title');
-    const impactSub   = document.getElementById('impact-card-sub');
-    const btnShareImpact = document.getElementById('btn-share-impact');
-    if (impactCard) {
-      if (total > 0) {
-        impactCard.classList.remove('hidden');
-        impactTitle.textContent = t('profile.impact_title', { n: reach });
-        impactSub.textContent   = t('profile.impact_sub',   { n: total });
-        if (btnShareImpact) {
-          btnShareImpact.onclick = () => {
-            const msg = t('share.msg_impact', { n: total, r: reach });
-            shareWhistle(msg, 'Whistle');
-          };
-        }
-      } else {
-        impactCard.classList.add('hidden');
-      }
-    }
-
 
     // --- List ---
     if (total === 0) {
