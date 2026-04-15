@@ -139,6 +139,9 @@
     'profile.no_alerts_sub':{ es: 'Usa el botón REPORTAR en el mapa para avisar a otros usuarios', en: 'Use the REPORT button on the map to warn other users' },
     'profile.error':        { es: 'Error al cargar tus alertas', en: 'Error loading your alerts' },
     'profile.anonymous':    { es: 'Usuario anónimo',             en: 'Anonymous user' },
+    'profile.share':        { es: 'Compartir Whistle',            en: 'Share Whistle' },
+    'profile.share_msg':    { es: 'Whistle te avisa en tiempo real si hay carteristas cerca de ti 🚨 Instálala gratis:', en: 'Whistle alerts you in real time about pickpockets nearby 🚨 Install it for free:' },
+    'profile.share_copied': { es: 'Enlace copiado',               en: 'Link copied' },
 
     // ── TIME ───────────────────────────────────────────────────
     'time.now':             { es: 'ahora',                       en: 'now' },

@@ -187,6 +187,42 @@
   });
 
   // ============================================================
+  // SHARE WHISTLE
+  // ============================================================
+
+  const btnShareWhistle = document.getElementById('btn-share-whistle');
+  if (btnShareWhistle) {
+    btnShareWhistle.addEventListener('click', async () => {
+      const url = location.origin + '/landing.html';
+      const text = t('profile.share_msg');
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'Whistle', text, url });
+          vibrate(10);
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(text + ' ' + url);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text + ' ' + url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+      }
+      showToast(t('profile.share_copied'));
+      vibrate(10);
+    });
+  }
+
+  // ============================================================
   // START
   // ============================================================
 

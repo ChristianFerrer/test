@@ -822,6 +822,32 @@ html, body {
   color: #fff;
 }
 
+/* Share Whistle button — profile page */
+.btn-share-whistle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 32px);
+  margin: 20px 16px 24px;
+  padding: 14px 20px;
+  background: #1c1c1e;
+  color: #f5c518;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s, background 0.15s;
+}
+.btn-share-whistle:active {
+  transform: scale(0.98);
+  background: #333;
+}
+
 /* ============================================================
    BOTTOM NAVIGATION - iOS tab bar style
    ============================================================ */
