@@ -18,6 +18,12 @@
   const myAlertsList   = document.getElementById('my-alerts-list');
   const btnLogout      = document.getElementById('btn-logout');
 
+  document.querySelectorAll('.stat-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('show-desc');
+    });
+  });
+
   // ============================================================
   // BOOT — check session first
   // ============================================================
