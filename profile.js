@@ -20,7 +20,7 @@
 
   document.querySelectorAll('.stat-card').forEach(card => {
     card.addEventListener('click', () => {
-      card.classList.toggle('show-desc');
+      card.classList.toggle('flipped');
     });
   });
 
@@ -121,7 +121,8 @@
       return;
     }
 
-    myAlertsList.innerHTML = data.map(alert => {
+    myAlertsList.innerHTML = data.map((alert, idx) => {
+      const alertNum = total - idx;
       const d = new Date(alert.created_at);
       const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
       const dateStr = d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -130,7 +131,6 @@
       const ageMin  = (Date.now() - d.getTime()) / 60000;
       const isRecent = ageMin < 5;
 
-      // Async geocode
       reverseGeocode(alert.lat, alert.lng).then(address => {
         const el = document.getElementById(cardId);
         if (el) el.textContent = address || `${alert.lat.toFixed(5)}, ${alert.lng.toFixed(5)}`;
@@ -138,7 +138,7 @@
 
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
-          <img src="whistle.png" class="card-icon" alt="" style="width:36px;height:36px;object-fit:contain;opacity:0.75;flex-shrink:0;">
+          <div class="alert-number">${alertNum}</div>
           <div class="card-body">
             <div class="card-top-row">
               <span class="card-datetime">${dateStr} · ${timeStr}</span>
