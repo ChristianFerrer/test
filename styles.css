@@ -1552,7 +1552,7 @@ html, body {
 .stat-card-inner {
   position: relative;
   width: 100%;
-  min-height: 80px;
+  min-height: 96px;
   transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
   transform-style: preserve-3d;
 }
@@ -1571,15 +1571,15 @@ html, body {
   box-shadow: var(--shadow-card);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 14px 6px;
-  gap: 4px;
+  padding: 18px 10px;
+  gap: 6px;
 }
 
 .stat-back {
   transform: rotateY(180deg);
   background: var(--brand-black);
-  padding: 10px 8px;
-  gap: 6px;
+  padding: 14px 10px;
+  gap: 8px;
 }
 
 .stat-back-title {

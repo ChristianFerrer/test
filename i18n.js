@@ -132,7 +132,7 @@
     'profile.stat_total':   { es: 'Alertas enviadas',            en: 'Alerts sent' },
     'profile.stat_today':   { es: 'Hoy',                         en: 'Today' },
     'profile.stat_streak':  { es: 'Racha',                       en: 'Streak' },
-    'profile.stat_reach':   { es: '~Personas avisadas',          en: '~People warned' },
+    'profile.stat_reach':   { es: 'Personas avisadas',           en: 'People warned' },
     'profile.desc_total':   { es: 'Total de alertas que has reportado', en: 'Total alerts you have reported' },
     'profile.desc_today':   { es: 'Alertas enviadas en el día de hoy', en: 'Alerts sent today' },
     'profile.desc_streak':  { es: 'Días consecutivos reportando alertas', en: 'Consecutive days reporting alerts' },
