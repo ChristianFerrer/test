@@ -275,8 +275,169 @@
     footer a { color: #636366; font-weight: 600; }
     footer a:hover { color: #1c1c1e; }
 
-    /* ─── RESPONSIVE ─── */
+    /* ─── APP SCREENSHOTS ─── */
+    .screenshots {
+      padding: 64px 24px;
+      background: #f9f9fb;
+      text-align: center;
+    }
+    .screenshots-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .screenshots-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding: 32px 0 16px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screenshots-scroll::-webkit-scrollbar { display: none; }
+    .screenshot-item {
+      flex-shrink: 0;
+      width: 220px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      scroll-snap-align: center;
+      border: 6px solid #1c1c1e;
+      background: #1c1c1e;
+    }
+    .screenshot-mock {
+      width: 100%;
+      height: 440px;
+      background: #f2f2f7;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .mock-header {
+      background: #f5c518;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1c1c1e;
+    }
+    .mock-logo { width: 22px; height: 22px; object-fit: contain; }
+    .mock-map {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(135deg, #d4e8d0 0%, #c8d8e8 50%, #e0ddd4 100%);
+    }
+    .mock-pin {
+      position: absolute;
+      font-size: 20px;
+      animation: mock-bounce 2s ease-in-out infinite;
+    }
+    .mock-pin:nth-child(2) { animation-delay: 0.4s; }
+    .mock-pin:nth-child(3) { animation-delay: 0.8s; }
+    @keyframes mock-bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .mock-btn-alert {
+      background: #f5c518;
+      color: #1c1c1e;
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+    .mock-list {
+      flex: 1;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .mock-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 11px;
+      color: #1c1c1e;
+      font-weight: 500;
+    }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .mock-dot--red { background: #ff3b30; }
+    .mock-dot--orange { background: #ff9500; }
+    .mock-dot--gray { background: #c7c7cc; }
+    .mock-num {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #f5c518;
+      color: #1c1c1e;
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .mock-stats {
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+    }
+    .mock-stat {
+      flex: 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 4px;
+      text-align: center;
+    }
+    .mock-stat strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1c1c1e;
+    }
+    .mock-stat small {
+      font-size: 9px;
+      color: #636366;
+    }
+
+    /* ─── PEOPLE SECTION ─── */
+    .people-section {
+      padding: 64px 24px;
+      background: #fff;
+    }
+    .people-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 32px;
+    }
+    .people-grid img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .people-caption {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #636366;
+      font-style: italic;
+    }
     @media (max-width: 520px) {
+      .people-grid { grid-template-columns: 1fr 1fr; }
+      .people-grid img { height: 160px; }
+      .screenshot-item { width: 180px; }
+      .screenshot-mock { height: 360px; }
+    }
       .hero { padding: 48px 20px 60px; }
       .hero h1 { font-size: 34px; }
       .hero .tagline { font-size: 18px; }
@@ -472,6 +633,53 @@
     </div>
   </section>
 
+  <!-- ═══ APP PREVIEW ═══ -->
+  <section class="screenshots">
+    <div class="screenshots-inner">
+      <h2 class="section-title">Asi se ve Whistle</h2>
+      <p class="section-lead">Una interfaz simple y directa. Alerta, mapa y perfil en un solo toque.</p>
+      <div class="screenshots-scroll">
+        <div class="screenshot-item">
+          <div class="screenshot-mock">
+            <div class="mock-header"><img src="whistle.png" class="mock-logo"><span>Radar</span></div>
+            <div class="mock-map">
+              <div class="mock-pin" style="top:30%;left:55%;">📍</div>
+              <div class="mock-pin" style="top:50%;left:35%;">🚨</div>
+              <div class="mock-pin" style="top:65%;left:60%;">🚨</div>
+            </div>
+            <div class="mock-btn-alert">REPORTAR</div>
+          </div>
+        </div>
+        <div class="screenshot-item">
+          <div class="screenshot-mock">
+            <div class="mock-header"><img src="whistle.png" class="mock-logo"><span>Historial</span></div>
+            <div class="mock-list">
+              <div class="mock-row"><span class="mock-dot mock-dot--red"></span><span>Carterista detectado · 2min</span></div>
+              <div class="mock-row"><span class="mock-dot mock-dot--orange"></span><span>Alerta cercana · 15min</span></div>
+              <div class="mock-row"><span class="mock-dot mock-dot--gray"></span><span>Expirada · 1h</span></div>
+              <div class="mock-row"><span class="mock-dot mock-dot--gray"></span><span>Expirada · 3h</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="screenshot-item">
+          <div class="screenshot-mock">
+            <div class="mock-header"><img src="whistle.png" class="mock-logo"><span>Perfil</span></div>
+            <div class="mock-stats">
+              <div class="mock-stat"><strong>24</strong><small>Alertas</small></div>
+              <div class="mock-stat"><strong>3</strong><small>Hoy</small></div>
+              <div class="mock-stat"><strong>7</strong><small>Racha</small></div>
+            </div>
+            <div class="mock-list">
+              <div class="mock-row"><span class="mock-num">24</span><span>Hoy · 14:32</span></div>
+              <div class="mock-row"><span class="mock-num">23</span><span>Hoy · 11:05</span></div>
+              <div class="mock-row"><span class="mock-num">22</span><span>Ayer · 19:20</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══ HOW IT WORKS ═══ -->
   <section class="how">
     <div class="how-inner">
@@ -523,6 +731,23 @@
           <span class="lbl">Coste para usar</span>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ═══ PEOPLE USING WHISTLE ═══ -->
+  <section class="people-section">
+    <div class="people-inner">
+      <h2 class="section-title">Protegiendo a la comunidad</h2>
+      <p class="section-lead">Ciudadanos reales usando Whistle en su dia a dia para mantenerse seguros.</p>
+      <div class="people-grid">
+        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=440&fit=crop&crop=faces" alt="Persona con movil en la calle" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=440&fit=crop&crop=faces" alt="Grupo de amigos caminando por la ciudad" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=440&fit=crop&crop=faces" alt="Personas en zona turistica" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=440&fit=crop&crop=faces" alt="Mujer consultando su movil" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1506869640319-fe1a24fd76cb?w=600&h=440&fit=crop&crop=faces" alt="Turistas caminando por Barcelona" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&h=440&fit=crop&crop=faces" alt="Joven mirando el movil en el metro" loading="lazy">
+      </div>
+      <p class="people-caption">Unete a la red de ciudadanos que protegen su ciudad.</p>
     </div>
   </section>
 
