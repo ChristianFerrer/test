@@ -1655,6 +1655,18 @@ html, body {
 }
 
 
+/* Admin button in header */
+.btn-header-admin {
+  background: rgba(0,0,0,0.10);
+  border: none; border-radius: 50%;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--brand-black);
+  transition: background var(--tr-fast);
+  text-decoration: none;
+}
+.btn-header-admin:active { background: rgba(0,0,0,0.20); }
+
 /* Logout button in header */
 .btn-logout {
   background: rgba(0,0,0,0.10);
