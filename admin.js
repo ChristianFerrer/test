@@ -78,11 +78,21 @@
 
   // ── Render all sections ───────────────────────────────────
   function renderDashboard(data) {
+    // Defaults for backward compat with old edge function
+    data.growth     = data.growth     || { new_today:0, new_7d:0, new_30d:0, new_prev_7d:0, new_prev_30d:0, user_curve:{}, reg_email:0, reg_google:0, reg_other:0 };
+    data.engagement = data.engagement || { dau:0, wau:0, mau:0, stickiness:0, alerts_per_user:0, active_users:0, dormant_users:0, active_rate:0, retention_rate:0 };
+    data.temporal   = data.temporal   || { alerts_by_day: data.alerts_by_day || {}, alerts_by_hour: new Array(24).fill(0), weekday_alerts:0, weekend_alerts:0 };
+    data.geographic = data.geographic || { unique_zones:0, top_zones:[] };
+    data.kpi        = data.kpi        || {};
+    data.kpi.push_adoption  = data.kpi.push_adoption  ?? 0;
+    data.kpi.alerts_prev_7d = data.kpi.alerts_prev_7d ?? 0;
+    data.kpi.alerts_prev_30d = data.kpi.alerts_prev_30d ?? 0;
+
     renderMainKPIs(data);
     renderGrowth(data.growth, data.kpi);
     renderEngagement(data.engagement, data.temporal);
     renderCoverage(data.temporal, data.geographic);
-    renderTop5(data.top5_reporters);
+    renderTop5(data.top5_reporters || []);
 
     allUsers = data.users;
     filtered = [...allUsers];
@@ -101,17 +111,19 @@
   // ══════════════════════════════════════════════════════════
 
   function renderMainKPIs(data) {
-    const { kpi, growth, engagement } = data;
+    const kpi = data.kpi || {};
+    const growth = data.growth || {};
+    const engagement = data.engagement || {};
 
-    document.getElementById('kpi-users').textContent = kpi.total_users;
-    document.getElementById('kpi-mau').textContent = engagement.mau;
-    document.getElementById('kpi-alerts30').textContent = kpi.alerts_30d;
-    document.getElementById('kpi-push').textContent = kpi.push_subs;
+    document.getElementById('kpi-users').textContent = kpi.total_users ?? '—';
+    document.getElementById('kpi-mau').textContent = engagement.mau ?? 0;
+    document.getElementById('kpi-alerts30').textContent = kpi.alerts_30d ?? '—';
+    document.getElementById('kpi-push').textContent = kpi.push_subs ?? '—';
 
-    setTrend('kpi-users-trend', growth.new_7d, `+${growth.new_7d} esta semana`);
-    setTrend('kpi-mau-trend', engagement.active_rate, `${engagement.active_rate}% del total`);
-    setTrend('kpi-alerts30-trend', trendPct(kpi.alerts_30d, kpi.alerts_prev_30d));
-    setTrend('kpi-push-trend', kpi.push_adoption, `${kpi.push_adoption}% adopción`);
+    setTrend('kpi-users-trend', growth.new_7d || 0, `+${growth.new_7d || 0} esta semana`);
+    setTrend('kpi-mau-trend', engagement.active_rate || 0, `${engagement.active_rate || 0}% del total`);
+    setTrend('kpi-alerts30-trend', trendPct(kpi.alerts_30d || 0, kpi.alerts_prev_30d || 0));
+    setTrend('kpi-push-trend', kpi.push_adoption || 0, `${kpi.push_adoption || 0}% adopción`);
   }
 
   function trendPct(current, previous) {
