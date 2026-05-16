@@ -9,9 +9,6 @@
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // --- ALERT SOUND ---
-  // iOS/PC require audio to be unlocked by a user gesture first.
-  // We create + silently play the audio on the first tap anywhere,
-  // so subsequent programmatic plays are always allowed.
   let alertAudio = null;
   let audioUnlocked = false;
 
@@ -20,12 +17,7 @@
     audioUnlocked = true;
     try {
       alertAudio = new Audio('pickpoket.wav');
-      alertAudio.volume = 0;
-      alertAudio.play().then(() => {
-        alertAudio.pause();
-        alertAudio.currentTime = 0;
-        alertAudio.volume = 1.0;
-      }).catch(() => {});
+      alertAudio.load();
     } catch (e) {}
   }
 
@@ -33,10 +25,10 @@
     try {
       if (!alertAudio) {
         alertAudio = new Audio('pickpoket.wav');
-        alertAudio.volume = 1.0;
       }
       alertAudio.currentTime = 0;
-      alertAudio.play().catch(() => {/* autoplay still blocked */});
+      alertAudio.volume = 1.0;
+      alertAudio.play().catch(() => {});
     } catch (err) {
       console.warn('[Whistle] Could not play sound:', err);
     }
@@ -1090,6 +1082,7 @@
     updateBadgeAndPanel();
     showOwnAlertPanel();
     vibrate([100]);
+    playAlertSound();
 
     // Start cooldown UI
     startCooldown();
