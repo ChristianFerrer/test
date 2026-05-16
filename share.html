@@ -38,7 +38,7 @@
     /* ─── CONTENT ─── */
     .share-content {
       flex: 1;
-      padding: 24px 16px 40px;
+      padding: 24px 16px calc(var(--bottom-bar-height, 64px) + 24px);
       padding-top: calc(var(--header-height, 56px) + 24px);
       display: flex;
       flex-direction: column;
@@ -250,6 +250,32 @@
     </div>
 
   </div>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item" aria-label="Radar">
+      <img src="radar.png" class="nav-icon-img" alt="">
+      <span class="nav-label" data-i18n="nav.alert">Radar</span>
+    </a>
+    <a href="history.html" class="nav-item" aria-label="Historial">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span class="nav-label" data-i18n="nav.history">Historial</span>
+    </a>
+    <a href="profile.html" class="nav-item" aria-label="Perfil">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+      </svg>
+      <span class="nav-label" data-i18n="nav.profile">Perfil</span>
+    </a>
+    <a href="share.html" class="nav-item active" aria-label="Compartir">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+      <span class="nav-label">Compartir</span>
+    </a>
+  </nav>
 
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
   <script src="utils.js"></script>
