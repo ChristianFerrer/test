@@ -14,11 +14,32 @@
 
   // Also listen for OAuth redirect callback
   supabase.auth.onAuthStateChange((event, session) => {
-    if (session) redirectToApp();
+    if (session) {
+      if (event === 'SIGNED_IN') {
+        const created = new Date(session.user.created_at);
+        const ageMs = Date.now() - created.getTime();
+        if (ageMs < 60000) {
+          notifyAdminNewUser(session.user.email || 'Google user');
+        }
+      }
+      redirectToApp();
+    }
   });
 
   function redirectToApp() {
     window.location.href = 'index.html';
+  }
+
+  async function notifyAdminNewUser(email) {
+    try {
+      await supabase.from('admin_notifications').insert({
+        type: 'new_user',
+        message: email,
+        created_at: new Date().toISOString(),
+      });
+    } catch (e) {
+      console.warn('[Whistle] Could not notify admin:', e);
+    }
   }
 
   // --- DOM ---
@@ -98,13 +119,13 @@
     const email    = document.getElementById('reg-email').value.trim();
     const password = document.getElementById('reg-password').value;
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data: signUpData, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
       showError(registerError, translateError(error.message));
       setLoading(btnRegister, false);
     } else {
-      // Show success message (Supabase may require email confirmation)
+      notifyAdminNewUser(email);
       registerForm.innerHTML = `
         <div class="auth-success">
           <div style="font-size:48px;margin-bottom:12px">✉️</div>
