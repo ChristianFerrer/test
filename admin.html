@@ -40,145 +40,251 @@
     <!-- Dashboard (hidden until data loads) -->
     <div id="admin-dashboard" class="hidden">
 
-      <!-- ── KPI CARDS ── -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- BLOCK 1: MAIN KPIs -->
+      <!-- ══════════════════════════════════════════════════ -->
       <section class="admin-section">
-        <h2 class="admin-section-title">Resumen general</h2>
-        <div class="kpi-grid">
-          <div class="kpi-card">
+        <div class="kpi-grid kpi-grid--main">
+          <div class="kpi-card kpi-card--highlight">
             <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
             <div class="kpi-value" id="kpi-users">—</div>
-            <div class="kpi-label">Usuarios registrados</div>
+            <div class="kpi-label">Usuarios</div>
+            <div class="kpi-trend" id="kpi-users-trend"></div>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card--highlight">
+            <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="kpi-value" id="kpi-mau">—</div>
+            <div class="kpi-label">Usuarios activos (30d)</div>
+            <div class="kpi-trend" id="kpi-mau-trend"></div>
+          </div>
+          <div class="kpi-card kpi-card--highlight">
             <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-            <div class="kpi-value" id="kpi-alerts">—</div>
-            <div class="kpi-label">Alertas totales</div>
+            <div class="kpi-value" id="kpi-alerts30">—</div>
+            <div class="kpi-label">Alertas (30d)</div>
+            <div class="kpi-trend" id="kpi-alerts30-trend"></div>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-card kpi-card--highlight">
             <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
             <div class="kpi-value" id="kpi-push">—</div>
             <div class="kpi-label">Push activos</div>
-          </div>
-          <div class="kpi-card kpi-card--yellow">
-            <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-            <div class="kpi-value" id="kpi-24h">—</div>
-            <div class="kpi-label">Alertas ultimas 24h</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <div class="kpi-value" id="kpi-7d">—</div>
-            <div class="kpi-label">Alertas ultimos 7 dias</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="18"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="16" y1="14" x2="16" y2="18"/></svg></div>
-            <div class="kpi-value" id="kpi-30d">—</div>
-            <div class="kpi-label">Alertas ultimos 30 dias</div>
+            <div class="kpi-trend" id="kpi-push-trend"></div>
           </div>
         </div>
       </section>
 
-      <!-- ── ALERTS CHART (last 7 days) ── -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- BLOCK 2: GROWTH -->
+      <!-- ══════════════════════════════════════════════════ -->
       <section class="admin-section">
-        <h2 class="admin-section-title">Alertas por día — últimos 7 días</h2>
-        <div class="chart-wrap" id="chart-wrap">
-          <!-- rendered by admin.js -->
+        <h2 class="admin-section-title">Crecimiento</h2>
+
+        <div class="metrics-row">
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="growth-today">0</span>
+            <span class="metric-mini-label">Nuevos hoy</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="growth-7d">0</span>
+            <span class="metric-mini-label">Nuevos 7d</span>
+            <span class="metric-mini-trend" id="growth-7d-trend"></span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="growth-30d">0</span>
+            <span class="metric-mini-label">Nuevos 30d</span>
+            <span class="metric-mini-trend" id="growth-30d-trend"></span>
+          </div>
+        </div>
+
+        <div class="charts-duo">
+          <div class="chart-card chart-card--wide">
+            <div class="chart-card-title">Usuarios acumulados (30 dias)</div>
+            <div class="chart-line-wrap" id="user-growth-chart"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">Registro por metodo</div>
+            <div class="donut-wrap" id="reg-donut"></div>
+            <div class="donut-legend" id="reg-legend"></div>
+          </div>
         </div>
       </section>
 
-      <!-- ── TOP REPORTERS ── -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- BLOCK 3: ENGAGEMENT -->
+      <!-- ══════════════════════════════════════════════════ -->
       <section class="admin-section">
-        <h2 class="admin-section-title">Top 5 reportadores (últimos 30 días)</h2>
-        <div class="top-list" id="top-list">
-          <!-- rendered by admin.js -->
+        <h2 class="admin-section-title">Engagement</h2>
+
+        <div class="metrics-row">
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-dau">0</span>
+            <span class="metric-mini-label">DAU</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-wau">0</span>
+            <span class="metric-mini-label">WAU</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-mau">0</span>
+            <span class="metric-mini-label">MAU</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-stickiness">0%</span>
+            <span class="metric-mini-label">Stickiness</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-avg">0</span>
+            <span class="metric-mini-label">Alertas/usuario</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="eng-retention">0%</span>
+            <span class="metric-mini-label">Retención semanal</span>
+          </div>
+        </div>
+
+        <div class="engagement-bar-wrap">
+          <div class="chart-card-title">Usuarios activos vs dormidos</div>
+          <div class="stacked-bar" id="active-bar">
+            <div class="stacked-bar-fill" id="active-bar-fill"></div>
+          </div>
+          <div class="stacked-bar-legend" id="active-bar-legend"></div>
+        </div>
+
+        <div class="chart-card chart-card--full">
+          <div class="chart-card-title">Alertas por dia — últimos 30 dias</div>
+          <div class="chart-wrap chart-wrap--30" id="chart-30d"></div>
         </div>
       </section>
 
-      <!-- ── ALERTS TABLE ── -->
-      <section class="admin-section" id="alerts-section">
-        <h2 class="admin-section-title">Alertas recientes (últimas 200)</h2>
-
-        <!-- Filter bar -->
-        <div class="alerts-filter-bar" id="alerts-filter-bar">
-          <div class="filter-group">
-            <label class="filter-label" for="f-email">Usuario</label>
-            <input class="filter-input" type="text" id="f-email" placeholder="email…">
-          </div>
-          <div class="filter-group">
-            <label class="filter-label" for="f-date-from">Desde</label>
-            <input class="filter-input" type="date" id="f-date-from">
-          </div>
-          <div class="filter-group">
-            <label class="filter-label" for="f-date-to">Hasta</label>
-            <input class="filter-input" type="date" id="f-date-to">
-          </div>
-          <div class="filter-group">
-            <label class="filter-label" for="f-time-from">Hora desde</label>
-            <input class="filter-input" type="time" id="f-time-from">
-          </div>
-          <div class="filter-group">
-            <label class="filter-label" for="f-time-to">Hora hasta</label>
-            <input class="filter-input" type="time" id="f-time-to">
-          </div>
-          <div class="filter-group">
-            <label class="filter-label" for="f-address">Dirección</label>
-            <input class="filter-input" type="text" id="f-address" placeholder="calle, zona…">
-          </div>
-          <button class="btn-clear-filters" id="btn-clear-filters">✕ Limpiar</button>
-        </div>
-
-        <!-- Action bar -->
-        <div class="alerts-action-bar" id="alerts-action-bar">
-          <label class="chk-select-all-wrap">
-            <input type="checkbox" id="chk-select-all">
-            <span id="selected-count">0 seleccionadas</span>
-          </label>
-          <button class="btn-delete-bulk" id="btn-delete-bulk" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Eliminar seleccionadas</button>
-        </div>
-
-        <div class="table-wrap">
-          <table class="admin-table" id="alerts-table">
-            <thead>
-              <tr>
-                <th class="th-chk"></th>
-                <th>Reportado por</th>
-                <th class="th-date">Fecha y hora</th>
-                <th class="th-coord">Coordenadas</th>
-                <th class="th-addr">Dirección</th>
-                <th class="th-map">Mapa</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="alerts-tbody">
-              <!-- rendered by admin.js -->
-            </tbody>
-          </table>
-        </div>
-        <div class="table-pagination" id="alerts-pagination"></div>
-      </section>
-
-      <!-- ── USERS TABLE ── -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- BLOCK 4: GEOGRAPHIC & TEMPORAL -->
+      <!-- ══════════════════════════════════════════════════ -->
       <section class="admin-section">
-        <div class="section-row">
-          <h2 class="admin-section-title">Usuarios</h2>
-          <input class="admin-search" type="search" id="user-search" placeholder="Buscar por email…">
+        <h2 class="admin-section-title">Cobertura y patrones</h2>
+
+        <div class="metrics-row">
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="geo-zones">0</span>
+            <span class="metric-mini-label">Zonas activas</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="geo-weekday">0</span>
+            <span class="metric-mini-label">L-V</span>
+          </div>
+          <div class="metric-mini">
+            <span class="metric-mini-value" id="geo-weekend">0</span>
+            <span class="metric-mini-label">S-D</span>
+          </div>
         </div>
-        <div class="table-wrap">
-          <table class="admin-table" id="users-table">
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th class="sortable active" data-col="alerts">Alertas ↓</th>
-                <th>Última alerta</th>
-                <th>Push</th>
-                <th>Registro</th>
-              </tr>
-            </thead>
-            <tbody id="users-tbody">
-              <!-- rendered by admin.js -->
-            </tbody>
-          </table>
+
+        <div class="charts-duo">
+          <div class="chart-card chart-card--wide">
+            <div class="chart-card-title">Actividad por hora (30d)</div>
+            <div class="chart-wrap chart-wrap--hours" id="chart-hours"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-card-title">Top 5 zonas</div>
+            <div class="top-zones-list" id="top-zones-list"></div>
+          </div>
         </div>
-        <div class="table-pagination" id="table-pagination"></div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════ -->
+      <!-- BLOCK 5: OPERATIONS -->
+      <!-- ══════════════════════════════════════════════════ -->
+      <section class="admin-section">
+        <h2 class="admin-section-title">Operaciones</h2>
+
+        <!-- Top 5 Reporters -->
+        <div class="ops-subsection">
+          <h3 class="ops-subtitle">Top 5 reportadores (30d)</h3>
+          <div class="top-list" id="top-list"></div>
+        </div>
+
+        <!-- Alerts Table -->
+        <div class="ops-subsection" id="alerts-section">
+          <h3 class="ops-subtitle">Alertas recientes (últimas 200)</h3>
+
+          <div class="alerts-filter-bar" id="alerts-filter-bar">
+            <div class="filter-group">
+              <label class="filter-label" for="f-email">Usuario</label>
+              <input class="filter-input" type="text" id="f-email" placeholder="email…">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label" for="f-date-from">Desde</label>
+              <input class="filter-input" type="date" id="f-date-from">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label" for="f-date-to">Hasta</label>
+              <input class="filter-input" type="date" id="f-date-to">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label" for="f-time-from">Hora desde</label>
+              <input class="filter-input" type="time" id="f-time-from">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label" for="f-time-to">Hora hasta</label>
+              <input class="filter-input" type="time" id="f-time-to">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label" for="f-address">Dirección</label>
+              <input class="filter-input" type="text" id="f-address" placeholder="calle, zona…">
+            </div>
+            <button class="btn-clear-filters" id="btn-clear-filters">Limpiar</button>
+          </div>
+
+          <div class="alerts-action-bar" id="alerts-action-bar">
+            <label class="chk-select-all-wrap">
+              <input type="checkbox" id="chk-select-all">
+              <span id="selected-count">0 seleccionadas</span>
+            </label>
+            <button class="btn-delete-bulk" id="btn-delete-bulk" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+              Eliminar seleccionadas
+            </button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="admin-table" id="alerts-table">
+              <thead>
+                <tr>
+                  <th class="th-chk"></th>
+                  <th>Reportado por</th>
+                  <th class="th-date">Fecha y hora</th>
+                  <th class="th-coord">Coordenadas</th>
+                  <th class="th-addr">Dirección</th>
+                  <th class="th-map">Mapa</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="alerts-tbody"></tbody>
+            </table>
+          </div>
+          <div class="table-pagination" id="alerts-pagination"></div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="ops-subsection">
+          <div class="section-row">
+            <h3 class="ops-subtitle">Usuarios</h3>
+            <input class="admin-search" type="search" id="user-search" placeholder="Buscar por email…">
+          </div>
+          <div class="table-wrap">
+            <table class="admin-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th class="sortable active" data-col="alerts">Alertas ↓</th>
+                  <th>Última alerta</th>
+                  <th>Push</th>
+                  <th>Registro</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+          <div class="table-pagination" id="table-pagination"></div>
+        </div>
+
       </section>
 
     </div><!-- /#admin-dashboard -->
