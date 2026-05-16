@@ -7,6 +7,7 @@
   <title>Compartir Whistle</title>
   <link rel="icon" type="image/png" href="whistle-icon.png">
   <link rel="apple-touch-icon" href="whistle-icon.png">
+  <link rel="stylesheet" href="styles.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -19,17 +20,7 @@
       flex-direction: column;
     }
 
-    /* ─── HEADER ─── */
-    .share-header {
-      background: #f5c518;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .share-header img { width: 32px; height: 32px; object-fit: contain; }
-    .share-header-text { font-size: 17px; font-weight: 700; color: #1c1c1e; }
-    .share-header-text small { display: block; font-size: 12px; font-weight: 400; color: rgba(0,0,0,0.55); }
+    /* ─── BACK BUTTON (inside app-header) ─── */
     .btn-back {
       background: rgba(0,0,0,0.08);
       border: none;
@@ -46,6 +37,7 @@
     .share-content {
       flex: 1;
       padding: 24px 16px 40px;
+      padding-top: calc(var(--header-height, 56px) + 24px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -207,13 +199,18 @@
 <body>
 
   <!-- HEADER -->
-  <div class="share-header">
-    <button class="btn-back" id="btn-back" aria-label="Volver">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <img src="whistle.png" alt="">
-    <div class="share-header-text">Whistle<small>Compartir</small></div>
-  </div>
+  <header class="app-header">
+    <div class="header-logo">
+      <button class="btn-back" id="btn-back" aria-label="Volver">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <img class="logo-icon" src="whistle.png" alt="Whistle" aria-hidden="true">
+      <div class="logo-text">
+        <strong>Whistle</strong>
+        <span>Compartir</span>
+      </div>
+    </div>
+  </header>
 
   <!-- CONTENT -->
   <div class="share-content">
