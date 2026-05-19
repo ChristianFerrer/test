@@ -81,6 +81,7 @@
     'map.popup_title':      { es: 'Carterista detectado',        en: 'Pickpocket detected' },
     'map.popup_ago':        { es: 'justo ahora',                 en: 'just now' },
     'map.popup_ago_min':    { es: 'hace {n} min',                en: '{n} min ago' },
+    'map.popup_expires':    { es: 'La alerta termina en:',       en: 'Alert ends in:' },
     'map.verified':         { es: '✓ Verificada por {n} personas', en: '✓ Verified by {n} people' },
     'map.heatmap_on':       { es: 'Zonas de riesgo',          en: 'Risk zones' },
     'map.heatmap_off':      { es: 'Ocultar zonas',             en: 'Hide zones' },

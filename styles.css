@@ -270,6 +270,14 @@ html, body {
   font-size: 12px; color: var(--text-muted);
   margin: 0 0 8px;
 }
+.popup-card-countdown {
+  font-size: 11px; color: #e65100;
+  margin: 0;
+  display: flex; align-items: center; gap: 4px;
+}
+.popup-card-countdown strong {
+  font-weight: 800;
+}
 .popup-card-btn {
   display: inline-flex; align-items: center; gap: 4px;
   background: none; border: none;

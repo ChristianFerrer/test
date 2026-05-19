@@ -390,7 +390,10 @@
   function buildPopupHtml(alert, verified) {
     const ageMin = Math.floor((Date.now() - new Date(alert.created_at)) / 60000);
     const ageStr = ageMin < 1 ? t('map.popup_ago') : t('map.popup_ago_min', { n: ageMin });
-    // Count corroborating alerts (others within cluster distance/time)
+    const remainMs = (new Date(alert.created_at).getTime() + ALERT_AGE_MIN * 60000) - Date.now();
+    const remainMin = Math.max(0, Math.floor(remainMs / 60000));
+    const remainSec = Math.max(0, Math.floor((remainMs % 60000) / 1000));
+    const remainStr = remainMin > 0 ? `${remainMin} min ${remainSec}s` : `${remainSec}s`;
     let corroborators = 0;
     if (verified) {
       const aTime = new Date(alert.created_at).getTime();
@@ -410,6 +413,7 @@
     return `<div class="popup-card">
       <p class="popup-card-title">${t('map.popup_title')}</p>
       <p class="popup-card-meta">${ageStr}${verifiedHtml ? ' · ' : ''}${verified ? '<span style="color:#2e7d32;font-weight:700">' + t('map.verified', { n: corroborators + 1 }) + '</span>' : ''}</p>
+      <p class="popup-card-countdown">${t('map.popup_expires')} <strong>${remainStr}</strong></p>
     </div>`;
   }
 
@@ -446,6 +450,8 @@
     });
   }
 
+  let popupTimerInterval = null;
+
   function createAlertMarker(alert) {
     if (alertMarkers.has(alert.id)) return; // already rendered
 
@@ -454,6 +460,18 @@
     const marker = L.marker([alert.lat, alert.lng], { icon: buildMarkerIcon(false) })
       .bindPopup(buildPopupHtml(alert, false), { maxWidth: 220, minWidth: 140, closeButton: false })
       .addTo(map);
+
+    marker.on('popupopen', function () {
+      clearInterval(popupTimerInterval);
+      popupTimerInterval = setInterval(function () {
+        const verified = computeVerifiedSet();
+        marker.setPopupContent(buildPopupHtml(alert, verified.has(alert.id)));
+      }, 1000);
+    });
+    marker.on('popupclose', function () {
+      clearInterval(popupTimerInterval);
+      popupTimerInterval = null;
+    });
 
     alertMarkers.set(alert.id, marker);
     alertTimestamps.set(alert.id, new Date(alert.created_at).getTime());
