@@ -260,20 +260,19 @@ html, body {
 }
 
 /* Google Maps-style popup card */
-.popup-card { padding: 12px 14px; }
+.popup-card { padding: 8px 12px; }
 .popup-card-title {
-  font-size: 14px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 4px;
+  margin: 0; line-height: 1.3;
 }
 .popup-card-meta {
-  font-size: 12px; color: var(--text-muted);
-  margin: 0 0 8px;
+  font-size: 11px; color: var(--text-muted);
+  margin: 0; line-height: 1.3;
 }
 .popup-card-countdown {
   font-size: 11px; color: #e65100;
-  margin: 0;
-  display: flex; align-items: center; gap: 4px;
+  margin: 2px 0 0; line-height: 1.3;
 }
 .popup-card-countdown strong {
   font-weight: 800;

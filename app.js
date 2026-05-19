@@ -407,14 +407,10 @@
         }
       });
     }
-    const verifiedHtml = verified
-      ? `<div style="color:#2e7d32;font-weight:700;font-size:11px;margin-top:5px">${t('map.verified', { n: corroborators + 1 })}</div>`
+    const verifiedLine = verified
+      ? ` · <span style="color:#2e7d32;font-weight:700">${t('map.verified', { n: corroborators + 1 })}</span>`
       : '';
-    return `<div class="popup-card">
-      <p class="popup-card-title">${t('map.popup_title')}</p>
-      <p class="popup-card-meta">${ageStr}${verifiedHtml ? ' · ' : ''}${verified ? '<span style="color:#2e7d32;font-weight:700">' + t('map.verified', { n: corroborators + 1 }) + '</span>' : ''}</p>
-      <p class="popup-card-countdown">${t('map.popup_expires')} <strong>${remainStr}</strong></p>
-    </div>`;
+    return `<div class="popup-card"><div class="popup-card-title">${t('map.popup_title')}</div><div class="popup-card-meta">${ageStr}${verifiedLine}</div><div class="popup-card-countdown">${t('map.popup_expires')} <strong>${remainStr}</strong></div></div>`;
   }
 
   /** Returns the Set of alert IDs that are corroborated by CLUSTER_MIN_USERS distinct users */
