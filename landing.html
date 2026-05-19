@@ -13,1115 +13,529 @@
   <link rel="icon" type="image/png" href="whistle-icon.png">
   <link rel="apple-touch-icon" href="whistle-icon.png">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-      background: #fff;
-      color: #1c1c1e;
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-    img { max-width: 100%; display: block; }
-    a { text-decoration: none; color: inherit; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;background:#0a0a0a;color:#fff;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    img{max-width:100%;display:block}
+    a{text-decoration:none;color:inherit}
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes pulse-ring{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.8);opacity:0}}
+    @keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slide-in-left{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes glow{0%,100%{box-shadow:0 0 20px rgba(245,197,24,.3)}50%{box-shadow:0 0 40px rgba(245,197,24,.6)}}
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-delay-1{transition-delay:.15s}
+    .reveal-delay-2{transition-delay:.3s}
+    .reveal-delay-3{transition-delay:.45s}
+
+    /* ─── NAV BAR ─── */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s}
+    .nav.scrolled{background:rgba(10,10,10,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;letter-spacing:-.5px}
+    .nav-brand img{width:32px;height:32px;border-radius:8px}
+    .nav-cta{background:#f5c518;color:#0a0a0a;font-size:13px;font-weight:700;padding:8px 20px;border-radius:100px;transition:transform .15s,box-shadow .15s}
+    .nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,197,24,.4)}
 
     /* ─── HERO ─── */
-    .hero {
-      background: linear-gradient(180deg, #f5c518 0%, #f3b800 100%);
-      padding: 56px 24px 72px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 50%);
-      pointer-events: none;
-    }
-    .hero-inner {
-      max-width: 640px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-    .hero-icon {
-      width: 96px; height: 96px;
-      border-radius: 24px;
-      border: 4px solid #fff;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-      margin: 0 auto 20px;
-    }
-    .hero h1 {
-      font-size: 40px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 10px;
-      color: #1c1c1e;
-    }
-    .hero .tagline {
-      font-size: 20px;
-      font-weight: 600;
-      color: #1c1c1e;
-      margin-bottom: 8px;
-    }
-    .hero .subtitle {
-      font-size: 16px;
-      color: rgba(28,28,30,0.75);
-      max-width: 420px;
-      margin: 0 auto 32px;
-    }
-    .cta-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #1c1c1e;
-      color: #f5c518;
-      font-size: 17px;
-      font-weight: 700;
-      padding: 18px 36px;
-      border-radius: 16px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .cta-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(0,0,0,0.3);
-    }
-    .cta-primary:active { transform: translateY(0); }
-    .cta-note {
-      display: block;
-      margin-top: 14px;
-      font-size: 13px;
-      color: rgba(28,28,30,0.65);
-      font-weight: 500;
-    }
+    .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:120px 24px 80px;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,197,24,.12) 0%,transparent 60%)}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px}
+    .hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;pointer-events:none}
+    .hero-orb--1{width:400px;height:400px;background:#f5c518;top:-10%;right:-5%}
+    .hero-orb--2{width:300px;height:300px;background:#ff6b35;bottom:10%;left:-8%}
+    .hero-inner{max-width:720px;text-align:center;position:relative;z-index:2}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.25);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:#f5c518;margin-bottom:28px;animation:fade-up .8s ease both}
+    .hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#34c759;animation:pulse-ring 2s infinite}
+    .hero-icon{width:80px;height:80px;border-radius:20px;margin:0 auto 24px;animation:float 4s ease-in-out infinite;box-shadow:0 8px 32px rgba(245,197,24,.3)}
+    .hero h1{font-size:clamp(36px,7vw,64px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:16px;animation:fade-up .8s .1s ease both}
+    .hero h1 .accent{color:#f5c518;position:relative}
+    .hero .subtitle{font-size:clamp(16px,2.5vw,20px);color:rgba(255,255,255,.6);max-width:500px;margin:0 auto 40px;animation:fade-up .8s .2s ease both}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;animation:fade-up .8s .3s ease both}
+    .btn-primary{display:inline-flex;align-items:center;gap:10px;background:#f5c518;color:#0a0a0a;font-size:17px;font-weight:700;padding:16px 32px;border-radius:14px;transition:all .2s;box-shadow:0 4px 20px rgba(245,197,24,.35)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,197,24,.5)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-secondary{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-weight:600;padding:14px 28px;border-radius:14px;border:1px solid rgba(255,255,255,.12);transition:all .2s;backdrop-filter:blur(8px)}
+    .btn-secondary:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.2)}
+    .hero-note{margin-top:20px;font-size:13px;color:rgba(255,255,255,.35);animation:fade-up .8s .4s ease both}
+    .hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.25);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase}
+    .hero-scroll svg{animation:float 2s ease-in-out infinite}
 
-    /* ─── WHAT IS ─── */
-    .section {
-      padding: 64px 24px;
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .section-title {
-      font-size: 28px;
-      font-weight: 800;
-      text-align: center;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-    }
-    .section-lead {
-      font-size: 17px;
-      text-align: center;
-      color: #636366;
-      max-width: 560px;
-      margin: 0 auto 40px;
-    }
-    .section-lead strong { color: #1c1c1e; font-weight: 700; }
+    /* ─── SOCIAL PROOF ─── */
+    .proof{padding:48px 24px;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+    .proof-inner{max-width:800px;margin:0 auto;display:flex;justify-content:center;gap:48px;flex-wrap:wrap}
+    .proof-item{text-align:center}
+    .proof-num{font-size:32px;font-weight:900;color:#f5c518;display:block;line-height:1}
+    .proof-label{font-size:12px;color:rgba(255,255,255,.4);font-weight:500;margin-top:4px}
 
-    /* ─── FEATURES GRID ─── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-top: 32px;
-    }
-    .feature-card {
-      background: #f9f9fb;
-      border: 1px solid #eeeef2;
-      border-radius: 18px;
-      padding: 24px 20px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .feature-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    }
-    .feature-card .icon-wrap {
-      width: 48px; height: 48px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-    }
-    .icon-yellow { background: #fff3c4; }
-    .icon-red    { background: #ffe1e1; }
-    .icon-green  { background: #e3f5e6; }
-    .icon-blue   { background: #e3efff; }
-    .feature-card h3 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .feature-card p {
-      font-size: 14px;
-      color: #636366;
-      line-height: 1.45;
-    }
+    /* ─── SECTION COMMON ─── */
+    .section{padding:100px 24px;max-width:1000px;margin:0 auto}
+    .section-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#f5c518;margin-bottom:12px}
+    .section-title{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:16px}
+    .section-lead{font-size:17px;color:rgba(255,255,255,.5);max-width:520px;margin-bottom:48px}
+    .section-lead strong{color:#fff;font-weight:600}
+    .section--center{text-align:center}
+    .section--center .section-lead{margin-left:auto;margin-right:auto}
+
+    /* ─── FEATURES ─── */
+    .features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .feature-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:28px 24px;transition:all .3s ease;position:relative;overflow:hidden}
+    .feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(245,197,24,.5),transparent);opacity:0;transition:opacity .3s}
+    .feature-card:hover{background:rgba(255,255,255,.06);border-color:rgba(245,197,24,.2);transform:translateY(-4px)}
+    .feature-card:hover::before{opacity:1}
+    .feature-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+    .feature-icon--yellow{background:rgba(245,197,24,.12);color:#f5c518}
+    .feature-icon--red{background:rgba(255,59,48,.12);color:#ff3b30}
+    .feature-icon--green{background:rgba(52,199,89,.12);color:#34c759}
+    .feature-icon--blue{background:rgba(0,122,255,.12);color:#007aff}
+    .feature-card h3{font-size:17px;font-weight:700;margin-bottom:6px}
+    .feature-card p{font-size:14px;color:rgba(255,255,255,.45);line-height:1.5}
+
+    /* ─── APP PREVIEW ─── */
+    .preview{padding:100px 24px;position:relative;overflow:hidden}
+    .preview-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(245,197,24,.06) 0%,transparent 60%)}
+    .preview-inner{max-width:1000px;margin:0 auto;position:relative;z-index:2}
+    .phones-track{display:flex;gap:20px;overflow-x:auto;padding:40px 0 24px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .phones-track::-webkit-scrollbar{display:none}
+    .phone-item{scroll-snap-align:center;flex-shrink:0}
+    .phone-frame{width:220px;height:440px;border-radius:32px;border:3px solid rgba(255,255,255,.15);background:#1c1c1e;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.05);transition:transform .3s,box-shadow .3s}
+    .phone-frame:hover{transform:translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(245,197,24,.1)}
+    .phone-label{text-align:center;color:rgba(255,255,255,.35);font-size:12px;font-weight:600;margin-top:12px;letter-spacing:.3px}
+
+    /* Phone internals */
+    .ph-header{background:#f5c518;padding:8px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+    .ph-header img{width:18px;height:18px;object-fit:contain}
+    .ph-header-text{font-size:10px;font-weight:700;color:#1c1c1e;line-height:1.2}
+    .ph-header-text small{display:block;font-size:8px;font-weight:400;color:rgba(0,0,0,.55)}
+    .ph-panel{padding:8px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .ph-panel--safe{background:linear-gradient(to bottom,#34c759,#248a3d)}
+    .ph-panel--danger{background:linear-gradient(to bottom,#ff453a,#d70015)}
+    .ph-panel-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .ph-panel-icon--safe{background:#34c759;border:1.5px solid #fff}
+    .ph-panel-icon--thief{background:#f5c518;border:1.5px solid #fff}
+    .ph-panel-text{color:#fff;font-size:10px;font-weight:600;line-height:1.3}
+    .ph-panel-text small{display:block;font-weight:400;font-size:9px;color:rgba(255,255,255,.8)}
+    .ph-map{flex:1;position:relative;background:linear-gradient(160deg,#d5e8d0,#c8d8e8 40%,#e2ddd4);overflow:hidden}
+    .ph-map-grid{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);background-size:30px 30px}
+    .ph-map-road{position:absolute;background:rgba(255,255,255,.7)}
+    .ph-map-road--h{height:4px;left:0;right:0}
+    .ph-map-road--v{width:4px;top:0;bottom:0}
+    .ph-map-road--diag{height:4px;width:140%;transform-origin:left center}
+    .ph-radar{position:absolute;border-radius:50%;border:2px solid;opacity:.5}
+    .ph-radar--green{border-color:#34c759;background:rgba(52,199,89,.08)}
+    .ph-radar--red{border-color:#ff3b30;background:rgba(255,59,48,.12)}
+    .ph-radar--yellow{border-color:#f5c518;background:rgba(245,197,24,.10)}
+    .ph-heat{position:absolute;border-radius:50%;filter:blur(12px);opacity:.55}
+    .ph-dot{position:absolute;width:12px;height:12px;border-radius:50%;background:#1a73e8;border:2px solid #fff;box-shadow:0 1px 4px rgba(26,115,232,.5);z-index:5}
+    .ph-pin{position:absolute;width:26px;height:26px;z-index:4}
+    .ph-pin-inner{width:100%;height:100%;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:radial-gradient(circle at 50% 40%,#fdd835,#f5a623 60%,#e8820c);border:1.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+    .ph-pin-face{transform:rotate(45deg);font-size:11px;line-height:1}
+    .ph-alert-btn{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#FFD60A,#E8A800);box-shadow:0 3px 10px rgba(245,197,24,.4);display:flex;align-items:center;justify-content:center;z-index:6}
+    .ph-alert-btn img{width:26px;height:26px;object-fit:contain}
+    .ph-alert-btn span{position:absolute;bottom:-2px;font-size:7px;font-weight:800;color:#1c1c1e}
+    .ph-legend{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.92);border-radius:8px;padding:5px 8px;box-shadow:0 1px 4px rgba(0,0,0,.1);z-index:5}
+    .ph-legend-title{font-size:7px;font-weight:700;color:#636366;text-transform:uppercase;letter-spacing:.3px}
+    .ph-legend-bar{width:60px;height:3px;border-radius:2px;background:linear-gradient(to right,#34c759,#ff9500,#ff3b30);margin:3px 0 2px}
+    .ph-legend-labels{display:flex;justify-content:space-between;font-size:7px;color:#8e8e93}
+    .ph-nav{display:flex;background:rgba(255,255,255,.95);border-top:.5px solid rgba(0,0,0,.12);flex-shrink:0}
+    .ph-nav-item{flex:1;text-align:center;padding:5px 0 4px;font-size:7px;color:#8e8e93;font-weight:500}
+    .ph-nav-item.active{color:#1c1c1e;font-weight:700}
+    .ph-nav-icon{font-size:13px;display:block;margin-bottom:1px}
 
     /* ─── HOW IT WORKS ─── */
-    .how {
-      background: #f9f9fb;
-      padding: 64px 24px;
-    }
-    .how-inner {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .steps-list {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      margin-top: 32px;
-    }
-    .step-row {
-      display: flex;
-      gap: 18px;
-      align-items: flex-start;
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    }
-    .step-circle {
-      flex-shrink: 0;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: #f5c518;
-      color: #1c1c1e;
-      font-size: 18px;
-      font-weight: 900;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .step-row h3 {
-      font-size: 17px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .step-row p {
-      font-size: 14px;
-      color: #636366;
-    }
+    .how{padding:100px 24px;background:rgba(255,255,255,.02)}
+    .how-inner{max-width:800px;margin:0 auto}
+    .steps{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative}
+    .steps::before{content:'';position:absolute;left:27px;top:28px;bottom:28px;width:2px;background:rgba(245,197,24,.15)}
+    .step{display:flex;gap:20px;align-items:flex-start;padding:24px 0;position:relative}
+    .step-num{width:56px;height:56px;border-radius:50%;background:rgba(245,197,24,.1);border:2px solid rgba(245,197,24,.3);color:#f5c518;font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:2}
+    .step-body{padding-top:8px}
+    .step-body h3{font-size:18px;font-weight:700;margin-bottom:4px}
+    .step-body p{font-size:15px;color:rgba(255,255,255,.45)}
 
-    /* ─── TRUST STRIP ─── */
-    .trust {
-      background: #1c1c1e;
-      color: #fff;
-      padding: 56px 24px;
-      text-align: center;
-    }
-    .trust-inner {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .trust-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 32px;
-    }
-    .trust-stat .num {
-      font-size: 32px;
-      font-weight: 900;
-      color: #f5c518;
-      display: block;
-    }
-    .trust-stat .lbl {
-      font-size: 13px;
-      color: rgba(255,255,255,0.7);
-      margin-top: 4px;
-    }
-    .trust h2 {
-      font-size: 26px;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.5px;
-    }
-    .trust p {
-      color: rgba(255,255,255,0.75);
-      margin-top: 10px;
-      font-size: 16px;
-    }
+    /* ─── TRUST ─── */
+    .trust{padding:100px 24px;text-align:center;position:relative}
+    .trust::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(245,197,24,.05) 0%,transparent 70%)}
+    .trust-inner{max-width:800px;margin:0 auto;position:relative;z-index:2}
+    .trust h2{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-1px;margin-bottom:12px}
+    .trust p{font-size:17px;color:rgba(255,255,255,.45);margin-bottom:48px}
+    .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .trust-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:32px 20px;transition:all .3s}
+    .trust-card:hover{border-color:rgba(245,197,24,.2);background:rgba(255,255,255,.06)}
+    .trust-num{font-size:40px;font-weight:900;color:#f5c518;display:block;line-height:1;margin-bottom:8px}
+    .trust-label{font-size:13px;color:rgba(255,255,255,.4);font-weight:500}
 
     /* ─── FINAL CTA ─── */
-    .final-cta {
-      padding: 72px 24px;
-      text-align: center;
-      background: linear-gradient(180deg, #fff 0%, #fff8d6 100%);
-    }
-    .final-cta h2 {
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -0.8px;
-      margin-bottom: 12px;
-    }
-    .final-cta p {
-      font-size: 16px;
-      color: #636366;
-      max-width: 420px;
-      margin: 0 auto 28px;
-    }
-
-    /* ─── PHONE MOCKUPS ─── */
-    .app-preview {
-      padding: 64px 24px;
-      background: #1c1c1e;
-      overflow: hidden;
-    }
-    .app-preview .section-title { color: #fff; }
-    .app-preview .section-lead { color: rgba(255,255,255,0.6); }
-    .phones-scroll {
-      display: flex;
-      gap: 24px;
-      overflow-x: auto;
-      padding: 32px 0 16px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      justify-content: flex-start;
-    }
-    .phones-scroll::-webkit-scrollbar { display: none; }
-    .phone-frame {
-      flex-shrink: 0;
-      width: 230px;
-      height: 460px;
-      border-radius: 28px;
-      border: 4px solid #444;
-      background: #f2f2f7;
-      overflow: hidden;
-      scroll-snap-align: center;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .phone-frame__label {
-      text-align: center;
-      color: rgba(255,255,255,0.55);
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 10px;
-      letter-spacing: 0.2px;
-    }
-    /* Phone header bar */
-    .ph-header {
-      background: #f5c518;
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-    .ph-header img { width: 18px; height: 18px; object-fit: contain; }
-    .ph-header-text { font-size: 10px; font-weight: 700; color: #1c1c1e; line-height: 1.2; }
-    .ph-header-text small { display: block; font-size: 8px; font-weight: 400; color: rgba(0,0,0,0.55); }
-    /* Panel banners */
-    .ph-panel {
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .ph-panel--safe { background: linear-gradient(to bottom, #34c759, #248a3d); }
-    .ph-panel--danger { background: linear-gradient(to bottom, #ff453a, #d70015); }
-    .ph-panel--warn { background: linear-gradient(to bottom, #ff9f0a, #c93400); }
-    .ph-panel-icon {
-      width: 28px; height: 28px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; flex-shrink: 0;
-    }
-    .ph-panel-icon--safe { background: #34c759; border: 1.5px solid #fff; }
-    .ph-panel-icon--thief { background: #f5c518; border: 1.5px solid #fff; }
-    .ph-panel-text { color: #fff; font-size: 10px; font-weight: 600; line-height: 1.3; }
-    .ph-panel-text small { display: block; font-weight: 400; font-size: 9px; color: rgba(255,255,255,0.8); }
-    /* Map area */
-    .ph-map {
-      flex: 1;
-      position: relative;
-      background: linear-gradient(160deg, #d5e8d0 0%, #c8d8e8 40%, #e2ddd4 100%);
-      overflow: hidden;
-    }
-    .ph-map-grid {
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-    .ph-map-road {
-      position: absolute;
-      background: rgba(255,255,255,0.7);
-    }
-    .ph-map-road--h { height: 4px; left: 0; right: 0; }
-    .ph-map-road--v { width: 4px; top: 0; bottom: 0; }
-    .ph-map-road--diag {
-      height: 4px; width: 140%;
-      transform-origin: left center;
-    }
-    /* Radar circle */
-    .ph-radar {
-      position: absolute;
-      border-radius: 50%;
-      border: 2px solid;
-      opacity: 0.5;
-    }
-    .ph-radar--green { border-color: #34c759; background: rgba(52,199,89,0.08); }
-    .ph-radar--red { border-color: #ff3b30; background: rgba(255,59,48,0.12); }
-    .ph-radar--yellow { border-color: #f5c518; background: rgba(245,197,24,0.10); }
-    /* Heatmap blobs */
-    .ph-heat {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(12px);
-      opacity: 0.55;
-    }
-    /* User dot */
-    .ph-dot {
-      position: absolute;
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: #1a73e8;
-      border: 2px solid #fff;
-      box-shadow: 0 1px 4px rgba(26,115,232,0.5);
-      z-index: 5;
-    }
-    /* Alert pin */
-    .ph-pin {
-      position: absolute;
-      width: 26px; height: 26px;
-      z-index: 4;
-    }
-    .ph-pin-inner {
-      width: 100%; height: 100%;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      background: radial-gradient(circle at 50% 40%, #fdd835 0%, #f5a623 60%, #e8820c 100%);
-      border: 1.5px solid #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .ph-pin-face {
-      transform: rotate(45deg);
-      font-size: 11px;
-      line-height: 1;
-    }
-    /* Alert button */
-    .ph-alert-btn {
-      position: absolute;
-      bottom: 10px; left: 50%; transform: translateX(-50%);
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #FFD60A, #E8A800);
-      box-shadow: 0 3px 10px rgba(245,197,24,0.4);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 6;
-    }
-    .ph-alert-btn img { width: 26px; height: 26px; object-fit: contain; }
-    .ph-alert-btn span {
-      position: absolute; bottom: -2px;
-      font-size: 7px; font-weight: 800; color: #1c1c1e;
-    }
-    /* Legend chip */
-    .ph-legend {
-      position: absolute;
-      top: 8px; right: 8px;
-      background: rgba(255,255,255,0.92);
-      border-radius: 8px;
-      padding: 5px 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      z-index: 5;
-    }
-    .ph-legend-title { font-size: 7px; font-weight: 700; color: #636366; text-transform: uppercase; letter-spacing: 0.3px; }
-    .ph-legend-bar { width: 60px; height: 3px; border-radius: 2px; background: linear-gradient(to right, #34c759, #ff9500, #ff3b30); margin: 3px 0 2px; }
-    .ph-legend-labels { display: flex; justify-content: space-between; font-size: 7px; color: #8e8e93; }
-    /* History view header */
-    .ph-toggle {
-      display: flex; align-items: center; gap: 4px;
-      padding: 5px 8px;
-      background: #fff;
-      border-bottom: 1px solid #eee;
-      flex-shrink: 0;
-    }
-    .ph-toggle-btn {
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; border: none; background: transparent; color: #636366;
-    }
-    .ph-toggle-btn.active { background: #f5c518; color: #1c1c1e; }
-    .ph-filter {
-      margin-left: auto; font-size: 8px; font-weight: 600;
-      color: #1c1c1e; background: #fff;
-      border: 1px solid #ddd; border-radius: 5px; padding: 2px 6px;
-    }
-    .ph-summary { font-size: 8px; color: #8e8e93; padding: 4px 10px; flex-shrink: 0; }
-    /* History chart */
-    .ph-chart {
-      padding: 4px 10px 2px;
-      flex-shrink: 0;
-    }
-    .ph-chart-title { font-size: 9px; font-weight: 700; color: #1c1c1e; margin-bottom: 4px; }
-    .ph-chart-bars {
-      display: flex; align-items: flex-end; gap: 2px; height: 36px;
-    }
-    .ph-bar {
-      flex: 1; border-radius: 3px; background: #d0d5d8; min-height: 3px;
-    }
-    .ph-bar--peak { background: #5a7d82; }
-    .ph-chart-labels { display: flex; gap: 2px; padding: 2px 0 4px; }
-    .ph-chart-label { flex: 1; font-size: 6px; color: #8e8e93; text-align: center; }
-    /* History list */
-    .ph-list { flex: 1; overflow: hidden; }
-    .ph-list-title { font-size: 10px; font-weight: 700; padding: 4px 10px; color: #1c1c1e; border-bottom: 1px solid #eee; }
-    .ph-card {
-      display: flex; align-items: center; gap: 6px;
-      padding: 7px 10px;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    .ph-card-icon {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: #f5c518; border: 1px solid #e0b000;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; flex-shrink: 0;
-    }
-    .ph-card-body { flex: 1; min-width: 0; }
-    .ph-card-date { font-size: 8px; font-weight: 500; color: #1c1c1e; }
-    .ph-card-dist { font-size: 9px; font-weight: 700; color: #ff9500; }
-    .ph-card-addr { font-size: 7px; color: #636366; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ph-card-badge {
-      font-size: 6px; font-weight: 700; color: #fff;
-      background: #8e8e93; border-radius: 3px; padding: 1px 4px;
-      text-transform: uppercase; flex-shrink: 0;
-    }
-    .ph-card-ago { font-size: 7px; color: #8e8e93; flex-shrink: 0; }
-    /* Bottom nav */
-    .ph-nav {
-      display: flex;
-      background: rgba(255,255,255,0.95);
-      border-top: 0.5px solid rgba(0,0,0,0.12);
-      flex-shrink: 0;
-    }
-    .ph-nav-item {
-      flex: 1; text-align: center; padding: 5px 0 4px;
-      font-size: 7px; color: #8e8e93; font-weight: 500;
-    }
-    .ph-nav-item.active { color: #1c1c1e; font-weight: 700; }
-    .ph-nav-icon { font-size: 13px; display: block; margin-bottom: 1px; }
-    @media (max-width: 520px) {
-      .phone-frame { width: 200px; height: 400px; }
-    }
+    .final{padding:120px 24px;text-align:center;position:relative;overflow:hidden}
+    .final-bg{position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(245,197,24,.06) 50%,transparent 100%)}
+    .final-inner{max-width:600px;margin:0 auto;position:relative;z-index:2}
+    .final h2{font-size:clamp(32px,5vw,48px);font-weight:900;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px}
+    .final h2 .accent{color:#f5c518}
+    .final p{font-size:17px;color:rgba(255,255,255,.45);margin-bottom:36px;max-width:420px;margin-left:auto;margin-right:auto}
+    .final .btn-primary{animation:glow 3s ease-in-out infinite}
+    .final-note{margin-top:16px;font-size:13px;color:rgba(255,255,255,.25)}
 
     /* ─── FOOTER ─── */
-    footer {
-      padding: 28px 24px 40px;
-      text-align: center;
-      font-size: 13px;
-      color: #8e8e93;
-      border-top: 1px solid #eeeef2;
-    }
-    footer a { color: #636366; font-weight: 600; }
-    footer a:hover { color: #1c1c1e; }
+    footer{padding:32px 24px 48px;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+    footer p{font-size:13px;color:rgba(255,255,255,.25)}
+    footer a{color:rgba(255,255,255,.4);font-weight:600;transition:color .2s}
+    footer a:hover{color:#f5c518}
+
+    /* ─── iOS MODAL ─── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+    .modal-overlay.open{display:flex}
+    @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal{background:#1c1c1e;border-radius:24px 24px 0 0;padding:28px 24px 32px;width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.5);animation:slideUp .25s ease;max-height:90vh;overflow-y:auto}
+    @media(min-width:520px){.modal-overlay{align-items:center}.modal{border-radius:24px;margin:20px}}
+    .modal-handle{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:-8px auto 16px}
+    .modal-icon{width:56px;height:56px;border-radius:14px;background:rgba(245,197,24,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+    .modal h3{font-size:20px;font-weight:800;text-align:center;margin-bottom:8px}
+    .modal-desc{font-size:15px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:24px;line-height:1.45}
+    .modal-desc strong{color:#fff}
+    .modal-steps{background:rgba(255,255,255,.05);border-radius:14px;padding:16px 18px;margin-bottom:18px}
+    .modal-steps-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+    .modal-steps ol{padding-left:20px;font-size:14px;color:rgba(255,255,255,.7);line-height:1.55}
+    .modal-steps ol strong{color:#fff;font-weight:700}
+    .modal-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 18px;border-radius:14px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s,background .15s}
+    .modal-btn:active{transform:scale(.98)}
+    .modal-btn--primary{background:#f5c518;color:#0a0a0a}
+    .modal-btn--primary:hover{background:#e8b400}
+    .modal-btn.copied{background:#34c759;color:#fff}
+    .modal-close{display:block;width:100%;text-align:center;margin-top:14px;padding:10px;background:none;border:none;font-size:14px;color:rgba(255,255,255,.35);cursor:pointer;font-family:inherit}
 
     /* ─── RESPONSIVE ─── */
-    @media (max-width: 520px) {
-      .hero { padding: 48px 20px 60px; }
-      .hero h1 { font-size: 34px; }
-      .hero .tagline { font-size: 18px; }
-      .section-title { font-size: 24px; }
-      .final-cta h2 { font-size: 26px; }
-      .trust-stats { grid-template-columns: 1fr; gap: 20px; }
-    }
-
-    /* ─── iOS SAFARI MODAL ─── */
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55);
-      z-index: 9999;
-      align-items: flex-end;
-      justify-content: center;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      animation: fadeIn 0.2s ease;
-    }
-    .modal-overlay.open { display: flex; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    .modal {
-      background: #fff;
-      border-radius: 24px 24px 0 0;
-      padding: 28px 24px 32px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
-      animation: slideUp 0.25s ease;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    @media (min-width: 520px) {
-      .modal-overlay { align-items: center; }
-      .modal { border-radius: 24px; margin: 20px; }
-    }
-    .modal-handle {
-      width: 40px; height: 4px;
-      background: #e5e5ea;
-      border-radius: 2px;
-      margin: -8px auto 16px;
-    }
-    .modal-icon {
-      width: 56px; height: 56px;
-      border-radius: 14px;
-      background: #fff3c4;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-    }
-    .modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      text-align: center;
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
-    }
-    .modal-desc {
-      font-size: 15px;
-      color: #636366;
-      text-align: center;
-      margin-bottom: 24px;
-      line-height: 1.45;
-    }
-    .modal-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .modal-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 15px 18px;
-      border-radius: 14px;
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: transform 0.1s ease, background 0.15s ease;
-    }
-    .modal-btn:active { transform: scale(0.98); }
-    .modal-btn--primary {
-      background: #1c1c1e;
-      color: #f5c518;
-    }
-    .modal-btn--primary:hover { background: #333; }
-    .modal-btn--secondary {
-      background: #f2f2f7;
-      color: #1c1c1e;
-    }
-    .modal-btn--secondary:hover { background: #e5e5ea; }
-    .modal-btn.copied {
-      background: #34c759;
-      color: #fff;
-    }
-    .modal-steps {
-      background: #f9f9fb;
-      border-radius: 14px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
-    }
-    .modal-steps-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #8e8e93;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 10px;
-    }
-    .modal-steps ol {
-      padding-left: 20px;
-      font-size: 14px;
-      color: #1c1c1e;
-      line-height: 1.55;
-    }
-    .modal-steps ol li { margin-bottom: 4px; }
-    .modal-steps ol li:last-child { margin-bottom: 0; }
-    .modal-steps strong { font-weight: 700; }
-    .modal-close {
-      display: block;
-      width: 100%;
-      text-align: center;
-      margin-top: 14px;
-      padding: 10px;
-      background: none;
-      border: none;
-      font-size: 14px;
-      color: #8e8e93;
-      cursor: pointer;
-      font-family: inherit;
+    @media(max-width:640px){
+      .features-grid{grid-template-columns:1fr}
+      .trust-grid{grid-template-columns:1fr;gap:12px}
+      .proof-inner{gap:32px}
+      .phone-frame{width:200px;height:400px;border-radius:26px}
     }
   </style>
 </head>
 <body>
 
+  <!-- ═══ NAV ═══ -->
+  <nav class="nav" id="nav">
+    <div class="nav-brand">
+      <img src="whistle-icon.png" alt="Whistle">
+      <span>Whistle</span>
+    </div>
+    <a class="nav-cta js-cta" href="onboarding.html">Usar Whistle</a>
+  </nav>
+
   <!-- ═══ HERO ═══ -->
   <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-orb hero-orb--1"></div>
+    <div class="hero-orb hero-orb--2"></div>
     <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Proteccion en tiempo real
+      </div>
       <img class="hero-icon" src="whistle-icon.png" alt="Whistle">
-      <h1>Whistle</h1>
-      <p class="tagline">Alerta de carteristas en tiempo real</p>
-      <p class="subtitle">La app colaborativa que te avisa al instante cuando alguien reporta un carterista cerca de ti.</p>
-      <a class="cta-primary js-cta" href="onboarding.html">
-        Usar Whistle ahora
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <span class="cta-note">Gratis · Anonimo · Sin cuenta</span>
+      <h1>Protege tu ciudad con <span class="accent">un toque</span></h1>
+      <p class="subtitle">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</p>
+      <div class="hero-actions">
+        <a class="btn-primary js-cta" href="onboarding.html">
+          Empezar ahora
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a class="btn-secondary" href="#como">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          Como funciona
+        </a>
+      </div>
+      <p class="hero-note">Gratis · Sin descargas · Funciona en cualquier movil</p>
+    </div>
+    <div class="hero-scroll">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
   </section>
 
-  <!-- ═══ WHAT IS ═══ -->
-  <section class="section">
-    <h2 class="section-title">Tu ciudad, mas segura</h2>
-    <p class="section-lead">
-      Whistle es una <strong>red de alerta ciudadana</strong> que convierte a los usuarios en los ojos de la ciudad. Cuando alguien detecta un carterista, toda la gente cerca lo sabe en <strong>menos de un segundo</strong>.
-    </p>
+  <!-- ═══ SOCIAL PROOF ═══ -->
+  <section class="proof">
+    <div class="proof-inner">
+      <div class="proof-item"><span class="proof-num">&lt;1s</span><span class="proof-label">Tiempo de alerta</span></div>
+      <div class="proof-item"><span class="proof-num">100m</span><span class="proof-label">Radio de proteccion</span></div>
+      <div class="proof-item"><span class="proof-num">24/7</span><span class="proof-label">Activa siempre</span></div>
+      <div class="proof-item"><span class="proof-num">0€</span><span class="proof-label">Completamente gratis</span></div>
+    </div>
+  </section>
 
+  <!-- ═══ FEATURES ═══ -->
+  <section class="section">
+    <div class="reveal">
+      <span class="section-tag">Funcionalidades</span>
+      <h2 class="section-title">Tu ciudad, mas segura</h2>
+      <p class="section-lead">Whistle convierte a cada usuario en un <strong>guardian de su zona</strong>. Cuando alguien detecta un carterista, toda la gente cerca lo sabe al instante.</p>
+    </div>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="icon-wrap icon-yellow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e0b000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon feature-icon--yellow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
         </div>
         <h3>Alertas instantaneas</h3>
-        <p>Recibe una notificacion si hay un aviso a menos de 100 metros de ti.</p>
+        <p>Recibe una notificacion si alguien reporta un carterista a menos de 100 metros de ti.</p>
       </div>
-      <div class="feature-card">
-        <div class="icon-wrap icon-red">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon feature-icon--red">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <h3>Mapa de riesgo</h3>
-        <p>Visualiza las zonas con mas incidentes para saber por donde caminar.</p>
+        <p>Visualiza las zonas con mas incidentes historicos para elegir por donde caminar.</p>
       </div>
-      <div class="feature-card">
-        <div class="icon-wrap icon-green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon feature-icon--green">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h3>100% anonimo</h3>
-        <p>Sin registro, sin datos personales. Solo tu y la comunidad.</p>
+        <p>Sin datos personales. Tu identidad esta protegida. Solo tu y la comunidad.</p>
       </div>
-      <div class="feature-card">
-        <div class="icon-wrap icon-blue">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon feature-icon--blue">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         </div>
         <h3>Radar colaborativo</h3>
-        <p>Cada alerta se valida con los reportes de otros usuarios cercanos.</p>
+        <p>Cada alerta se valida con los reportes de otros usuarios cercanos en tiempo real.</p>
       </div>
     </div>
   </section>
 
   <!-- ═══ APP PREVIEW ═══ -->
-  <section class="app-preview">
-    <h2 class="section-title">Asi se ve Whistle</h2>
-    <p class="section-lead">Interfaz real de la app. Simple, rapida y directa.</p>
-    <div class="phones-scroll">
-
-      <!-- 1. Radar — Zona Tranquila -->
-      <div>
-      <div class="phone-frame">
-        <div class="ph-header">
-          <img src="whistle.png" alt="">
-          <div class="ph-header-text">Whistle<small>Alerta de carteristas a tu alrededor</small></div>
-        </div>
-        <div class="ph-panel ph-panel--safe">
-          <div class="ph-panel-icon ph-panel-icon--safe">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          </div>
-          <div class="ph-panel-text">Zona Tranquila<small>0 alertas activas en 100 m.</small></div>
-        </div>
-        <div class="ph-map">
-          <div class="ph-map-grid"></div>
-          <div class="ph-map-road ph-map-road--h" style="top:45%"></div>
-          <div class="ph-map-road ph-map-road--v" style="left:35%"></div>
-          <div class="ph-map-road ph-map-road--diag" style="top:30%;left:10%;transform:rotate(25deg)"></div>
-          <div class="ph-radar ph-radar--green" style="width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-dot" style="top:50%;left:50%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-alert-btn"><img src="whistle.png" alt=""></div>
-        </div>
-        <div class="ph-nav">
-          <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
-        </div>
+  <section class="preview">
+    <div class="preview-bg"></div>
+    <div class="preview-inner">
+      <div class="reveal section--center">
+        <span class="section-tag">La app</span>
+        <h2 class="section-title">Asi se ve Whistle</h2>
+        <p class="section-lead">Simple, rapida y directa. Diseñada para actuar en segundos.</p>
       </div>
-      <div class="phone-frame__label">Zona segura</div>
-      </div>
-
-      <!-- 2. Historial lista -->
-      <div>
-      <div class="phone-frame">
-        <div class="ph-header">
-          <img src="whistle.png" alt="">
-          <div class="ph-header-text">Whistle<small>Historial de alerta de carteristas</small></div>
-        </div>
-        <div class="ph-toggle">
-          <div class="ph-toggle-btn active">☰</div>
-          <div class="ph-toggle-btn">🗺</div>
-          <div class="ph-filter">Todas · 30d ▾</div>
-        </div>
-        <div class="ph-summary">15 alertas · 6 zonas activas</div>
-        <div class="ph-chart">
-          <div class="ph-chart-title">Actividad por horas</div>
-          <div class="ph-chart-bars">
-            <div class="ph-bar" style="height:8%"></div><div class="ph-bar" style="height:5%"></div>
-            <div class="ph-bar" style="height:12%"></div><div class="ph-bar" style="height:3%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:3%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:3%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:3%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:5%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:3%"></div>
-            <div class="ph-bar" style="height:8%"></div><div class="ph-bar ph-bar--peak" style="height:90%"></div>
-            <div class="ph-bar" style="height:5%"></div><div class="ph-bar" style="height:10%"></div>
-            <div class="ph-bar" style="height:3%"></div><div class="ph-bar" style="height:8%"></div>
-            <div class="ph-bar" style="height:5%"></div><div class="ph-bar" style="height:12%"></div>
-            <div class="ph-bar" style="height:8%"></div><div class="ph-bar" style="height:5%"></div>
-          </div>
-          <div class="ph-chart-labels">
-            <div class="ph-chart-label">00</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">03</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">06</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">09</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">12</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">15</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">18</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-            <div class="ph-chart-label">21</div><div class="ph-chart-label"></div><div class="ph-chart-label"></div>
-          </div>
-        </div>
-        <div class="ph-list">
-          <div class="ph-list-title">Historial de alertas</div>
-          <div class="ph-card">
-            <div class="ph-card-icon">😠</div>
-            <div class="ph-card-body">
-              <div class="ph-card-date">01/05/2026 · 03:18</div>
-              <div class="ph-card-dist">55m</div>
-              <div class="ph-card-addr">📍 Carrer de Londres, 5 · l'Eixample</div>
+      <div class="phones-track">
+        <div class="phone-item">
+          <div class="phone-frame">
+            <div class="ph-header"><img src="whistle.png" alt=""><div class="ph-header-text">Whistle<small>Alerta de carteristas</small></div></div>
+            <div class="ph-panel ph-panel--safe">
+              <div class="ph-panel-icon ph-panel-icon--safe"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+              <div class="ph-panel-text">Zona Tranquila<small>0 alertas en 100m</small></div>
             </div>
-            <div><div class="ph-card-badge">EXPIRADA</div><div class="ph-card-ago">hace 228h</div></div>
-          </div>
-          <div class="ph-card">
-            <div class="ph-card-icon">😠</div>
-            <div class="ph-card-body">
-              <div class="ph-card-date">18/04/2026 · 17:45</div>
-              <div class="ph-card-dist">568m</div>
-              <div class="ph-card-addr">📍 Carrer de Nicaragua · les Corts</div>
+            <div class="ph-map">
+              <div class="ph-map-grid"></div>
+              <div class="ph-map-road ph-map-road--h" style="top:45%"></div>
+              <div class="ph-map-road ph-map-road--v" style="left:35%"></div>
+              <div class="ph-radar ph-radar--green" style="width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-dot" style="top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-alert-btn"><img src="whistle.png" alt=""></div>
             </div>
-            <div><div class="ph-card-badge">EXPIRADA</div><div class="ph-card-ago">hace 400h</div></div>
-          </div>
-          <div class="ph-card">
-            <div class="ph-card-icon">😠</div>
-            <div class="ph-card-body">
-              <div class="ph-card-date">17/04/2026 · 00:27</div>
-              <div class="ph-card-dist">1.2km</div>
-              <div class="ph-card-addr">📍 Av. Diagonal · Barcelona</div>
+            <div class="ph-nav">
+              <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
             </div>
-            <div><div class="ph-card-badge">EXPIRADA</div><div class="ph-card-ago">hace 441h</div></div>
           </div>
+          <div class="phone-label">Zona segura</div>
         </div>
-        <div class="ph-nav">
-          <div class="ph-nav-item"><span class="ph-nav-icon">📡</span>Radar</div>
-          <div class="ph-nav-item active"><span class="ph-nav-icon">🕐</span>Historial</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
-        </div>
-      </div>
-      <div class="phone-frame__label">Historial de alertas</div>
-      </div>
 
-      <!-- 3. Historial mapa -->
-      <div>
-      <div class="phone-frame">
-        <div class="ph-header">
-          <img src="whistle.png" alt="">
-          <div class="ph-header-text">Whistle<small>Historial de alerta de carteristas</small></div>
-        </div>
-        <div class="ph-toggle">
-          <div class="ph-toggle-btn">☰</div>
-          <div class="ph-toggle-btn active">🗺</div>
-          <div class="ph-filter">Todas · 30d ▾</div>
-        </div>
-        <div class="ph-summary">15 alertas · 6 zonas activas</div>
-        <div class="ph-map" style="flex:1;">
-          <div class="ph-map-grid"></div>
-          <div class="ph-map-road ph-map-road--h" style="top:55%"></div>
-          <div class="ph-map-road ph-map-road--h" style="top:30%"></div>
-          <div class="ph-map-road ph-map-road--v" style="left:50%"></div>
-          <div class="ph-map-road ph-map-road--v" style="left:25%"></div>
-          <div class="ph-dot" style="bottom:35%;left:28%"></div>
-          <div class="ph-pin" style="top:22%;left:55%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-pin" style="top:40%;left:25%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-pin" style="top:48%;left:30%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-pin" style="top:55%;left:15%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div style="position:absolute;bottom:42%;right:15%;font-size:9px;font-weight:500;color:#1c1c1e;opacity:0.6">Barcelona</div>
-          <div style="position:absolute;top:30%;left:30%;font-size:8px;color:#636366;opacity:0.5">l'Eixample</div>
-          <div style="position:absolute;top:18%;left:20%;font-size:8px;color:#636366;opacity:0.5">Gracia</div>
-        </div>
-        <div class="ph-nav">
-          <div class="ph-nav-item"><span class="ph-nav-icon">📡</span>Radar</div>
-          <div class="ph-nav-item active"><span class="ph-nav-icon">🕐</span>Historial</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
-        </div>
-      </div>
-      <div class="phone-frame__label">Vista mapa</div>
-      </div>
-
-      <!-- 4. Radar — Actividad elevada -->
-      <div>
-      <div class="phone-frame">
-        <div class="ph-header">
-          <img src="whistle.png" alt="">
-          <div class="ph-header-text">Whistle<small>Alerta de carteristas a tu alrededor</small></div>
-        </div>
-        <div class="ph-panel ph-panel--danger">
-          <div class="ph-panel-icon ph-panel-icon--thief">😠</div>
-          <div class="ph-panel-text">Actividad elevada<small>2 alertas cercanas</small></div>
-        </div>
-        <div class="ph-map">
-          <div class="ph-map-grid"></div>
-          <div class="ph-map-road ph-map-road--h" style="top:50%"></div>
-          <div class="ph-map-road ph-map-road--v" style="left:40%"></div>
-          <div class="ph-map-road ph-map-road--diag" style="top:35%;left:0;transform:rotate(30deg)"></div>
-          <div class="ph-radar ph-radar--red" style="width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-dot" style="top:48%;left:48%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-pin" style="top:35%;left:42%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-pin" style="top:55%;left:55%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-alert-btn"><img src="whistle.png" alt=""><span>24S</span></div>
-        </div>
-        <div class="ph-nav">
-          <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
-        </div>
-      </div>
-      <div class="phone-frame__label">Alerta activa</div>
-      </div>
-
-      <!-- 5. Radar — Mapa de calor -->
-      <div>
-      <div class="phone-frame">
-        <div class="ph-header">
-          <img src="whistle.png" alt="">
-          <div class="ph-header-text">Whistle<small>Alerta de carteristas a tu alrededor</small></div>
-        </div>
-        <div class="ph-map" style="flex:1;">
-          <div class="ph-map-grid"></div>
-          <div class="ph-map-road ph-map-road--h" style="top:50%"></div>
-          <div class="ph-map-road ph-map-road--v" style="left:40%"></div>
-          <div class="ph-map-road ph-map-road--diag" style="top:30%;left:5%;transform:rotate(25deg)"></div>
-          <div class="ph-radar ph-radar--yellow" style="width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-heat" style="width:60px;height:60px;background:radial-gradient(circle,rgba(255,59,48,0.7),rgba(255,149,0,0.3),transparent);top:38%;left:35%"></div>
-          <div class="ph-heat" style="width:40px;height:40px;background:radial-gradient(circle,rgba(255,149,0,0.5),rgba(255,200,0,0.2),transparent);top:55%;left:50%"></div>
-          <div class="ph-heat" style="width:35px;height:35px;background:radial-gradient(circle,rgba(52,199,89,0.4),transparent);top:28%;left:55%"></div>
-          <div class="ph-dot" style="top:48%;left:46%;transform:translate(-50%,-50%)"></div>
-          <div class="ph-pin" style="top:38%;left:38%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
-          <div class="ph-legend">
-            <div class="ph-legend-title">Nivel de riesgo historico</div>
-            <div class="ph-legend-bar"></div>
-            <div class="ph-legend-labels"><span>Bajo</span><span>Alto</span></div>
+        <div class="phone-item">
+          <div class="phone-frame">
+            <div class="ph-header"><img src="whistle.png" alt=""><div class="ph-header-text">Whistle<small>Alerta de carteristas</small></div></div>
+            <div class="ph-panel ph-panel--danger">
+              <div class="ph-panel-icon ph-panel-icon--thief">😠</div>
+              <div class="ph-panel-text">Actividad elevada<small>2 alertas cercanas</small></div>
+            </div>
+            <div class="ph-map">
+              <div class="ph-map-grid"></div>
+              <div class="ph-map-road ph-map-road--h" style="top:50%"></div>
+              <div class="ph-map-road ph-map-road--v" style="left:40%"></div>
+              <div class="ph-radar ph-radar--red" style="width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-dot" style="top:48%;left:48%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-pin" style="top:35%;left:42%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
+              <div class="ph-pin" style="top:55%;left:55%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
+              <div class="ph-alert-btn"><img src="whistle.png" alt=""><span>24s</span></div>
+            </div>
+            <div class="ph-nav">
+              <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
+            </div>
           </div>
-          <div class="ph-alert-btn"><img src="whistle.png" alt=""></div>
+          <div class="phone-label">Alerta activa</div>
         </div>
-        <div class="ph-nav">
-          <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
-          <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
-        </div>
-      </div>
-      <div class="phone-frame__label">Mapa de calor</div>
-      </div>
 
+        <div class="phone-item">
+          <div class="phone-frame">
+            <div class="ph-header"><img src="whistle.png" alt=""><div class="ph-header-text">Whistle<small>Alerta de carteristas</small></div></div>
+            <div class="ph-map" style="flex:1">
+              <div class="ph-map-grid"></div>
+              <div class="ph-map-road ph-map-road--h" style="top:50%"></div>
+              <div class="ph-map-road ph-map-road--v" style="left:40%"></div>
+              <div class="ph-radar ph-radar--yellow" style="width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-heat" style="width:60px;height:60px;background:radial-gradient(circle,rgba(255,59,48,.7),rgba(255,149,0,.3),transparent);top:38%;left:35%"></div>
+              <div class="ph-heat" style="width:40px;height:40px;background:radial-gradient(circle,rgba(255,149,0,.5),rgba(255,200,0,.2),transparent);top:55%;left:50%"></div>
+              <div class="ph-heat" style="width:35px;height:35px;background:radial-gradient(circle,rgba(52,199,89,.4),transparent);top:28%;left:55%"></div>
+              <div class="ph-dot" style="top:48%;left:46%;transform:translate(-50%,-50%)"></div>
+              <div class="ph-pin" style="top:38%;left:38%"><div class="ph-pin-inner"><span class="ph-pin-face">😠</span></div></div>
+              <div class="ph-legend">
+                <div class="ph-legend-title">Nivel de riesgo</div>
+                <div class="ph-legend-bar"></div>
+                <div class="ph-legend-labels"><span>Bajo</span><span>Alto</span></div>
+              </div>
+              <div class="ph-alert-btn"><img src="whistle.png" alt=""></div>
+            </div>
+            <div class="ph-nav">
+              <div class="ph-nav-item active"><span class="ph-nav-icon">📡</span>Radar</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">🕐</span>Historial</div>
+              <div class="ph-nav-item"><span class="ph-nav-icon">👤</span>Perfil</div>
+            </div>
+          </div>
+          <div class="phone-label">Mapa de calor</div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ═══ HOW IT WORKS ═══ -->
-  <section class="how">
+  <section class="how" id="como">
     <div class="how-inner">
-      <h2 class="section-title">Como funciona</h2>
-      <p class="section-lead">Tres pasos. Cero complicaciones.</p>
-
-      <div class="steps-list">
-        <div class="step-row">
-          <div class="step-circle">1</div>
-          <div>
+      <div class="reveal section--center">
+        <span class="section-tag">3 pasos</span>
+        <h2 class="section-title">Como funciona</h2>
+        <p class="section-lead">Cero complicaciones. Cero descargas.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-body">
             <h3>Instala Whistle</h3>
-            <p>Agregala a tu pantalla de inicio en segundos. Funciona como una app nativa.</p>
+            <p>Agregala a tu pantalla de inicio en 10 segundos. Funciona como una app nativa sin pasar por la App Store.</p>
           </div>
         </div>
-        <div class="step-row">
-          <div class="step-circle">2</div>
-          <div>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-body">
             <h3>Activa la ubicacion</h3>
-            <p>Whistle detecta si hay alertas cerca de ti y te avisa al instante.</p>
+            <p>Whistle monitorea tu zona y te avisa al instante si alguien reporta un carterista cerca de ti.</p>
           </div>
         </div>
-        <div class="step-row">
-          <div class="step-circle">3</div>
-          <div>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-body">
             <h3>Reporta y protege</h3>
-            <p>Si detectas un carterista, lanza un "whistle" con un solo toque y ayuda a otros.</p>
+            <p>Si detectas un carterista, lanza un whistle con un solo toque. Tu alerta protege a todos los que estan cerca.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ TRUST STRIP ═══ -->
+  <!-- ═══ TRUST ═══ -->
   <section class="trust">
-    <div class="trust-inner">
+    <div class="trust-inner reveal">
+      <span class="section-tag">Impacto</span>
       <h2>Juntos somos mas fuertes</h2>
       <p>Cada alerta protege a decenas de personas a tu alrededor.</p>
-      <div class="trust-stats">
-        <div class="trust-stat">
-          <span class="num">&lt;1s</span>
-          <span class="lbl">Tiempo de alerta</span>
+      <div class="trust-grid">
+        <div class="trust-card">
+          <span class="trust-num">&lt;1s</span>
+          <span class="trust-label">Tiempo de alerta</span>
         </div>
-        <div class="trust-stat">
-          <span class="num">100m</span>
-          <span class="lbl">Radio de deteccion</span>
+        <div class="trust-card">
+          <span class="trust-num">100m</span>
+          <span class="trust-label">Radio de deteccion</span>
         </div>
-        <div class="trust-stat">
-          <span class="num">0€</span>
-          <span class="lbl">Coste para usar</span>
+        <div class="trust-card">
+          <span class="trust-num">0€</span>
+          <span class="trust-label">Para siempre gratis</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ FINAL CTA ═══ -->
-  <section class="final-cta">
-    <h2>Empieza a protegerte hoy</h2>
-    <p>Unete a la red ciudadana que hace mas seguras las calles.</p>
-    <a class="cta-primary js-cta" href="onboarding.html">
-      Abrir Whistle
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </a>
-    <span class="cta-note">No necesitas descargar nada de la App Store</span>
+  <section class="final">
+    <div class="final-bg"></div>
+    <div class="final-inner reveal">
+      <h2>Empieza a protegerte <span class="accent">hoy</span></h2>
+      <p>Unete a la red ciudadana que hace mas seguras las calles de tu ciudad.</p>
+      <a class="btn-primary js-cta" href="onboarding.html">
+        Abrir Whistle
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <p class="final-note">No necesitas descargar nada de la App Store</p>
+    </div>
   </section>
 
   <!-- ═══ FOOTER ═══ -->
   <footer>
-    &copy; Whistle · Hecho para mantenerte a salvo ·
-    <a href="onboarding.html">Instalar</a> ·
-    <a href="index.html">Abrir app</a>
+    <p>&copy; Whistle · Hecho para mantenerte a salvo · <a href="onboarding.html">Instalar</a> · <a href="index.html">Abrir app</a></p>
   </footer>
 
-  <!-- ═══ iOS SAFARI MODAL ═══ -->
-  <div class="modal-overlay" id="safari-modal" role="dialog" aria-modal="true" aria-labelledby="safari-modal-title">
+  <!-- ═══ iOS MODAL ═══ -->
+  <div class="modal-overlay" id="safari-modal" role="dialog" aria-modal="true">
     <div class="modal">
       <div class="modal-handle"></div>
       <div class="modal-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e0b000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f5c518" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       </div>
-      <h3 id="safari-modal-title">Abre Whistle en Safari</h3>
-      <p class="modal-desc" id="safari-modal-desc">
-        Para instalar Whistle en tu iPhone necesitas abrir esta pagina en <strong>Safari</strong>.
-      </p>
-
+      <h3>Abre Whistle en Safari</h3>
+      <p class="modal-desc" id="safari-modal-desc">Para instalar Whistle en tu iPhone necesitas abrir esta pagina en <strong>Safari</strong>.</p>
       <div class="modal-steps" id="modal-steps">
         <div class="modal-steps-title">Sigue estos 3 pasos</div>
-        <ol id="modal-steps-list">
+        <ol>
           <li>Pulsa <strong>"Copiar enlace"</strong> abajo</li>
-          <li>Sal de este navegador y abre <strong>Safari</strong> desde tu pantalla de inicio</li>
-          <li>Pega el enlace en la barra de direcciones y abrelo</li>
+          <li>Sal de este navegador y abre <strong>Safari</strong></li>
+          <li>Pega el enlace en la barra de direcciones</li>
         </ol>
       </div>
-
-      <div class="modal-actions">
-        <button class="modal-btn modal-btn--primary" id="btn-copy">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          <span>Copiar enlace y abrir Safari</span>
-        </button>
-      </div>
-
+      <button class="modal-btn modal-btn--primary" id="btn-copy">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        <span>Copiar enlace</span>
+      </button>
       <button class="modal-close" id="btn-close">Cancelar</button>
     </div>
   </div>
 
   <script>
-  (function () {
+  (function(){
     'use strict';
 
-    // ─── Detection ─────────────────────────────────────────
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|GSA|DuckDuckGo|YaBrowser|Brave/i.test(ua);
+    // Scroll reveal
+    var reveals=document.querySelectorAll('.reveal');
+    var observer=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+    },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+    reveals.forEach(function(el){observer.observe(el)});
 
-    // In-app WebViews (Instagram, Facebook, TikTok, etc.)
-    const isInAppBrowser = /(Instagram|FBAN|FBAV|FB_IAB|Twitter|Line|MicroMessenger|TikTok|Pinterest|LinkedInApp|Snapchat)/i.test(ua);
+    // Nav scroll effect
+    var nav=document.getElementById('nav');
+    window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>60)},{passive:true});
 
-    // Only intercept if iOS AND not already in Safari
-    const needsRedirect = isIOS && !isSafari;
-    if (!needsRedirect) return;
+    // iOS Safari detection + modal
+    var ua=navigator.userAgent||'';
+    var isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+    var isSafari=/Safari/i.test(ua)&&!/CriOS|FxiOS|EdgiOS|OPiOS|GSA|DuckDuckGo|YaBrowser|Brave/i.test(ua);
+    var isInApp=/(Instagram|FBAN|FBAV|FB_IAB|Twitter|Line|MicroMessenger|TikTok|Pinterest|LinkedInApp|Snapchat)/i.test(ua);
+    var needsRedirect=isIOS&&!isSafari;
 
-    // ─── Elements ──────────────────────────────────────────
-    const modal     = document.getElementById('safari-modal');
-    const btnCopy   = document.getElementById('btn-copy');
-    const btnClose  = document.getElementById('btn-close');
-    const modalDesc = document.getElementById('safari-modal-desc');
-
-    if (isInAppBrowser) {
-      modalDesc.innerHTML = 'Estas viendo esta pagina dentro de una app. Para instalar Whistle necesitas abrirla en <strong>Safari</strong>.';
-    }
-
-    // ─── Intercept all CTAs ────────────────────────────────
-    const ctas = document.querySelectorAll('.js-cta');
-    ctas.forEach(cta => {
-      cta.addEventListener('click', (e) => {
-        e.preventDefault();
-        openModal();
+    if(needsRedirect){
+      var modal=document.getElementById('safari-modal');
+      var btnCopy=document.getElementById('btn-copy');
+      var btnClose=document.getElementById('btn-close');
+      if(isInApp){document.getElementById('safari-modal-desc').innerHTML='Estas viendo esta pagina dentro de una app. Para instalar Whistle abrela en <strong>Safari</strong>.'}
+      document.querySelectorAll('.js-cta').forEach(function(cta){cta.addEventListener('click',function(e){e.preventDefault();modal.classList.add('open');document.body.style.overflow='hidden'})});
+      btnCopy.addEventListener('click',async function(){
+        var url=window.location.href;var label=btnCopy.querySelector('span');
+        try{await navigator.clipboard.writeText(url)}catch(e){var ta=document.createElement('textarea');ta.value=url;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(x){}document.body.removeChild(ta)}
+        btnCopy.classList.add('copied');if(label)label.textContent='Enlace copiado';
+        setTimeout(function(){btnCopy.classList.remove('copied');if(label)label.textContent='Copiar enlace'},3500);
       });
-    });
-
-    function openModal() {
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
+      btnClose.addEventListener('click',function(){modal.classList.remove('open');document.body.style.overflow=''});
+      modal.addEventListener('click',function(e){if(e.target===modal){modal.classList.remove('open');document.body.style.overflow=''}});
     }
-    function closeModal() {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // ─── Copy link ─────────────────────────────────────────
-    btnCopy.addEventListener('click', async () => {
-      const url = window.location.href;
-      const label = btnCopy.querySelector('span');
-      try {
-        await navigator.clipboard.writeText(url);
-      } catch {
-        // Fallback for older iOS
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        try { document.execCommand('copy'); } catch {}
-        document.body.removeChild(ta);
-      }
-      btnCopy.classList.add('copied');
-      if (label) label.textContent = 'Enlace copiado · Pegalo en Safari';
-      setTimeout(() => {
-        btnCopy.classList.remove('copied');
-        if (label) label.textContent = 'Copiar enlace y abrir Safari';
-      }, 3500);
-    });
-
-    // ─── Close ─────────────────────────────────────────────
-    btnClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
-    });
   })();
   </script>
 
