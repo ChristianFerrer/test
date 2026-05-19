@@ -74,9 +74,21 @@
   </div>
   <!-- ==================== HOURLY CHART (fixed) ==================== -->
   <div id="hourly-chart-section" class="hourly-chart-section hidden">
-    <div id="history-summary" class="history-summary"></div>
-    <h2 class="history-section-title">Actividad por horas</h2>
-    <div class="hourly-chart" id="hourly-chart"></div>
+    <div class="horas-card">
+      <div class="horas-header">
+        <div class="horas-header-left">
+          <svg class="horas-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span class="horas-title">Horas punta</span>
+        </div>
+        <div class="horas-header-right">
+          <select class="horas-day-select" id="horas-day-select"></select>
+        </div>
+      </div>
+      <div class="horas-realtime" id="horas-realtime"></div>
+      <div class="hourly-chart" id="hourly-chart"></div>
+      <div class="hourly-chart-labels" id="hourly-chart-labels"></div>
+      <div id="history-summary" class="horas-footer"></div>
+    </div>
   </div>
 
   <!-- ==================== ALERT LIST TITLE (fixed) ==================== -->

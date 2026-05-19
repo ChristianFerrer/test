@@ -281,21 +281,6 @@
       historyCount.classList.add('hidden');
     }
 
-    // Summary bar
-    if (historySummary) {
-      if (within.length === 0) {
-        historySummary.textContent = t('history.empty_period');
-        historySummary.classList.add('visible');
-      } else if (within.length === 1) {
-        historySummary.textContent = t('history.summary_one');
-        historySummary.classList.add('visible');
-      } else {
-        const zones = countActiveZones(within);
-        historySummary.textContent = t('history.summary_many', { n: within.length, z: zones });
-        historySummary.classList.add('visible');
-      }
-    }
-
     renderList(within, verifiedIds);
 
     // Also update map markers if map view is active
@@ -366,11 +351,20 @@
   }
 
   // ============================================================
-  // HOURLY CHART
+  // HOURLY CHART (Google Maps "Horas punta" style)
   // ============================================================
 
-  // Axis labels to display (every 3 hours)
-  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
+  const CHART_LABELS = [6, 9, 12, 15, 18, 21];
+  const DAY_NAMES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+  function getActivityLevel(count, max) {
+    if (count === 0) return 'Sin actividad registrada';
+    const ratio = count / max;
+    if (ratio >= 0.8) return 'Muy concurrido de carteristas';
+    if (ratio >= 0.5) return 'Está bastante concurrido';
+    if (ratio >= 0.25) return 'Está un poco concurrido';
+    return 'No está demasiado concurrido';
+  }
 
   function renderHourlyChart(alerts) {
     if (!hourlyChart || !hourlyChartSection) return;
@@ -380,38 +374,81 @@
       return;
     }
 
-    // Count alerts per hour (0-23)
-    const counts = new Array(24).fill(0);
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentDay = now.getDay();
+
+    // Group alerts by day of week
+    const byDay = Array.from({length: 7}, () => new Array(24).fill(0));
     alerts.forEach(a => {
-      const h = new Date(a.created_at).getHours();
-      counts[h]++;
+      const d = new Date(a.created_at);
+      byDay[d.getDay()][d.getHours()]++;
     });
 
-    const max = Math.max(...counts, 1);
-    const peakVal = Math.max(...counts);
-
-    // Build bars
-    hourlyChart.innerHTML = counts.map((c, h) => {
-      const pct = Math.max((c / max) * 100, 5);
-      const isPeak = c === peakVal && c > 0;
-      return `<div class="hourly-bar-col">
-        <div class="hourly-bar${isPeak ? ' hourly-bar--peak' : ''}" style="height:${pct}%"
-             title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
-      </div>`;
-    }).join('');
-
-    // Build axis labels row
-    let labelsEl = hourlyChartSection.querySelector('.hourly-chart-labels');
-    if (!labelsEl) {
-      labelsEl = document.createElement('div');
-      labelsEl.className = 'hourly-chart-labels';
-      hourlyChart.insertAdjacentElement('afterend', labelsEl);
+    // Populate day selector
+    const daySelect = document.getElementById('horas-day-select');
+    if (daySelect && daySelect.options.length === 0) {
+      DAY_NAMES.forEach((name, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = name;
+        if (i === currentDay) opt.selected = true;
+        daySelect.appendChild(opt);
+      });
+      daySelect.addEventListener('change', () => renderBars(Number(daySelect.value)));
     }
-    labelsEl.innerHTML = Array.from({length: 24}, (_, h) => {
-      const show = CHART_LABELS.includes(h);
-      return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
-    }).join('');
 
+    function renderBars(dayIdx) {
+      const counts = byDay[dayIdx];
+      const max = Math.max(...counts, 1);
+      const peakVal = Math.max(...counts);
+      const isToday = dayIdx === currentDay;
+
+      hourlyChart.innerHTML = counts.map((c, h) => {
+        const pct = c > 0 ? Math.max((c / max) * 100, 8) : 5;
+        const isNow = isToday && h === currentHour;
+        const isPeak = c === peakVal && c > 0 && !isNow;
+        let cls = 'hourly-bar';
+        if (isNow) cls += ' hourly-bar--now';
+        else if (isPeak) cls += ' hourly-bar--peak';
+        return `<div class="hourly-bar-col">
+          <div class="${cls}" style="height:${pct}%"
+               title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
+        </div>`;
+      }).join('');
+
+      const labelsEl = document.getElementById('hourly-chart-labels');
+      if (labelsEl) {
+        labelsEl.innerHTML = Array.from({length: 24}, (_, h) => {
+          const show = CHART_LABELS.includes(h);
+          return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
+        }).join('');
+      }
+
+      // Real-time line
+      const rtEl = document.getElementById('horas-realtime');
+      if (rtEl && isToday) {
+        const nowCount = counts[currentHour];
+        const level = getActivityLevel(nowCount, max);
+        rtEl.innerHTML = `<span class="horas-realtime-label">En tiempo real ${String(currentHour).padStart(2, '0')}:00:</span> ${level}`;
+      } else if (rtEl) {
+        rtEl.innerHTML = '';
+      }
+
+      // Footer summary
+      if (historySummary) {
+        const total = counts.reduce((s, v) => s + v, 0);
+        if (total === 0) {
+          historySummary.textContent = 'Sin alertas registradas para este día';
+        } else {
+          const peakH = counts.indexOf(peakVal);
+          historySummary.innerHTML = `La mayor actividad suele ser a las <strong>${String(peakH).padStart(2, '0')}:00</strong>`;
+        }
+      }
+    }
+
+    const selectedDay = daySelect ? Number(daySelect.value) : currentDay;
+    renderBars(selectedDay);
     hourlyChartSection.classList.remove('hidden');
     repositionList();
   }
