@@ -1147,20 +1147,27 @@
   }
 
   function startCooldown() {
+    const endTime = Date.now() + COOLDOWN_MS;
+    try { sessionStorage.setItem('whistle_cooldown_end', String(endTime)); } catch (e) {}
+    resumeCooldown(endTime);
+  }
+
+  function resumeCooldown(endTime) {
     isOnCooldown = true;
     alertBtn.classList.add('cooldown');
 
-    let remaining = Math.floor(COOLDOWN_MS / 1000);
+    let remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
     btnLabel.textContent = `${remaining}s`;
 
     cooldownInterval = setInterval(() => {
-      remaining--;
+      remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
       if (remaining <= 0) {
         clearInterval(cooldownInterval);
         cooldownInterval = null;
         isOnCooldown = false;
         alertBtn.classList.remove('cooldown');
         btnLabel.textContent = '';
+        try { sessionStorage.removeItem('whistle_cooldown_end'); } catch (e) {}
       } else {
         btnLabel.textContent = `${remaining}s`;
       }
@@ -1185,6 +1192,7 @@
     isOnCooldown = false;
     alertBtn.classList.remove('cooldown');
     btnLabel.textContent = '';
+    try { sessionStorage.removeItem('whistle_cooldown_end'); } catch (e) {}
 
     // Hide own-alert panel (also stops panel countdown via hidePanel)
     hidePanel();
@@ -1243,6 +1251,16 @@
 
     // Alert button
     alertBtn.addEventListener('click', sendAlert);
+
+    // Restore cooldown if it was active before navigation
+    try {
+      const savedEnd = Number(sessionStorage.getItem('whistle_cooldown_end'));
+      if (savedEnd && savedEnd > Date.now()) {
+        resumeCooldown(savedEnd);
+      } else {
+        sessionStorage.removeItem('whistle_cooldown_end');
+      }
+    } catch (e) {}
 
     // Badge click → toggle panel visibility
     // Own-alert panel is one-time only (shown on send, never re-opened via badge)
