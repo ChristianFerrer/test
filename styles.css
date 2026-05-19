@@ -1187,13 +1187,8 @@ html, body {
 .horas-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-.horas-header-left {
-  display: flex;
-  align-items: center;
   gap: 8px;
+  margin-bottom: 8px;
 }
 .horas-icon {
   color: #5f6368;
@@ -1202,27 +1197,6 @@ html, body {
   font-size: 15px;
   font-weight: 600;
   color: #1c1c1e;
-}
-.horas-header-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.horas-day-select {
-  font-size: 13px;
-  font-weight: 500;
-  color: #1c1c1e;
-  background: #e8e8ed;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 12px;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235f6368' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  padding-right: 28px;
 }
 .horas-realtime {
   font-size: 13px;
@@ -1271,9 +1245,6 @@ html, body {
   transition: height 0.3s ease;
 }
 .hourly-bar--peak {
-  background: #80868b;
-}
-.hourly-bar--now {
   background: #d93025;
 }
 .horas-footer {

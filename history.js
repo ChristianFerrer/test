@@ -355,7 +355,6 @@
   // ============================================================
 
   const CHART_LABELS = [6, 9, 12, 15, 18, 21];
-  const DAY_NAMES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
 
   function getActivityLevel(count, max) {
     if (count === 0) return 'Sin actividad registrada';
@@ -374,81 +373,48 @@
       return;
     }
 
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay();
+    const currentHour = new Date().getHours();
 
-    // Group alerts by day of week
-    const byDay = Array.from({length: 7}, () => new Array(24).fill(0));
-    alerts.forEach(a => {
-      const d = new Date(a.created_at);
-      byDay[d.getDay()][d.getHours()]++;
-    });
+    const counts = new Array(24).fill(0);
+    alerts.forEach(a => { counts[new Date(a.created_at).getHours()]++; });
 
-    // Populate day selector
-    const daySelect = document.getElementById('horas-day-select');
-    if (daySelect && daySelect.options.length === 0) {
-      DAY_NAMES.forEach((name, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = name;
-        if (i === currentDay) opt.selected = true;
-        daySelect.appendChild(opt);
-      });
-      daySelect.addEventListener('change', () => renderBars(Number(daySelect.value)));
-    }
+    const max = Math.max(...counts, 1);
+    const peakVal = Math.max(...counts);
 
-    function renderBars(dayIdx) {
-      const counts = byDay[dayIdx];
-      const max = Math.max(...counts, 1);
-      const peakVal = Math.max(...counts);
-      const isToday = dayIdx === currentDay;
+    hourlyChart.innerHTML = counts.map((c, h) => {
+      const pct = c > 0 ? Math.max((c / max) * 100, 8) : 5;
+      const isPeak = c === peakVal && c > 0;
+      const cls = 'hourly-bar' + (isPeak ? ' hourly-bar--peak' : '');
+      return `<div class="hourly-bar-col">
+        <div class="${cls}" style="height:${pct}%"
+             title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
+      </div>`;
+    }).join('');
 
-      hourlyChart.innerHTML = counts.map((c, h) => {
-        const pct = c > 0 ? Math.max((c / max) * 100, 8) : 5;
-        const isNow = isToday && h === currentHour;
-        const isPeak = c === peakVal && c > 0 && !isNow;
-        let cls = 'hourly-bar';
-        if (isNow) cls += ' hourly-bar--now';
-        else if (isPeak) cls += ' hourly-bar--peak';
-        return `<div class="hourly-bar-col">
-          <div class="${cls}" style="height:${pct}%"
-               title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
-        </div>`;
+    const labelsEl = document.getElementById('hourly-chart-labels');
+    if (labelsEl) {
+      labelsEl.innerHTML = Array.from({length: 24}, (_, h) => {
+        const show = CHART_LABELS.includes(h);
+        return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
       }).join('');
+    }
 
-      const labelsEl = document.getElementById('hourly-chart-labels');
-      if (labelsEl) {
-        labelsEl.innerHTML = Array.from({length: 24}, (_, h) => {
-          const show = CHART_LABELS.includes(h);
-          return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
-        }).join('');
-      }
+    const rtEl = document.getElementById('horas-realtime');
+    if (rtEl) {
+      const nowCount = counts[currentHour];
+      const level = getActivityLevel(nowCount, max);
+      rtEl.innerHTML = `<span class="horas-realtime-label">En tiempo real ${String(currentHour).padStart(2, '0')}:00:</span> ${level}`;
+    }
 
-      // Real-time line
-      const rtEl = document.getElementById('horas-realtime');
-      if (rtEl && isToday) {
-        const nowCount = counts[currentHour];
-        const level = getActivityLevel(nowCount, max);
-        rtEl.innerHTML = `<span class="horas-realtime-label">En tiempo real ${String(currentHour).padStart(2, '0')}:00:</span> ${level}`;
-      } else if (rtEl) {
-        rtEl.innerHTML = '';
-      }
-
-      // Footer summary
-      if (historySummary) {
-        const total = counts.reduce((s, v) => s + v, 0);
-        if (total === 0) {
-          historySummary.textContent = 'Sin alertas registradas para este día';
-        } else {
-          const peakH = counts.indexOf(peakVal);
-          historySummary.innerHTML = `La mayor actividad suele ser a las <strong>${String(peakH).padStart(2, '0')}:00</strong>`;
-        }
+    if (historySummary) {
+      if (peakVal === 0) {
+        historySummary.textContent = 'Sin alertas registradas';
+      } else {
+        const peakH = counts.indexOf(peakVal);
+        historySummary.innerHTML = `La mayor actividad suele ser a las <strong>${String(peakH).padStart(2, '0')}:00</strong>`;
       }
     }
 
-    const selectedDay = daySelect ? Number(daySelect.value) : currentDay;
-    renderBars(selectedDay);
     hourlyChartSection.classList.remove('hidden');
     repositionList();
   }
