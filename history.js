@@ -281,6 +281,21 @@
       historyCount.classList.add('hidden');
     }
 
+    // Summary bar
+    if (historySummary) {
+      if (within.length === 0) {
+        historySummary.textContent = t('history.empty_period');
+        historySummary.classList.add('visible');
+      } else if (within.length === 1) {
+        historySummary.textContent = t('history.summary_one');
+        historySummary.classList.add('visible');
+      } else {
+        const zones = countActiveZones(within);
+        historySummary.textContent = t('history.summary_many', { n: within.length, z: zones });
+        historySummary.classList.add('visible');
+      }
+    }
+
     renderList(within, verifiedIds);
 
     // Also update map markers if map view is active
@@ -351,18 +366,35 @@
   }
 
   // ============================================================
-  // HOURLY CHART (Google Maps "Horas punta" style)
+  // HOURLY CHART
   // ============================================================
 
-  const CHART_LABELS = [6, 9, 12, 15, 18, 21];
+  const CHART_LABELS = [0, 3, 6, 9, 12, 15, 18, 21];
+  let chartCounts = new Array(24).fill(0);
+  let chartPeakVal = 0;
+  let selectedBarIdx = -1;
+  let chartClickBound = false;
 
-  function getActivityLevel(count, max) {
-    if (count === 0) return 'Sin actividad registrada';
-    const ratio = count / max;
-    if (ratio >= 0.8) return 'Muy concurrido de carteristas';
-    if (ratio >= 0.5) return 'Está bastante concurrido';
-    if (ratio >= 0.25) return 'Está un poco concurrido';
-    return 'No está demasiado concurrido';
+  function handleBarClick(e) {
+    const col = e.target.closest('.hourly-bar-col');
+    if (!col) return;
+    const h = Number(col.dataset.hour);
+
+    const prev = hourlyChart.querySelector('.hourly-bar--selected');
+    if (prev) prev.classList.remove('hourly-bar--selected');
+    const prevTip = hourlyChart.querySelector('.hourly-bar-tooltip');
+    if (prevTip) prevTip.remove();
+
+    if (selectedBarIdx === h) { selectedBarIdx = -1; return; }
+    selectedBarIdx = h;
+
+    const bar = col.querySelector('.hourly-bar');
+    if (!(chartCounts[h] === chartPeakVal && chartCounts[h] > 0)) bar.classList.add('hourly-bar--selected');
+
+    const tip = document.createElement('div');
+    tip.className = 'hourly-bar-tooltip';
+    tip.textContent = `${String(h).padStart(2, '0')}:00 — ${chartCounts[h]} alerta${chartCounts[h] !== 1 ? 's' : ''}`;
+    col.appendChild(tip);
   }
 
   function renderHourlyChart(alerts) {
@@ -373,23 +405,25 @@
       return;
     }
 
-    const currentHour = new Date().getHours();
+    chartCounts = new Array(24).fill(0);
+    alerts.forEach(a => { chartCounts[new Date(a.created_at).getHours()]++; });
 
-    const counts = new Array(24).fill(0);
-    alerts.forEach(a => { counts[new Date(a.created_at).getHours()]++; });
+    const max = Math.max(...chartCounts, 1);
+    chartPeakVal = Math.max(...chartCounts);
+    selectedBarIdx = -1;
 
-    const max = Math.max(...counts, 1);
-    const peakVal = Math.max(...counts);
-
-    hourlyChart.innerHTML = counts.map((c, h) => {
-      const pct = c > 0 ? Math.max((c / max) * 100, 8) : 5;
-      const isPeak = c === peakVal && c > 0;
-      const cls = 'hourly-bar' + (isPeak ? ' hourly-bar--peak' : '');
-      return `<div class="hourly-bar-col">
-        <div class="${cls}" style="height:${pct}%"
-             title="${String(h).padStart(2, '0')}:00 — ${c} alerta${c !== 1 ? 's' : ''}"></div>
+    hourlyChart.innerHTML = chartCounts.map((c, h) => {
+      const pct = Math.max((c / max) * 100, 5);
+      const isPeak = c === chartPeakVal && c > 0;
+      return `<div class="hourly-bar-col" data-hour="${h}" style="position:relative">
+        <div class="hourly-bar${isPeak ? ' hourly-bar--peak' : ''}" style="height:${pct}%"></div>
       </div>`;
     }).join('');
+
+    if (!chartClickBound) {
+      hourlyChart.addEventListener('click', handleBarClick);
+      chartClickBound = true;
+    }
 
     const labelsEl = document.getElementById('hourly-chart-labels');
     if (labelsEl) {
@@ -397,22 +431,6 @@
         const show = CHART_LABELS.includes(h);
         return `<span class="hourly-chart-label">${show ? String(h).padStart(2, '0') : ''}</span>`;
       }).join('');
-    }
-
-    const rtEl = document.getElementById('horas-realtime');
-    if (rtEl) {
-      const nowCount = counts[currentHour];
-      const level = getActivityLevel(nowCount, max);
-      rtEl.innerHTML = `<span class="horas-realtime-label">En tiempo real ${String(currentHour).padStart(2, '0')}:00:</span> ${level}`;
-    }
-
-    if (historySummary) {
-      if (peakVal === 0) {
-        historySummary.textContent = 'Sin alertas registradas';
-      } else {
-        const peakH = counts.indexOf(peakVal);
-        historySummary.innerHTML = `La mayor actividad suele ser a las <strong>${String(peakH).padStart(2, '0')}:00</strong>`;
-      }
     }
 
     hourlyChartSection.classList.remove('hidden');
