@@ -148,6 +148,16 @@
     'profile.share_msg':    { es: 'Whistle te avisa en tiempo real si hay carteristas cerca de ti 🚨 Instálala gratis:', en: 'Whistle alerts you in real time about pickpockets nearby 🚨 Install it for free:' },
     'profile.share_copied': { es: 'Enlace copiado',               en: 'Link copied' },
 
+    // ── BADGES ────────────────────────────────────────────────
+    'badge.first_whistle':       { es: 'Primer Silbato',              en: 'First Whistle' },
+    'badge.night_watch':         { es: 'Vigía Nocturno',              en: 'Night Watch' },
+    'badge.verified':            { es: 'Verificador',                 en: 'Verifier' },
+    'badge.streak_7':            { es: 'Racha de 7',                  en: '7-Day Streak' },
+    'badge.zone_guardian':       { es: 'Guardián',                    en: 'Guardian' },
+    'badge.sentinel':            { es: 'Centinela',                   en: 'Sentinel' },
+    'badge.protector':           { es: 'Protector',                   en: 'Protector' },
+    'badge.early_bird':          { es: 'Madrugador',                  en: 'Early Bird' },
+
     // ── TIME ───────────────────────────────────────────────────
     'time.now':             { es: 'ahora',                       en: 'now' },
     'time.mins_ago':        { es: 'hace {n}m',                   en: '{n}m ago' },

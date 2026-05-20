@@ -25,6 +25,157 @@
   });
 
   // ============================================================
+  // BADGES DEFINITION
+  // ============================================================
+
+  const BADGES = [
+    {
+      id: 'first_whistle',
+      icon: '💨',
+      name: 'Primer Silbato',
+      desc: 'Envía tu primera alerta',
+      check: function (s) { return { earned: s.total >= 1, current: s.total, goal: 1 }; },
+    },
+    {
+      id: 'night_watch',
+      icon: '🌙',
+      name: 'Vigía Nocturno',
+      desc: 'Alerta enviada entre 00:00 y 06:00',
+      check: function (s) { return { earned: s.nightAlerts >= 1, current: s.nightAlerts, goal: 1 }; },
+    },
+    {
+      id: 'verified',
+      icon: '✅',
+      name: 'Verificador',
+      desc: 'Tu alerta fue corroborada por otros',
+      check: function (s) { return { earned: s.verifiedCount >= 1, current: s.verifiedCount, goal: 1 }; },
+    },
+    {
+      id: 'streak_7',
+      icon: '🔥',
+      name: 'Racha de 7',
+      desc: '7 días consecutivos reportando',
+      check: function (s) { return { earned: s.streak >= 7, current: s.streak, goal: 7 }; },
+    },
+    {
+      id: 'zone_guardian',
+      icon: '🛡️',
+      name: 'Guardián',
+      desc: '10 alertas en una misma zona',
+      check: function (s) { return { earned: s.maxZoneAlerts >= 10, current: s.maxZoneAlerts, goal: 10 }; },
+    },
+    {
+      id: 'sentinel',
+      icon: '🎯',
+      name: 'Centinela',
+      desc: '50 alertas enviadas en total',
+      check: function (s) { return { earned: s.total >= 50, current: s.total, goal: 50 }; },
+    },
+    {
+      id: 'protector',
+      icon: '👥',
+      name: 'Protector',
+      desc: 'Avisaste a más de 100 personas',
+      check: function (s) { return { earned: s.reach >= 100, current: s.reach, goal: 100 }; },
+    },
+    {
+      id: 'early_bird',
+      icon: '🌅',
+      name: 'Madrugador',
+      desc: 'Alerta enviada entre 06:00 y 09:00',
+      check: function (s) { return { earned: s.earlyAlerts >= 1, current: s.earlyAlerts, goal: 1 }; },
+    },
+  ];
+
+  function computeBadgeStats(alerts, streak, reach, othersAlerts) {
+    const nightAlerts = alerts.filter(function (a) { var h = new Date(a.created_at).getHours(); return h >= 0 && h < 6; }).length;
+    const earlyAlerts = alerts.filter(function (a) { var h = new Date(a.created_at).getHours(); return h >= 6 && h < 9; }).length;
+
+    var zoneCounts = {};
+    alerts.forEach(function (a) {
+      var key = (Math.round(a.lat * 200) / 200) + ',' + (Math.round(a.lng * 200) / 200);
+      zoneCounts[key] = (zoneCounts[key] || 0) + 1;
+    });
+    var maxZoneAlerts = 0;
+    Object.keys(zoneCounts).forEach(function (k) {
+      if (zoneCounts[k] > maxZoneAlerts) maxZoneAlerts = zoneCounts[k];
+    });
+
+    var verifiedCount = 0;
+    alerts.forEach(function (a) {
+      var aTime = new Date(a.created_at).getTime();
+      for (var i = 0; i < othersAlerts.length; i++) {
+        var b = othersAlerts[i];
+        var timeDiff = Math.abs(aTime - new Date(b.created_at).getTime()) / 60000;
+        if (timeDiff <= CLUSTER_TIME_MIN && haversineDistance(a.lat, a.lng, b.lat, b.lng) <= CLUSTER_RADIUS_M) {
+          verifiedCount++;
+          break;
+        }
+      }
+    });
+
+    return {
+      total: alerts.length,
+      nightAlerts: nightAlerts,
+      earlyAlerts: earlyAlerts,
+      streak: streak,
+      reach: reach,
+      maxZoneAlerts: maxZoneAlerts,
+      verifiedCount: verifiedCount,
+    };
+  }
+
+  function renderBadges(stats) {
+    var grid = document.getElementById('badges-grid');
+    var counter = document.getElementById('badge-counter');
+    if (!grid) return;
+
+    var earnedCount = 0;
+    var previouslyEarned = {};
+    try { previouslyEarned = JSON.parse(localStorage.getItem('whistle_badges') || '{}'); } catch (e) {}
+    var newlyEarned = [];
+
+    var html = BADGES.map(function (b) {
+      var result = b.check(stats);
+      var isEarned = result.earned;
+      if (isEarned) earnedCount++;
+      if (isEarned && !previouslyEarned[b.id]) newlyEarned.push(b);
+
+      var progressHtml = '';
+      if (!isEarned && result.goal > 1) {
+        var pct = Math.min(100, Math.round((result.current / result.goal) * 100));
+        progressHtml = '<div class="badge-progress">' + result.current + '/' + result.goal + '</div>'
+          + '<div class="badge-progress-bar"><div class="badge-progress-fill" style="width:' + pct + '%"></div></div>';
+      }
+
+      return '<div class="badge-item ' + (isEarned ? 'earned' : 'locked') + '" title="' + b.desc + '">'
+        + '<div class="badge-icon">' + b.icon + '</div>'
+        + '<div class="badge-name">' + b.name + '</div>'
+        + progressHtml
+        + '</div>';
+    }).join('');
+
+    grid.innerHTML = html;
+    if (counter) counter.textContent = earnedCount + '/' + BADGES.length;
+
+    // Save earned state
+    var earned = {};
+    BADGES.forEach(function (b) { if (b.check(stats).earned) earned[b.id] = true; });
+    try { localStorage.setItem('whistle_badges', JSON.stringify(earned)); } catch (e) {}
+
+    // Celebrate newly earned badges
+    if (newlyEarned.length > 0) {
+      var delay = 500;
+      newlyEarned.forEach(function (b, i) {
+        setTimeout(function () {
+          showToast(b.icon + ' ' + b.name + ' desbloqueado!');
+          if (typeof vibrate === 'function') vibrate(50);
+        }, delay + i * 1500);
+      });
+    }
+  }
+
+  // ============================================================
   // BOOT — check session first
   // ============================================================
 
@@ -62,12 +213,16 @@
   // ============================================================
 
   async function loadMyAlerts(userId) {
-    const { data, error } = await supabase
-      .from('alerts')
-      .select('id, lat, lng, created_at')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(50);
+    const [myResult, allResult] = await Promise.all([
+      supabase.from('alerts').select('id, lat, lng, created_at, user_id')
+        .eq('user_id', userId).order('created_at', { ascending: false }).limit(200),
+      supabase.from('alerts').select('id, lat, lng, created_at, user_id')
+        .neq('user_id', userId).order('created_at', { ascending: false }).limit(500),
+    ]);
+
+    const data = myResult.data;
+    const error = myResult.error;
+    const othersAlerts = allResult.data || [];
 
     if (error) {
       myAlertsList.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><p>${t('profile.error')}</p></div>`;
@@ -104,11 +259,15 @@
     const AVG_REACH_PER_ALERT = 10;
     const reach = total * AVG_REACH_PER_ALERT;
 
+    const streak = computeStreak(data);
     statTotal.textContent  = total;
     statToday.textContent  = todayCount;
-    statStreak.textContent = computeStreak(data);
+    statStreak.textContent = streak;
     if (statReach) statReach.textContent = reach > 0 ? reach : '–';
 
+    // --- Badges ---
+    const badgeStats = computeBadgeStats(data, streak, reach, othersAlerts);
+    renderBadges(badgeStats);
 
     // --- List ---
     if (total === 0) {
@@ -121,7 +280,8 @@
       return;
     }
 
-    myAlertsList.innerHTML = data.map((alert, idx) => {
+    const displayAlerts = data.slice(0, 50);
+    myAlertsList.innerHTML = displayAlerts.map((alert, idx) => {
       const alertNum = total - idx;
       const d = new Date(alert.created_at);
       const locale = window.appLang === 'en' ? 'en-US' : 'es-ES';
