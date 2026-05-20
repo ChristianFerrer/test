@@ -389,7 +389,7 @@
     selectedBarIdx = h;
 
     const bar = col.querySelector('.hourly-bar');
-    if (!(chartCounts[h] === chartPeakVal && chartCounts[h] > 0)) bar.classList.add('hourly-bar--selected');
+    if (!bar.classList.contains('hourly-bar--peak')) bar.classList.add('hourly-bar--selected');
 
     const tip = document.createElement('div');
     tip.className = 'hourly-bar-tooltip';
@@ -411,14 +411,25 @@
     const max = Math.max(...chartCounts, 1);
     chartPeakVal = Math.max(...chartCounts);
     selectedBarIdx = -1;
+    const currentHour = new Date().getHours();
 
     hourlyChart.innerHTML = chartCounts.map((c, h) => {
       const pct = Math.max((c / max) * 100, 5);
-      const isPeak = c === chartPeakVal && c > 0;
+      const isNow = h === currentHour;
       return `<div class="hourly-bar-col" data-hour="${h}" style="position:relative">
-        <div class="hourly-bar${isPeak ? ' hourly-bar--peak' : ''}" style="height:${pct}%"></div>
+        <div class="hourly-bar${isNow ? ' hourly-bar--peak' : ''}" style="height:${pct}%"></div>
       </div>`;
     }).join('');
+
+    // Realtime text
+    const rtEl = document.getElementById('horas-realtime');
+    if (rtEl) {
+      const nowCount = chartCounts[currentHour];
+      const detail = nowCount === 0
+        ? 'Sin actividad detectada'
+        : `${nowCount} alerta${nowCount !== 1 ? 's' : ''} detectada${nowCount !== 1 ? 's' : ''}`;
+      rtEl.innerHTML = `<span class="horas-realtime-label">En tiempo real ${String(currentHour).padStart(2, '0')}:00:</span> ${detail}`;
+    }
 
     if (!chartClickBound) {
       hourlyChart.addEventListener('click', handleBarClick);

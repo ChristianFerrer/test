@@ -1185,6 +1185,17 @@ html, body {
 }
 .hourly-chart-section.hidden { display: none; }
 
+.horas-realtime {
+  padding: 0 20px 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+.horas-realtime-label {
+  color: #d93025;
+  font-weight: 700;
+}
+
 .hourly-chart {
   display: flex;
   align-items: flex-end;
