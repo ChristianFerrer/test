@@ -1261,7 +1261,6 @@ html, body {
 }
 .hourly-bar-tooltip {
   position: absolute;
-  bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%);
   background: #1c1c1e;

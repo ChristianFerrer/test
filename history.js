@@ -394,6 +394,7 @@
     const tip = document.createElement('div');
     tip.className = 'hourly-bar-tooltip';
     tip.textContent = `${String(h).padStart(2, '0')}:00 — ${chartCounts[h]} alerta${chartCounts[h] !== 1 ? 's' : ''}`;
+    tip.style.bottom = (bar.offsetHeight + 6) + 'px';
     col.appendChild(tip);
   }
 
