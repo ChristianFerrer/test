@@ -537,7 +537,7 @@
 
       return `
         <div class="alert-card${isRecent ? ' alert-card--recent' : ''}">
-          <div class="card-dist-badge">${distStr}</div>
+          <img class="card-icon" src="thief2.png" aria-hidden="true">
           <div class="card-body">
             <div class="card-top-row">
               <span class="card-datetime">${fullDateStr}</span>
@@ -545,6 +545,7 @@
               <span class="card-status${isActive ? '' : ' card-status--expired'}">${isActive ? t('history.active') : t('history.expired')}</span>
             </div>
             <div class="card-mid-row">
+              <span class="card-distance">${distStr}</span>
               <span class="card-ago${isRecent ? ' card-ago--recent' : ''}">${agoStr}</span>
             </div>
             <div class="card-address-row">
