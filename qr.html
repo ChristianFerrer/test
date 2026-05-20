@@ -366,11 +366,11 @@
     <div class="card" id="card-preview">
       <img class="card-logo" src="whistle-icon.png" alt="Whistle">
       <div class="card-brand">Whistle</div>
-      <div class="card-tagline">Alerta de carteristas a tu alrededor en tiempo real</div>
+      <div class="card-tagline">Alerta de carteristas en tiempo real</div>
       <div class="card-qr-wrap" id="qr-preview"></div>
-      <div class="card-cta">Juntos somos más fuertes</div>
-      <div class="card-url">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</div>
-      <div class="card-footer">Anónimo · Rápido · En tiempo real</div>
+      <div class="card-cta">Escanea para instalar</div>
+      <div class="card-url" id="card-url"></div>
+      <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
     </div>
   </div>
 
@@ -387,6 +387,9 @@
     const SHARE_URL = (location.origin && !location.origin.startsWith('file'))
       ? location.origin + '/landing.html'
       : 'https://whistle.app/landing.html';
+
+    // Show URL in card
+    document.getElementById('card-url').textContent = SHARE_URL.replace(/^https?:\/\//, '');
 
     // Generate QR code in preview
     const qrPreview = document.getElementById('qr-preview');
@@ -427,9 +430,9 @@
           <div class="card-left">
             <img class="card-logo" src="whistle-icon.png" alt="Whistle">
             <div class="card-brand">Whistle</div>
-            <div class="card-tagline">Alerta de carteristas a tu alrededor<br>en tiempo real</div>
-            <div class="card-cta">Juntos somos más fuertes</div>
-            <div class="card-url">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</div>
+            <div class="card-tagline">Alerta de carteristas<br>en tiempo real</div>
+            <div class="card-cta">Escanea para instalar</div>
+            <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
           </div>
           <div class="card-qr-wrap"></div>
         `;
@@ -439,11 +442,11 @@
         cardPreview.innerHTML = `
           <img class="card-logo" src="whistle-icon.png" alt="Whistle">
           <div class="card-brand">Whistle</div>
-          <div class="card-tagline">Alerta de carteristas a tu alrededor en tiempo real</div>
+          <div class="card-tagline">Alerta de carteristas en tiempo real</div>
           <div class="card-qr-wrap"></div>
-          <div class="card-cta">Juntos somos más fuertes</div>
-          <div class="card-url">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</div>
-          <div class="card-footer">Anónimo · Rápido · En tiempo real</div>
+          <div class="card-cta">Escanea para instalar</div>
+          <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
         `;
         generateQR(cardPreview.querySelector('.card-qr-wrap'), 200);
       }
@@ -465,19 +468,19 @@
           <div class="card-left">
             <img class="card-logo" src="whistle-icon.png" alt="">
             <div class="card-brand">Whistle</div>
-            <div class="card-tagline">Alerta de carteristas a tu alrededor<br>en tiempo real</div>
-            <div class="card-cta">Juntos somos más fuertes</div>
-            <div class="card-url">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</div>
+            <div class="card-tagline">Alerta de carteristas<br>en tiempo real</div>
+            <div class="card-cta">Escanea para instalar</div>
+            <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
           </div>
           <div class="card-qr-wrap"></div>
         ` : `
           <img class="card-logo" src="whistle-icon.png" alt="">
           <div class="card-brand">Whistle</div>
-          <div class="card-tagline">Alerta de carteristas a tu alrededor en tiempo real</div>
+          <div class="card-tagline">Alerta de carteristas en tiempo real</div>
           <div class="card-qr-wrap"></div>
-          <div class="card-cta">Juntos somos más fuertes</div>
-          <div class="card-url">La app colaborativa que alerta a todos a tu alrededor cuando detectas un carterista. En menos de un segundo.</div>
-          <div class="card-footer">Anónimo · Rápido · En tiempo real</div>
+          <div class="card-cta">Escanea para instalar</div>
+          <div class="card-url">${SHARE_URL.replace(/^https?:\/\//, '')}</div>
+          <div class="card-footer">Gratis · Anonimo · Sin cuenta</div>
         `;
         printSheet.appendChild(card);
         generateQR(card.querySelector('.card-qr-wrap'), 200);
