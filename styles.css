@@ -1173,6 +1173,14 @@ html, body {
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
   padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 /* ── Hourly chart section (fixed above the scrollable list) ── */
@@ -1329,6 +1337,19 @@ html, body {
   object-fit: contain;
   flex-shrink: 0;
   opacity: 0.75;
+}
+.card-dist-badge {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: #fff3e0;
+  color: var(--alert-orange);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.3px;
 }
 
 /* Right: all text content */
