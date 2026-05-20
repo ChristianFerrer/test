@@ -31,58 +31,58 @@
   const BADGES = [
     {
       id: 'first_whistle',
-      icon: '💨',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>',
       name: 'Primer Silbato',
-      desc: 'Envía tu primera alerta',
+      desc: 'Envía tu primera alerta para desbloquear este logro',
       check: function (s) { return { earned: s.total >= 1, current: s.total, goal: 1 }; },
     },
     {
       id: 'night_watch',
-      icon: '🌙',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>',
       name: 'Vigía Nocturno',
-      desc: 'Alerta enviada entre 00:00 y 06:00',
+      desc: 'Envía una alerta entre las 00:00 y las 06:00',
       check: function (s) { return { earned: s.nightAlerts >= 1, current: s.nightAlerts, goal: 1 }; },
     },
     {
       id: 'verified',
-      icon: '✅',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
       name: 'Verificador',
-      desc: 'Tu alerta fue corroborada por otros',
+      desc: 'Otro usuario corroboró tu alerta reportando en el mismo lugar y momento',
       check: function (s) { return { earned: s.verifiedCount >= 1, current: s.verifiedCount, goal: 1 }; },
     },
     {
       id: 'streak_7',
-      icon: '🔥',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
       name: 'Racha de 7',
-      desc: '7 días consecutivos reportando',
+      desc: 'Reporta alertas durante 7 días consecutivos sin parar',
       check: function (s) { return { earned: s.streak >= 7, current: s.streak, goal: 7 }; },
     },
     {
       id: 'zone_guardian',
-      icon: '🛡️',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
       name: 'Guardián',
-      desc: '10 alertas en una misma zona',
+      desc: 'Envía 10 o más alertas en la misma zona de ~500m',
       check: function (s) { return { earned: s.maxZoneAlerts >= 10, current: s.maxZoneAlerts, goal: 10 }; },
     },
     {
       id: 'sentinel',
-      icon: '🎯',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
       name: 'Centinela',
-      desc: '50 alertas enviadas en total',
+      desc: 'Alcanza las 50 alertas enviadas en total',
       check: function (s) { return { earned: s.total >= 50, current: s.total, goal: 50 }; },
     },
     {
       id: 'protector',
-      icon: '👥',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
       name: 'Protector',
-      desc: 'Avisaste a más de 100 personas',
+      desc: 'Tus alertas han avisado a más de 100 personas en total',
       check: function (s) { return { earned: s.reach >= 100, current: s.reach, goal: 100 }; },
     },
     {
       id: 'early_bird',
-      icon: '🌅',
+      icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
       name: 'Madrugador',
-      desc: 'Alerta enviada entre 06:00 y 09:00',
+      desc: 'Envía una alerta entre las 06:00 y las 09:00',
       check: function (s) { return { earned: s.earlyAlerts >= 1, current: s.earlyAlerts, goal: 1 }; },
     },
   ];
@@ -148,15 +148,27 @@
           + '<div class="badge-progress-bar"><div class="badge-progress-fill" style="width:' + pct + '%"></div></div>';
       }
 
-      return '<div class="badge-item ' + (isEarned ? 'earned' : 'locked') + '" title="' + b.desc + '">'
-        + '<div class="badge-icon">' + b.icon + '</div>'
-        + '<div class="badge-name">' + b.name + '</div>'
-        + progressHtml
+      return '<div class="badge-item ' + (isEarned ? 'earned' : 'locked') + '">'
+        + '<div class="badge-item-inner">'
+        +   '<div class="badge-front">'
+        +     '<div class="badge-icon">' + b.icon + '</div>'
+        +     '<div class="badge-name">' + b.name + '</div>'
+        +     progressHtml
+        +   '</div>'
+        +   '<div class="badge-back">'
+        +     '<div class="badge-back-title">' + b.name + '</div>'
+        +     '<div class="badge-back-desc">' + b.desc + '</div>'
+        +   '</div>'
+        + '</div>'
         + '</div>';
     }).join('');
 
     grid.innerHTML = html;
     if (counter) counter.textContent = earnedCount + '/' + BADGES.length;
+
+    grid.querySelectorAll('.badge-item').forEach(function (card) {
+      card.addEventListener('click', function () { card.classList.toggle('flipped'); });
+    });
 
     // Save earned state
     var earned = {};
@@ -168,7 +180,7 @@
       var delay = 500;
       newlyEarned.forEach(function (b, i) {
         setTimeout(function () {
-          showToast(b.icon + ' ' + b.name + ' desbloqueado!');
+          showToast(b.name + ' desbloqueado!');
           if (typeof vibrate === 'function') vibrate(50);
         }, delay + i * 1500);
       });

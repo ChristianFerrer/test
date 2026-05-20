@@ -1733,28 +1733,67 @@ html, body {
   padding: 4px 16px 20px;
 }
 .badge-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
-  padding: 12px 4px;
-  border-radius: 14px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  position: relative;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  perspective: 400px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-}
-.badge-item.earned {
-  border-color: var(--brand-yellow);
-  box-shadow: 0 2px 8px rgba(245,197,24,0.15);
-}
-.badge-item.earned:active {
-  transform: scale(0.96);
 }
 .badge-item.locked {
   opacity: 0.45;
+}
+.badge-item-inner {
+  position: relative;
+  width: 100%;
+  min-height: 100px;
+  transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.badge-item.flipped .badge-item-inner {
+  transform: rotateY(180deg);
+}
+.badge-front, .badge-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 4px;
+  gap: 6px;
+}
+.badge-front {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+}
+.badge-item.earned .badge-front {
+  border-color: var(--brand-yellow);
+  box-shadow: 0 2px 8px rgba(245,197,24,0.15);
+}
+.badge-back {
+  transform: rotateY(180deg);
+  background: var(--brand-black);
+  border: 1.5px solid var(--brand-yellow);
+  padding: 10px 6px;
+  gap: 6px;
+}
+.badge-back-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--brand-yellow);
+  text-align: center;
+  line-height: 1.2;
+}
+.badge-back-desc {
+  font-size: 9px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+  line-height: 1.3;
 }
 .badge-icon {
   width: 36px;
@@ -1762,9 +1801,9 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
   line-height: 1;
   position: relative;
+  color: var(--brand-black);
 }
 .badge-item.locked .badge-icon::after {
   content: '';
