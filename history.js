@@ -444,6 +444,17 @@
       }).join('');
     }
 
+    // Footer: peak hour summary
+    const footerEl = document.getElementById('horas-footer');
+    if (footerEl) {
+      if (chartPeakVal === 0) {
+        footerEl.textContent = 'Sin alertas registradas';
+      } else {
+        const peakH = chartCounts.indexOf(chartPeakVal);
+        footerEl.innerHTML = `La mayor actividad suele ser a las <strong>${String(peakH).padStart(2, '0')}:00</strong>`;
+      }
+    }
+
     hourlyChartSection.classList.remove('hidden');
     repositionList();
   }

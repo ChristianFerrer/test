@@ -1182,18 +1182,37 @@ html, body {
   z-index: 10;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
 }
 .hourly-chart-section.hidden { display: none; }
 
+.horas-card {
+  background: #f5f5f5;
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+.horas-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+  letter-spacing: -0.2px;
+}
 .horas-realtime {
-  padding: 0 20px 6px;
   font-size: 13px;
   color: var(--text-primary);
   line-height: 1.4;
+  margin-bottom: 10px;
 }
 .horas-realtime-label {
   color: #d93025;
   font-weight: 700;
+}
+.horas-footer {
+  font-size: 13px;
+  color: #5f6368;
+  margin-top: 10px;
+  line-height: 1.4;
 }
 
 .hourly-chart {
@@ -1201,12 +1220,12 @@ html, body {
   align-items: flex-end;
   gap: 4px;
   height: 80px;
-  padding: 0 20px 4px;
+  padding: 0;
 }
 .hourly-chart-labels {
   display: flex;
   gap: 4px;
-  padding: 2px 20px 10px;
+  padding: 2px 0 0;
 }
 .hourly-chart-label {
   flex: 1;
